@@ -1,0 +1,268 @@
+// colors
+
+$purple: #7c5dfa;
+$light-purple: #9277ff;
+$element-bg_dark: #1e2139;
+$element-bg-lighter_dark: #252945;
+$bg_dark: #141625;
+$text_light: #0c0e16;
+$light-blue: #dfe3fa;
+$light-blue_2: #ced6fd;
+$text-secondary: #888eb0;
+$navbar-bg: #373b53;
+$blue-gray: #7e88c3;
+$red: #ec5757;
+$light-red: #ff9797;
+$bg_light: #f8f8fb;
+$light-gray: #f9fafe;
+$white: #ffffff;
+$shadow-color: hsla(231, 20%, 61%, 0.5);
+$status-paid: #33d69f;
+$status-paid-bg: hsla(160, 67%, 52%, 0.06);
+$status-pending: #ff8f00;
+$status-pending-bg: hsla(34, 100%, 50%, 0.06);
+$status-draft: #373b53;
+$status-draft-bg: hsla(231, 20%, 27%, 0.06);
+$transparent-black: hsla(0, 0%, 0%, 0.6);
+
+@mixin shadow-1 {
+  box-shadow: 2px 10px 10px $shadow-color, -2px 0px 10px $shadow-color;
+}
+
+@mixin shadow-2 {
+  box-shadow: 0px 3px 10px $shadow-color;
+}
+
+@mixin heading-default {
+  font-family: "Spartan", sans-serif;
+  font-weight: 700;
+  color: $text_light;
+  margin: 0;
+}
+
+@mixin heading-1_lg {
+  @include heading-default;
+  font-size: 32px;
+  letter-spacing: -1px;
+}
+
+@mixin heading-1_sm {
+  @include heading-default;
+  font-size: 24px;
+  letter-spacing: -0.5px;
+  line-height: 32px;
+}
+
+@mixin heading-2_lg {
+  @include heading-default;
+  font-size: 20px;
+  letter-spacing: -0.62px;
+}
+
+@mixin heading-2_sm {
+  @include heading-default;
+  font-size: 18px;
+  letter-spacing: -0.38px;
+  line-height: 32px;
+}
+
+@mixin heading-3_lg {
+  @include heading-default;
+  font-size: 16px;
+  letter-spacing: -0.8px;
+  line-height: 24px;
+}
+
+@mixin heading-3_sm {
+  @include heading-default;
+  font-size: 12px;
+  letter-spacing: -0.25px;
+  line-height: 15px;
+}
+
+@mixin body-default {
+  font-family: "Spartan", sans-serif;
+  font-weight: 500;
+  color: $text_light;
+  margin: 0;
+}
+
+@mixin body_xxl {
+  @include body-default;
+  font-size: 20px;
+  letter-spacing: -0.42px;
+  line-height: 32px;
+}
+
+@mixin body_xl {
+  @include body-default;
+  font-size: 15px;
+  letter-spacing: -0.31px;
+  line-height: 20px;
+}
+
+@mixin body_lg {
+  @include body-default;
+  font-size: 12px;
+  letter-spacing: -0.25px;
+  line-height: 15px;
+}
+
+@mixin body_sm {
+  @include body-default;
+  font-size: 11px;
+  letter-spacing: -0.23px;
+  line-height: 18px;
+}
+
+@mixin text_sm {
+  font-family: "Spartan", sans-serif;
+  font-size: 12px;
+  letter-spacing: -0.25px;
+  line-height: 15px;
+  color: $text_light;
+}
+
+@mixin button-default {
+  @include text_sm;
+  border: none;
+  padding: 1rem 1.5rem;
+  border-radius: 2rem;
+  cursor: pointer;
+}
+
+@mixin button-with-icon {
+  padding-left: 4rem;
+  position: relative;
+  & .icon {
+    background-color: $white;
+    color: $purple;
+    border-radius: 50%;
+    height: 2rem;
+    width: 2rem;
+    display: block;
+    position: absolute;
+    transform: translate(0%, -50%);
+    top: 50%;
+    left: 0.5rem;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  &:hover {
+    .icon {
+      color: $light-purple;
+    }
+  }
+}
+
+@mixin button-purple {
+  @include button-default;
+  background-color: $purple;
+  color: $white;
+  &:hover {
+    background-color: $light-purple;
+  }
+}
+
+@mixin button-edit_light {
+  @include button-default;
+  color: $text_light;
+  background-color: $light-blue;
+  &:hover {
+    background-color: $light-blue_2;
+  }
+}
+
+@mixin button-edit_dark {
+  @include button-default;
+  color: $light-blue;
+  background-color: $bg_dark;
+  &:hover {
+    background-color: $white;
+  }
+}
+
+@mixin button-save_light {
+  @include button-default;
+  background-color: $navbar-bg;
+  color: $white;
+  &:hover {
+    background-color: $text_light;
+  }
+}
+
+@mixin button-save_dark {
+  @include button-default;
+  color: $light-blue;
+  &:hover {
+    background-color: $dark-blue_1;
+  }
+}
+
+@mixin button-delete {
+  @include button-default;
+  background-color: $red;
+  color: $white;
+  &:hover {
+    background-color: $light-red;
+  }
+}
+
+@mixin button-add {
+  @include button-default;
+  background-color: $light-gray_2;
+  color: $blue-gray;
+  text-align: center;
+  &:hover {
+    background-color: $light-blue;
+  }
+}
+
+@mixin fieldset-reset {
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+@mixin form-control-with-label {
+  display: flex;
+  flex-direction: column;
+}
+
+@mixin label {
+  @include text_sm;
+  color: $blue-gray;
+  margin-bottom: 0.5rem;
+}
+
+@mixin textfield {
+  @include text_sm;
+  border: 1px solid $light-blue;
+  color: $text_light;
+  outline: none;
+  border-radius: 5px;
+  padding: 1rem;
+  //width: 100%;
+  //min-width: 15rem;
+  &:focus {
+    border-color: $light-purple;
+  }
+}
+
+@mixin list-reset {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@mixin button-reset {
+  border: none;
+  background-color: transparent;
+  font-family: inherit;
+  padding: 0;
+  &:hover {
+    cursor: pointer;
+  }
+}

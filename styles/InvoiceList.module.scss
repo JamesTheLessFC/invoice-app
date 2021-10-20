@@ -1,0 +1,16 @@
+@import "./variables.scss";
+
+.root {
+  @include list-reset;
+  &_with_form {
+    display: none;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .root {
+    &_with_form {
+      display: block;
+    }
+  }
+}

@@ -1,0 +1,71 @@
+@import "./variables.scss";
+
+@keyframes slideInLeft {
+  0% {
+    left: 100%;
+  }
+  100% {
+    left: 0;
+  }
+}
+
+.root {
+  width: 90%;
+  margin: auto;
+  background-color: $white;
+  padding: 2rem;
+  border-radius: 5px;
+  position: relative;
+  left: 0;
+  transition: left 0.5s ease-out;
+  animation: slideInLeft 0.5s ease-out 1;
+  &_hidden {
+    left: 100%;
+  }
+  h1 {
+    @include body_xxl;
+  }
+  p {
+    @include body_lg;
+    color: $text-secondary;
+    margin-top: 1rem;
+    margin-bottom: 2rem;
+  }
+}
+
+.actions {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  button {
+    @include button-edit_light;
+    &:last-child {
+      margin-left: 1rem;
+      @include button-delete;
+    }
+  }
+}
+
+@media screen and (min-width: 576px) {
+  .root {
+    width: 70%;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .root {
+    width: 50%;
+  }
+}
+
+@media screen and (min-width: 992px) {
+  .root {
+    width: 40%;
+  }
+}
+
+@media screen and (min-width: 1199px) {
+  .root {
+    width: 30%;
+  }
+}

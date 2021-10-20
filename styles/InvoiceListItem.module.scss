@@ -1,0 +1,121 @@
+@import "./variables.scss";
+
+.root {
+  position: relative;
+  margin: 2rem 0;
+  background-color: $white;
+  border-radius: 5px;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  padding: 1.5rem;
+  @include shadow-2;
+  &:hover {
+    cursor: pointer;
+    border: 1px solid $light-purple;
+    padding: calc(1.5rem - 1px);
+  }
+}
+
+.id,
+.due_date,
+.client_name {
+  @include body_lg;
+}
+
+.id {
+  margin-bottom: 2rem;
+  span:first-child {
+    color: $text-secondary;
+  }
+}
+
+.total {
+  @include heading-3_lg;
+  margin-top: 0.5rem;
+}
+
+.due_date {
+  color: $text-secondary;
+}
+
+.align_right {
+  text-align: right;
+}
+
+.client_name {
+  color: $text-secondary;
+  margin-bottom: auto;
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+}
+
+.status {
+  @include text_sm;
+  text-align: center;
+  text-transform: capitalize;
+  width: 7rem;
+  padding: 0.75rem 0;
+  margin: 0;
+  position: absolute;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  &_paid {
+    background-color: $status-paid-bg;
+    color: $status-paid !important;
+  }
+  &_pending {
+    background-color: $status-pending-bg;
+    color: $status-pending !important;
+  }
+  &_draft {
+    background-color: $status-draft-bg;
+    color: $status-draft !important;
+  }
+}
+
+.open_button {
+  display: none;
+  @include button-reset;
+  color: $purple;
+}
+
+@media screen and (min-width: 768px) {
+  .root {
+    align-items: center;
+    flex-direction: row;
+    justify-content: flex-start;
+  }
+
+  .id {
+    width: 12%;
+    margin-bottom: 0;
+  }
+
+  .due_date {
+    width: 20%;
+  }
+
+  .client_name {
+    position: static;
+    width: 20%;
+    margin-bottom: 0;
+  }
+
+  .total {
+    margin-top: 0;
+    text-align: right;
+    flex-grow: 1;
+  }
+
+  .status {
+    position: static;
+    margin-right: 2rem;
+    margin-left: 2rem;
+  }
+
+  .open_button {
+    display: block;
+  }
+}

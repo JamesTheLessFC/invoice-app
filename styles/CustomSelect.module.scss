@@ -1,0 +1,64 @@
+@import "./variables.scss";
+
+.root {
+  position: relative;
+  @include textfield;
+  background-color: $white;
+  padding-right: 3rem !important;
+  &_focused {
+    border-color: $light-purple;
+  }
+  span {
+    text-transform: capitalize;
+  }
+  .toggleOptionsButton {
+    color: $blue-gray;
+    border: none;
+    background-color: transparent;
+    padding: 0;
+    font-size: 18px;
+    transform: translate(0, -50%);
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    cursor: pointer;
+  }
+  ul {
+    @include list-reset;
+    @include shadow-1;
+    position: absolute;
+    top: 4.5rem;
+    left: 0;
+    max-height: 17rem;
+    transition: max-height 0.5s ease-out;
+    border-radius: 5px;
+    width: 100%;
+    overflow: hidden;
+    background-color: $white;
+    z-index: 10;
+  }
+  ul.hidden {
+    max-height: 0;
+    overflow: hidden;
+  }
+  li {
+    border-bottom: 1px solid $light-blue;
+    &:last-child {
+      border-bottom: none;
+    }
+    button {
+      @include button-reset;
+      @include text_sm;
+      width: 100%;
+      text-align: left;
+      padding: 1rem;
+      text-transform: capitalize;
+      &:hover {
+        background-color: $light-blue;
+      }
+    }
+    button.active {
+      color: $purple;
+    }
+  }
+}

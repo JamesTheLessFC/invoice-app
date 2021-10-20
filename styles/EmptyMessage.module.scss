@@ -1,0 +1,23 @@
+@import "./variables.scss";
+
+.root {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: auto;
+  width: 100%;
+  height: calc(100vh - 9rem);
+  min-height: calc(738px - 9rem);
+  h2 {
+    @include heading-2_lg;
+    margin-top: 3rem;
+    margin-bottom: 1rem;
+  }
+  p {
+    @include body_lg;
+    color: $text-secondary;
+    text-align: center;
+    max-width: 50%;
+  }
+}

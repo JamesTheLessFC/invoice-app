@@ -1,0 +1,36 @@
+@import "./variables";
+
+.root {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin-top: 2rem;
+  height: 3rem;
+  .align_left {
+    flex-grow: 1;
+  }
+  h2 {
+    @include heading-2_lg;
+  }
+  p {
+    @include body_lg;
+    color: $text-secondary;
+    margin-top: 0.5rem;
+  }
+  &_with_form {
+    display: none;
+  }
+}
+
+.button_add {
+  @include button-purple;
+  @include button-with-icon;
+}
+
+@media screen and (min-width: 768px) {
+  .root {
+    &_with_form {
+      display: flex;
+    }
+  }
+}

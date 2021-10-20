@@ -1,0 +1,230 @@
+@import "./variables.scss";
+
+.root {
+  margin: 2rem 0;
+  width: 90%;
+  p {
+    @include body_lg;
+  }
+  p.label {
+    color: $blue-gray;
+  }
+}
+
+.container {
+  background-color: $white;
+  border-radius: 5px;
+  @include shadow-2;
+  margin-top: 1rem;
+  padding: 1.5rem;
+  &_status {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 2rem;
+  }
+  &:not(.container_status) {
+    margin-bottom: 8rem;
+  }
+}
+
+.status {
+  text-align: center;
+  text-transform: capitalize;
+  width: 7rem;
+  padding: 0.75rem 0;
+  &_paid {
+    background-color: $status-paid-bg;
+    color: $status-paid !important;
+  }
+  &_pending {
+    background-color: $status-pending-bg;
+    color: $status-pending !important;
+  }
+  &_draft {
+    background-color: $status-draft-bg;
+    color: $status-draft !important;
+  }
+}
+
+.id {
+  span {
+    color: $blue-gray;
+  }
+}
+
+p.description {
+  color: $blue-gray;
+  margin-top: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.address p {
+  @include body_sm;
+  color: $blue-gray;
+}
+
+.details {
+  display: flex;
+  margin-top: 2rem;
+  & > div {
+    width: 50%;
+  }
+  p:not(.label):not(.address p) {
+    @include body_xl;
+    margin-top: 1rem;
+    margin-bottom: 2rem;
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.breakdown {
+  margin-top: 2rem;
+  ul {
+    @include list-reset;
+    background-color: $light-gray;
+    padding: 1rem 0;
+  }
+  .list_headings {
+    display: none;
+  }
+  li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1rem;
+    margin-bottom: 1rem;
+    &:last-child {
+      margin-bottom: 0;
+    }
+    .item_quantity_price {
+      color: $blue-gray;
+      margin-top: 0.5rem;
+    }
+  }
+  & > div:last-child {
+    background-color: $navbar-bg;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    p {
+      color: $white;
+      &:last-child {
+        @include body_xxl;
+        color: $white;
+      }
+    }
+  }
+}
+
+.actions {
+  background-color: $white;
+  padding: 1rem;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  button:first-child {
+    @include button-edit_light;
+  }
+  button:nth-child(2) {
+    @include button-delete;
+  }
+  button:last-child {
+    @include button-purple;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .actions {
+    position: static;
+    padding: 0;
+    width: unset;
+    margin-left: auto;
+    button:nth-child(2) {
+      margin: 0 1rem;
+    }
+  }
+
+  .container_status .label {
+    margin-right: 1.5rem;
+  }
+
+  .container:not(.container_status) {
+    margin-bottom: 4rem;
+    & > div:first-child {
+      display: flex;
+      justify-content: space-between;
+      .address {
+        text-align: right;
+      }
+    }
+  }
+
+  .details {
+    width: 60%;
+    position: relative;
+  }
+
+  .client_email {
+    position: absolute;
+    top: 0;
+    right: 0;
+    transform: translate(100%, 0%);
+  }
+
+  .breakdown {
+    & > div:last-child {
+      padding: 1.5rem 1rem;
+    }
+    & > ul > li {
+      &.list_headings {
+        display: flex;
+        border-bottom: 1px solid hsla(0, 0%, 0%, 0.1);
+        margin-bottom: 1rem;
+        p {
+          @include body_sm;
+          color: $blue-gray;
+        }
+      }
+      position: relative;
+      padding: 1rem;
+      margin-bottom: 0;
+      .item_quantity_price {
+        margin-top: 0;
+      }
+      .item_quantity {
+        position: absolute;
+        transform: translate(-100%, -50%);
+        top: 50%;
+        left: 50%;
+        span {
+          display: none; // hide the "x"
+        }
+      }
+      .item_price {
+        position: absolute;
+        transform: translate(-100%, -50%);
+        top: 50%;
+        left: 75%;
+      }
+    }
+  }
+}
+
+@media screen and (min-width: 992px) {
+  .root {
+    width: 80%;
+  }
+}
+
+@media screen and (min-width: 1199px) {
+  .root {
+    width: 60%;
+  }
+}

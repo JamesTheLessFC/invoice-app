@@ -1,0 +1,78 @@
+@import "./variables.scss";
+
+.root {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin: 0 2rem;
+  ul {
+    @include list-reset;
+    @include shadow-1;
+    background-color: $white;
+    max-height: 10rem;
+    transition: max-height 0.25s ease-out;
+    position: absolute;
+    top: 2.5rem;
+    left: 50%;
+    transform: translate(-50%, 0%);
+    min-width: 100%;
+    width: 10rem;
+    overflow: hidden;
+    border-radius: 5px;
+    z-index: 9;
+  }
+  ul.hidden {
+    max-height: 0;
+  }
+}
+
+.toggle_button {
+  @include button-reset;
+  color: $purple;
+  margin-left: 1rem;
+}
+
+.option_button {
+  @include button-reset;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 3rem;
+  padding: 0 1rem;
+  text-transform: capitalize;
+  &:hover {
+    background-color: $light-blue;
+    .checkbox {
+      border: 1px solid $purple;
+    }
+  }
+  span:last-child {
+    text-align: right;
+  }
+}
+
+.checkbox {
+  background-color: $light-blue;
+  padding: 0.25rem;
+  border-radius: 3px;
+  width: 1.5rem;
+  height: 1.5rem;
+  position: relative;
+  &_checked {
+    background-color: $purple;
+    .check {
+      max-height: 1.5rem;
+    }
+  }
+}
+
+.check {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+  color: $white;
+  max-height: 0;
+  transition: max-height 0.2s ease-out;
+}

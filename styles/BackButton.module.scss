@@ -1,0 +1,10 @@
+@import "./variables.scss";
+
+.root {
+  @include button-reset;
+  @include text_sm;
+  span {
+    color: $purple;
+    margin-right: 1rem;
+  }
+}
