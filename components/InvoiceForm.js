@@ -58,6 +58,35 @@ export default function InvoiceForm({
     }
   }, [selectedInvoice]);
 
+  const saveAsDraft = async (e) => {
+    e.preventDefault();
+    try {
+      const body = {
+        description,
+        senderStreet,
+        senderCity,
+        senderZip,
+        senderCountry,
+        clientName,
+        clientEmail,
+        clientStreet,
+        clientCity,
+        clientZip,
+        clientCountry,
+        invoiceDate,
+        paymentTerms,
+        items,
+      };
+      await fetch("/api/invoice", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const handleSenderStreetChange = (e) => {
     setSenderStreet(e.target.value);
   };
@@ -332,7 +361,9 @@ export default function InvoiceForm({
           >
             Discard
           </button>
-          <button className={styles.save_as_draft}>Save as Draft</button>
+          <button onClick={saveAsDraft} className={styles.save_as_draft}>
+            Save as Draft
+          </button>
           <button className={styles.save_and_send}>{"Save & Send"}</button>
         </div>
       )}

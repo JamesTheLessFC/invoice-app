@@ -19,7 +19,9 @@ export default function InvoicesHeader({
     >
       <div className={styles.align_left}>
         <h2>Invoices</h2>
-        <p>{invoiceCount} Invoices</p>
+        <p>
+          {invoiceCount} Invoice{invoiceCount !== 1 ? "s" : ""}
+        </p>
       </div>
       <InvoicesFilter
         filter={filter}

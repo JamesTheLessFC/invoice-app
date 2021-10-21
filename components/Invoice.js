@@ -56,26 +56,18 @@ export default function Invoice({
             <p className={styles.description}>{data.description}</p>
           </div>
           <div className={styles.address}>
-            <p>{data.senderAddress.street}</p>
-            <p>{data.senderAddress.city}</p>
-            <p>{data.senderAddress.postCode}</p>
-            <p>{data.senderAddress.country}</p>
+            <p>{data.senderStreet}</p>
+            <p>{data.senderCity}</p>
+            <p>{data.senderZip}</p>
+            <p>{data.senderCountry}</p>
           </div>
         </div>
         <div className={styles.details}>
           <div>
             <p className={styles.label}>Invoice Date</p>
-            <p>
-              {new Date(data.createdAt).toLocaleDateString("en-US", {
-                dateStyle: "medium",
-              })}
-            </p>
+            <p>{data.invoiceDate}</p>
             <p className={styles.label}>Payment Due</p>
-            <p>
-              {new Date(data.paymentDue).toLocaleDateString("en-US", {
-                dateStyle: "medium",
-              })}
-            </p>
+            <p>{data.paymentDue}</p>
             <div className={styles.client_email}>
               <p className={styles.label}>Send To</p>
               <p>{data.clientEmail}</p>
@@ -85,10 +77,10 @@ export default function Invoice({
             <p className={styles.label}>Bill To</p>
             <p>{data.clientName}</p>
             <div className={styles.address}>
-              <p>{data.clientAddress.street}</p>
-              <p>{data.clientAddress.city}</p>
-              <p>{data.clientAddress.postCode}</p>
-              <p>{data.clientAddress.country}</p>
+              <p>{data.clientStreet}</p>
+              <p>{data.clientCity}</p>
+              <p>{data.clientZip}</p>
+              <p>{data.clientCountry}</p>
             </div>
           </div>
         </div>
