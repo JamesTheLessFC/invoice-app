@@ -7,6 +7,15 @@ import { useSelector } from "react-redux";
 import { selectInvoices } from "../features/invoices/invoicesSlice";
 import InvoiceForm from "../components/InvoiceForm";
 import Screen from "../components/Screen";
+import prisma from "../lib/prisma";
+
+export async function getStaticProps() {
+  const invoiceData = await prisma.invoice.findMany();
+  console.log(invoiceData);
+  const invoices = JSON.parse(JSON.stringify(invoiceData));
+  const items = await prisma.item.findMany();
+  return { props: { invoices, items } };
+}
 
 export default function Home() {
   const invoices = useSelector(selectInvoices);
