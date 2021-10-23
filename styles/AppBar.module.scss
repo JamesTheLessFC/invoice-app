@@ -40,9 +40,26 @@
   align-items: center;
   button {
     @include button-reset;
-    font-size: 1.5rem;
-    color: $blue-gray;
   }
+}
+
+.icon {
+  font-size: 2rem;
+  color: $blue-gray;
+  &_moon {
+    font-size: 1.75rem;
+  }
+}
+
+.avatar_name_container {
+  display: flex;
+  align-items: center;
+}
+
+.name {
+  @include body_lg;
+  color: $blue-gray;
+  margin-left: 0.5rem;
 }
 
 .divider {
@@ -54,6 +71,7 @@
 
 .avatar {
   border-radius: 50%;
+  border: 5px solid $blue-gray;
 }
 
 @media screen and (min-width: 992px) {
@@ -76,5 +94,19 @@
     width: 4rem;
     margin: 1rem 0;
     background-color: $blue-gray;
+  }
+
+  .avatar_name_container {
+    flex-direction: column-reverse;
+    .avatar {
+      transform: rotate(-90deg);
+    }
+  }
+
+  .name {
+    writing-mode: vertical-rl;
+    margin-left: 0;
+    margin-bottom: 0.5rem;
+    transform: rotate(180deg);
   }
 }

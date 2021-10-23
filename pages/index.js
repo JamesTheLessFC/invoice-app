@@ -14,6 +14,8 @@ export const getServerSideProps = async ({ req, res }) => {
     return { props: { invoices: [] } };
   }
 
+  const user = session.user;
+
   const invoicesData = await prisma.invoice.findMany({
     where: {
       user: { email: session.user.email },
@@ -45,11 +47,11 @@ export const getServerSideProps = async ({ req, res }) => {
     })),
   }));
   return {
-    props: { invoices },
+    props: { invoices, user },
   };
 };
 
-export default function Home({ invoices }) {
+export default function Home({ invoices, user }) {
   const [selectedInvoice, setSelectedInvoice] = useState(null);
   const [showInvoiceForm, setShowInvoiceForm] = useState(false);
   const [showScreen, setShowScreen] = useState(false);
@@ -86,7 +88,7 @@ export default function Home({ invoices }) {
 
   return (
     <div className={styles.root}>
-      <AppBar />
+      <AppBar user={user} />
       {!selectedInvoice && (
         <Invoices
           data={invoices}
