@@ -5,6 +5,7 @@ import BackButton from "./BackButton";
 import { useState, useEffect } from "react";
 import ModalScreen from "./ModalScreen";
 import DeleteModal from "./DeleteModal";
+import { useRouter } from "next/router";
 
 export default function Invoice({
   data,
@@ -21,6 +22,18 @@ export default function Invoice({
       }, 500);
     }
   }, [hideDeleteModal]);
+
+  const deleteInvoice = async () => {
+    const response = await fetch(`/api/invoice/${data.id}`, {
+      method: "DELETE",
+    });
+    if (response.ok) {
+      const jsonResponse = await response.json();
+      console.log(`Invoice #${jsonResponse.id} deleted!`);
+      deselectInvoice();
+      setHideDeleteModal(true);
+    }
+  };
 
   const handleDeleteClick = () => {
     setHideModalScreen(false);
@@ -99,7 +112,7 @@ export default function Invoice({
               </div>
             </li>
             {data.items.map((item) => (
-              <li key={item.name}>
+              <li key={item.id}>
                 <div>
                   <p>{item.name}</p>
                   <p className={styles.item_quantity_price}>
@@ -142,6 +155,7 @@ export default function Invoice({
           <DeleteModal
             hidden={hideDeleteModal}
             handleCancelDeleteClick={handleCancelDeleteClick}
+            deleteInvoice={deleteInvoice}
           />
         </ModalScreen>
       )}

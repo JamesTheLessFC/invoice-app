@@ -3,8 +3,6 @@ import AppBar from "../components/AppBar";
 import Invoices from "../components/Invoices";
 import Invoice from "../components/Invoice";
 import { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
-import { selectInvoices } from "../features/invoices/invoicesSlice";
 import InvoiceForm from "../components/InvoiceForm";
 import Screen from "../components/Screen";
 import prisma from "../lib/prisma";
@@ -26,9 +24,14 @@ export const getServerSideProps = async ({ req, res }) => {
   });
   const invoices = invoicesData.map((invoice) => ({
     ...invoice,
-    total: invoice.items.reduce(
-      (a, b) => a.price * a.quantity + b.price * b.quantity
-    ),
+    total:
+      invoice.items.length > 1
+        ? invoice.items.reduce(
+            (a, b) => a.price * a.quantity + b.price * b.quantity
+          )
+        : invoice.items.length === 1
+        ? invoice.items[0].price * invoice.items[0].quantity
+        : 0,
     paymentDue: new Date(
       invoice.invoiceDate.getTime() + invoice.paymentTerms * 24 * 60 * 60 * 1000
     ).toLocaleDateString("en-US", { dateStyle: "medium" }),
@@ -46,16 +49,7 @@ export const getServerSideProps = async ({ req, res }) => {
   };
 };
 
-// export async function getStaticProps() {
-//   const invoiceData = await prisma.invoice.findMany();
-//   console.log(invoiceData);
-//   const invoices = JSON.parse(JSON.stringify(invoiceData));
-//   const items = await prisma.item.findMany();
-//   return { props: { invoices, items } };
-// }
-
 export default function Home({ invoices }) {
-  //const invoices = useSelector(selectInvoices);
   const [selectedInvoice, setSelectedInvoice] = useState(null);
   const [showInvoiceForm, setShowInvoiceForm] = useState(false);
   const [showScreen, setShowScreen] = useState(false);
@@ -93,11 +87,6 @@ export default function Home({ invoices }) {
   return (
     <div className={styles.root}>
       <AppBar />
-      {/* {invoices.map((invoice) => (
-        <p key={invoice.id}>
-          {invoice.id} {invoice.items[0].name}
-        </p>
-      ))} */}
       {!selectedInvoice && (
         <Invoices
           data={invoices}

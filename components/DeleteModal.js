@@ -1,6 +1,10 @@
 import styles from "../styles/DeleteModal.module.scss";
 
-export default function DeleteModal({ hidden, handleCancelDeleteClick }) {
+export default function DeleteModal({
+  hidden,
+  handleCancelDeleteClick,
+  deleteInvoice,
+}) {
   return (
     <div className={`${styles.root} ${hidden ? styles.root_hidden : ""}`}>
       <h1>Confirm Deletion</h1>
@@ -10,7 +14,7 @@ export default function DeleteModal({ hidden, handleCancelDeleteClick }) {
       </p>
       <div className={styles.actions}>
         <button onClick={handleCancelDeleteClick}>Cancel</button>
-        <button>Delete</button>
+        <button onClick={deleteInvoice}>Delete</button>
       </div>
     </div>
   );

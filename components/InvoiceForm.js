@@ -7,26 +7,78 @@ import CustomSelect from "./CustomSelect";
 import { useState, useEffect } from "react";
 import { nanoid } from "nanoid";
 
-const getWindowHeight = () => {
-  return window.innerHeight;
-};
+const states = [
+  "AL (Alabama)",
+  "AK (Alaska)",
+  "AZ (Arizona)",
+  "AR (Arkansas)",
+  "CA (California)",
+  "CO (Colorado)",
+  "CT (Connecticut)",
+  "DE (Delaware)",
+  "DC (District of Columbia)",
+  "FL (Florida)",
+  "GA (Georgia)",
+  "HI (Hawaii)",
+  "ID (Idaho)",
+  "IL (Illinois)",
+  "IN (Indiana)",
+  "IA (Iowa)",
+  "KS (Kansas)",
+  "KY (Kentucky)",
+  "LA (Louisiana)",
+  "ME (Maine)",
+  "MD (Maryland)",
+  "MA (Massachusetts)",
+  "MI (Michigan)",
+  "MN (Minnesota)",
+  "MS (Mississippi)",
+  "MT (Montana)",
+  "NE (Nebraska)",
+  "NV (Nevada)",
+  "NH (New Hampshire)",
+  "NJ (New Jersey)",
+  "NM (New Mexico)",
+  "NY (New York)",
+  "NC (North Carolina)",
+  "ND (North Dakota)",
+  "OH (Ohio)",
+  "OK (Oklahoma)",
+  "OR (Oregon)",
+  "PA (Pennsylvania)",
+  "RI (Rhode Island)",
+  "SC (South Carolina)",
+  "SD (South Dakota)",
+  "TN (Tennessee)",
+  "TX (Texas)",
+  "UT (Utah)",
+  "VT (Vermont)",
+  "VA (Virgina)",
+  "WA (Washington)",
+  "WV (West Virginia)",
+  "WI (Wisconsin)",
+  "WY (Wyoming)",
+];
 
 export default function InvoiceForm({
-  invoice,
   handleDiscardNewInvoiceClick,
   hidden,
   selectedInvoice,
 }) {
   const [senderStreet, setSenderStreet] = useState("");
+  const [senderStreet2, setSenderStreet2] = useState("");
   const [senderCity, setSenderCity] = useState("");
+  const [senderState, setSenderState] = useState("");
   const [senderZip, setSenderZip] = useState("");
-  const [senderCountry, setSenderCountry] = useState("");
+  const [senderCountry, setSenderCountry] = useState("United States");
   const [clientName, setClientName] = useState("");
   const [clientEmail, setClientEmail] = useState("");
   const [clientStreet, setClientStreet] = useState("");
+  const [clientStreet2, setClientStreet2] = useState("");
   const [clientCity, setClientCity] = useState("");
+  const [clientState, setClientState] = useState("");
   const [clientZip, setClientZip] = useState("");
-  const [clientCountry, setClientCountry] = useState("");
+  const [clientCountry, setClientCountry] = useState("United States");
   const [invoiceDate, setInvoiceDate] = useState(new Date());
   const [paymentTerms, setPaymentTerms] = useState(1);
   const [description, setDescription] = useState("");
@@ -34,17 +86,21 @@ export default function InvoiceForm({
 
   useEffect(() => {
     if (selectedInvoice) {
-      setSenderStreet(selectedInvoice.senderAddress.street);
-      setSenderCity(selectedInvoice.senderAddress.city);
-      setSenderZip(selectedInvoice.senderAddress.postCode);
-      setSenderCountry(selectedInvoice.senderAddress.country);
+      setSenderStreet(selectedInvoice.senderStreet);
+      setSenderStreet2(selectedInvoice.senderStreet2);
+      setSenderCity(selectedInvoice.senderCity);
+      setSenderState(selectedInvoice.senderState);
+      setSenderZip(selectedInvoice.senderZip);
+      setSenderCountry(selectedInvoice.senderCountry);
       setClientName(selectedInvoice.clientName);
       setClientEmail(selectedInvoice.clientEmail);
-      setClientStreet(selectedInvoice.clientAddress.street);
-      setClientCity(selectedInvoice.clientAddress.city);
-      setClientZip(selectedInvoice.clientAddress.postCode);
-      setClientCountry(selectedInvoice.clientAddress.country);
-      setInvoiceDate(new Date(selectedInvoice.createdAt));
+      setClientStreet(selectedInvoice.clientStreet);
+      setClientStreet2(selectedInvoice.clientStreet2);
+      setClientCity(selectedInvoice.clientCity);
+      setClientState(selectedInvoice.clientState);
+      setClientZip(selectedInvoice.clientZip);
+      setClientCountry(selectedInvoice.clientCountry);
+      setInvoiceDate(new Date(selectedInvoice.invoiceDate));
       setPaymentTerms(selectedInvoice.paymentTerms);
       setDescription(selectedInvoice.description);
       setItems(
@@ -58,30 +114,109 @@ export default function InvoiceForm({
     }
   }, [selectedInvoice]);
 
+  const prepareInvoiceObj = () => {
+    return {
+      description,
+      senderStreet,
+      senderStreet2,
+      senderCity,
+      senderState,
+      senderZip,
+      senderCountry,
+      clientName,
+      clientEmail,
+      clientStreet,
+      clientStreet2,
+      clientCity,
+      clientState,
+      clientZip,
+      clientCountry,
+      invoiceDate,
+      paymentTerms,
+      items: items.map((item) => ({
+        name: item.name,
+        price: Number(item.price),
+        quantity: Number(item.quantity),
+      })),
+    };
+  };
+
   const saveAsDraft = async (e) => {
     e.preventDefault();
+    const body = prepareInvoiceObj();
     try {
-      const body = {
-        description,
-        senderStreet,
-        senderCity,
-        senderZip,
-        senderCountry,
-        clientName,
-        clientEmail,
-        clientStreet,
-        clientCity,
-        clientZip,
-        clientCountry,
-        invoiceDate,
-        paymentTerms,
-        items,
-      };
-      await fetch("/api/invoice", {
-        method: "POST",
+      if (selectedInvoice) {
+        const response = await fetch(`/api/invoice/${selectedInvoice.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        });
+        if (response.ok) {
+          const jsonResponse = await response.json();
+          console.log(`Invoice #${jsonResponse.id} updated!`);
+        }
+      } else {
+        const response = await fetch("/api/invoice", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        });
+        if (response.ok) {
+          const jsonResponse = await response.json();
+          console.log(`Invoice #${jsonResponse.id} created!`);
+        }
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const saveAndSend = async (e) => {
+    e.preventDefault();
+    const body = {
+      ...prepareInvoiceObj(),
+      status: "PENDING",
+    };
+    try {
+      if (selectedInvoice) {
+        const response = await fetch(`/api/invoice/${selectedInvoice.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        });
+        if (response.ok) {
+          const jsonResponse = await response.json();
+          console.log(`Invoice #${jsonResponse.id} updated!`);
+        }
+      } else {
+        const response = await fetch("/api/invoice", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        });
+        if (response.ok) {
+          const jsonResponse = await response.json();
+          console.log(`Invoice #${jsonResponse.id} created!`);
+        }
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const saveChanges = async (e) => {
+    e.preventDefault();
+    const body = prepareInvoiceObj();
+    try {
+      const response = await fetch(`/api/invoice/${selectedInvoice.id}`, {
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
+      if (response.ok) {
+        const jsonResponse = await response.json();
+        console.log(`Invoice #${jsonResponse.id} updated!`);
+      }
     } catch (err) {
       console.error(err);
     }
@@ -89,6 +224,10 @@ export default function InvoiceForm({
 
   const handleSenderStreetChange = (e) => {
     setSenderStreet(e.target.value);
+  };
+
+  const handleSenderStreet2Change = (e) => {
+    setSenderStreet2(e.target.value);
   };
 
   const handleSenderCityChange = (e) => {
@@ -113,6 +252,10 @@ export default function InvoiceForm({
 
   const handleClientStreetChange = (e) => {
     setClientStreet(e.target.value);
+  };
+
+  const handleClientStreet2Change = (e) => {
+    setClientStreet2(e.target.value);
   };
 
   const handleClientCityChange = (e) => {
@@ -181,13 +324,21 @@ export default function InvoiceForm({
       <form>
         <h1 className={styles.form_title}>New Invoice</h1>
         <fieldset>
-          <p className={styles.fieldset_title}>Bill From</p>
+          <p className={styles.fieldset_title}>BILL FROM</p>
           <div className={styles.label_input_container}>
-            <label>Street Address</label>
+            <label>Address 1</label>
             <input
               type="text"
               value={senderStreet}
               onChange={handleSenderStreetChange}
+            />
+          </div>
+          <div className={styles.label_input_container}>
+            <label>Address 2</label>
+            <input
+              type="text"
+              value={senderStreet2}
+              onChange={handleSenderStreet2Change}
             />
           </div>
           <div className={`${styles.label_input_container} ${styles.city}`}>
@@ -198,8 +349,17 @@ export default function InvoiceForm({
               onChange={handleSenderCityChange}
             />
           </div>
+          <div className={`${styles.label_input_container} ${styles.state}`}>
+            <label>State</label>
+            <CustomSelect
+              options={states}
+              value={senderState}
+              setValue={setSenderState}
+              type="state"
+            />
+          </div>
           <div className={`${styles.label_input_container} ${styles.zip}`}>
-            <label>Zip Code</label>
+            <label>ZIP/Postal Code</label>
             <input
               type="text"
               value={senderZip}
@@ -216,7 +376,7 @@ export default function InvoiceForm({
           </div>
         </fieldset>
         <fieldset>
-          <p className={styles.fieldset_title}>Bill To</p>
+          <p className={styles.fieldset_title}>BILL TO</p>
           <div className={styles.label_input_container}>
             <label>{"Client's Name"}</label>
             <input
@@ -234,11 +394,19 @@ export default function InvoiceForm({
             />
           </div>
           <div className={styles.label_input_container}>
-            <label>Street Address</label>
+            <label>Address 1</label>
             <input
               type="text"
               value={clientStreet}
               onChange={handleClientStreetChange}
+            />
+          </div>
+          <div className={styles.label_input_container}>
+            <label>Address 2</label>
+            <input
+              type="text"
+              value={clientStreet2}
+              onChange={handleClientStreet2Change}
             />
           </div>
           <div className={`${styles.label_input_container} ${styles.city}`}>
@@ -249,8 +417,17 @@ export default function InvoiceForm({
               onChange={handleClientCityChange}
             />
           </div>
+          <div className={`${styles.label_input_container} ${styles.state}`}>
+            <label>State</label>
+            <CustomSelect
+              options={states}
+              value={clientState}
+              setValue={setClientState}
+              type="state"
+            />
+          </div>
           <div className={`${styles.label_input_container} ${styles.zip}`}>
-            <label>Post Code</label>
+            <label>ZIP/Postal Code</label>
             <input
               type="text"
               value={clientZip}
@@ -277,6 +454,7 @@ export default function InvoiceForm({
               options={[1, 7, 14, 30]}
               value={paymentTerms}
               setValue={setPaymentTerms}
+              type="terms"
             />
           </div>
           <div className={styles.label_input_container}>
@@ -321,7 +499,7 @@ export default function InvoiceForm({
                   <label>Price</label>
                   <input
                     type="text"
-                    value={item.price.toFixed(2)}
+                    value={item.price}
                     onChange={(e) => handleItemValueChange(e, item.id, "price")}
                   />
                 </div>
@@ -351,7 +529,9 @@ export default function InvoiceForm({
           >
             Cancel
           </button>
-          <button className={styles.save_changes}>Save Changes</button>
+          <button onClick={saveChanges} className={styles.save_changes}>
+            Save Changes
+          </button>
         </div>
       ) : (
         <div className={styles.actions}>
@@ -364,7 +544,9 @@ export default function InvoiceForm({
           <button onClick={saveAsDraft} className={styles.save_as_draft}>
             Save as Draft
           </button>
-          <button className={styles.save_and_send}>{"Save & Send"}</button>
+          <button onClick={saveAndSend} className={styles.save_and_send}>
+            {"Save & Send"}
+          </button>
         </div>
       )}
     </div>

@@ -7,8 +7,8 @@
   position: fixed;
   top: 4rem;
   overflow: auto;
+  min-height: calc(100vh - 9rem);
   max-height: calc(100vh - 9rem);
-  min-height: calc(100vh - 5rem);
   form {
     & > h2 {
       @include heading-2_sm;
@@ -41,12 +41,15 @@
 }
 
 .city,
-.zip {
+.zip,
+.state,
+.country {
   width: calc(50% - 0.5rem);
   display: inline-flex;
 }
 
-.zip {
+.state,
+.country {
   margin-left: 1rem;
 }
 
@@ -162,7 +165,8 @@
     left: 0;
     top: 4rem;
     padding: 0 1.5rem;
-    max-height: calc(100% - 5rem);
+    min-height: calc(100vh - 5rem);
+    max-height: calc(100vh - 5rem);
     margin-top: 0;
     margin-bottom: 0;
     border-top-right-radius: 1rem;
@@ -200,25 +204,14 @@
     }
   }
 
-  .city,
-  .zip,
-  .country {
-    width: calc(33.3% - 0.66rem);
-    display: inline-flex;
-  }
-
-  .country,
   .terms {
     margin-left: 1rem;
+    width: calc(40% - 0.5rem);
+    display: inline-flex;
   }
 
   .date {
     width: calc(60% - 0.5rem);
-    display: inline-flex;
-  }
-
-  .terms {
-    width: calc(40% - 0.5rem);
     display: inline-flex;
   }
 

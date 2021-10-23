@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
 
-export default function CustomSelect({ options, value, setValue }) {
+export default function CustomSelect({ options, value, setValue, type }) {
   const [hideOptions, setHideOptions] = useState(true);
 
   useEffect(() => {
@@ -29,30 +29,53 @@ export default function CustomSelect({ options, value, setValue }) {
 
   const handleOptionClick = (e, option) => {
     e.preventDefault();
-    //e.stopPropagation();
-    setValue(option);
+    if (type !== "state") {
+      setValue(option);
+    } else {
+      setValue(option.split(" ")[0]);
+    }
   };
 
   return (
     <div className={`${styles.root} ${hideOptions ? "" : styles.root_focused}`}>
-      <span>
-        Net {value} {value === 1 ? "Day" : "Days"}
-      </span>
+      {type === "terms" ? (
+        <span>
+          Net {value} {value === 1 ? "Day" : "Days"}
+        </span>
+      ) : (
+        <span>{value === "" ? "--" : value}</span>
+      )}
       <button className={styles.toggleOptionsButton} onClick={toggleOptions}>
         <FontAwesomeIcon icon={hideOptions ? faChevronDown : faChevronUp} />
       </button>
-      <ul className={hideOptions ? styles.hidden : ""}>
-        {options.map((option) => (
-          <li key={option}>
-            <button
-              onClick={(e) => handleOptionClick(e, option)}
-              className={value === option ? styles.active : ""}
-            >
-              Net {option} {option === 1 ? "Day" : "Days"}
-            </button>
-          </li>
-        ))}
-      </ul>
+      <div
+        className={`${styles.options_container} ${
+          type === "terms" ? styles.options_container_terms : ""
+        }`}
+      >
+        <ul
+          className={`${styles.options} ${
+            hideOptions ? styles.options_hidden : ""
+          } ${type === "terms" ? styles.options_terms : ""}`}
+        >
+          {options.map((option) => (
+            <li key={option}>
+              <button
+                onClick={(e) => handleOptionClick(e, option)}
+                className={value === option ? styles.active : ""}
+              >
+                {type === "terms" ? (
+                  <span>
+                    Net {option} {option === 1 ? "Day" : "Days"}
+                  </span>
+                ) : (
+                  <span>{option}</span>
+                )}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 }

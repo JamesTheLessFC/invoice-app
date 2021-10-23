@@ -72,7 +72,7 @@ model Item {
   name      String?
   quantity  Int?
   price     Float?
-  invoice   Invoice @relation(fields: [invoiceId], references: [id])
+  invoice   Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   invoiceId String
 }
 
@@ -85,17 +85,19 @@ model Invoice {
   clientEmail   String?
   status        Status   @default(DRAFT)
   senderStreet  String?
+  senderStreet2 String?
   senderCity    String?
   senderState   State?
   senderZip     String?
   senderCountry String   @default("United States")
   clientStreet  String?
+  clientStreet2 String?
   clientCity    String?
   clientState   State?
   clientZip     String?
   clientCountry String   @default("United States")
   items         Item[]
-  user          User     @relation(fields: [userId], references: [id])
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId        String
 }
 
