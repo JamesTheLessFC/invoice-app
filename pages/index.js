@@ -7,11 +7,12 @@ import InvoiceForm from "../components/InvoiceForm";
 import Screen from "../components/Screen";
 import prisma from "../lib/prisma";
 import { useSession, getSession } from "next-auth/client";
+import { SignInMessage } from "../components/SignInMessage";
 
 export const getServerSideProps = async ({ req, res }) => {
   const session = await getSession({ req });
   if (!session) {
-    return { props: { invoices: [] } };
+    return { props: { invoices: [], user: null } };
   }
 
   const user = session.user;
@@ -85,6 +86,15 @@ export default function Home({ invoices, user }) {
   const deselectInvoice = () => {
     setSelectedInvoice(null);
   };
+
+  if (!user) {
+    return (
+      <div className={styles.root}>
+        <AppBar user={user} />
+        <SignInMessage />
+      </div>
+    );
+  }
 
   return (
     <div className={styles.root}>

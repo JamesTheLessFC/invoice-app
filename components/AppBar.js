@@ -1,7 +1,6 @@
 import styles from "../styles/AppBar.module.scss";
 import Image from "next/image";
 import logo from "../public/assets/logo.svg";
-import avatar from "../public/assets/image-avatar.jpg";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faMoon,
@@ -11,13 +10,9 @@ import {
   faSpinner,
 } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
-import { useRouter } from "next/router";
 import { signOut, useSession } from "next-auth/client";
 
 export default function AppBar({ user }) {
-  const router = useRouter();
-  const isActive = (pathname) => router.pathname === pathname;
-
   const [session, loading] = useSession();
 
   return (
@@ -45,14 +40,18 @@ export default function AppBar({ user }) {
           ) : (
             <FontAwesomeIcon icon={faUserCircle} className={styles.icon} />
           )}
-          {user ? <p className={styles.name}>{user.name || user.login}</p> : ""}
+          {user ? (
+            <p className={styles.name}>{user.name || user.login}</p>
+          ) : (
+            <p className={styles.name}>Anonymous User</p>
+          )}
         </div>
         <div className={styles.divider}>&nbsp;</div>
         {loading ? (
           <FontAwesomeIcon icon={faSpinner} className={styles.icon} />
         ) : !session ? (
           <Link href="/api/auth/signin">
-            <a data-active={isActive("/signup")}>
+            <a>
               <FontAwesomeIcon icon={faSignInAlt} className={styles.icon} />
             </a>
           </Link>

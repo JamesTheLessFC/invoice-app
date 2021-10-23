@@ -7,7 +7,7 @@ export default function EmptyMessage() {
     <div className={styles.root}>
       <Image src={EmptyGraphic} alt="empty invoice list" />
       <h2>There is nothing here</h2>
-      <p>Create an invoice by clicking the new button and get started</p>
+      <p>To get started, create an invoice by clicking the 'Add' button</p>
     </div>
   );
 }

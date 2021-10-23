@@ -98,7 +98,8 @@
 
   .avatar_name_container {
     flex-direction: column-reverse;
-    .avatar {
+    .avatar,
+    .icon {
       transform: rotate(-90deg);
     }
   }
