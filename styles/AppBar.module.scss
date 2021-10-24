@@ -60,6 +60,7 @@
   @include body_lg;
   color: $blue-gray;
   margin-left: 0.5rem;
+  display: none;
 }
 
 .divider {
@@ -72,6 +73,12 @@
 .avatar {
   border-radius: 50%;
   border: 5px solid $blue-gray;
+}
+
+@media screen and (min-width: 500px) {
+  .name {
+    display: block;
+  }
 }
 
 @media screen and (min-width: 992px) {

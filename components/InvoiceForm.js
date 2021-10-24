@@ -1,4 +1,8 @@
-import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import {
+  faPaperPlane,
+  faSave,
+  faTrash,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from "../styles/InvoiceForm.module.scss";
 import BackButton from "./BackButton";
@@ -527,10 +531,10 @@ export default function InvoiceForm({
             className={styles.cancel}
             onClick={handleDiscardNewInvoiceClick}
           >
-            Cancel
+            <span>Cancel</span>
           </button>
           <button onClick={saveChanges} className={styles.save_changes}>
-            Save Changes
+            <span>Save Changes</span>
           </button>
         </div>
       ) : (
@@ -539,13 +543,16 @@ export default function InvoiceForm({
             className={styles.discard}
             onClick={handleDiscardNewInvoiceClick}
           >
-            Discard
+            <FontAwesomeIcon icon={faTrash} className={styles.icon} />
+            <span>Discard</span>
           </button>
           <button onClick={saveAsDraft} className={styles.save_as_draft}>
-            Save as Draft
+            <FontAwesomeIcon icon={faSave} className={styles.icon} />
+            <span>Save as Draft</span>
           </button>
           <button onClick={saveAndSend} className={styles.save_and_send}>
-            {"Save & Send"}
+            <FontAwesomeIcon icon={faPaperPlane} className={styles.icon} />
+            <span>Save &amp; Send</span>
           </button>
         </div>
       )}

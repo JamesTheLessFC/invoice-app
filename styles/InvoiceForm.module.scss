@@ -128,23 +128,73 @@
   padding: 1rem 3rem 1rem 2rem;
   box-shadow: 0 -5px 30px $shadow-color;
   button {
+    @include button-reset;
+    &:hover {
+      .icon {
+        color: $light-purple;
+      }
+    }
+    span {
+      display: none;
+    }
+    .icon {
+      font-size: 2rem;
+      color: $purple;
+    }
     &.discard {
-      @include button-edit_light;
       margin-right: auto;
+      .icon {
+        color: $blue-gray;
+      }
+      &:hover {
+        .icon {
+          opacity: 0.75;
+        }
+      }
     }
     &.save_as_draft {
-      @include button-save_light;
-      margin: 0 1rem;
-    }
-    &.save_and_send {
-      @include button-purple;
+      margin-right: 2rem;
+      .icon {
+        color: $navbar-bg;
+      }
+      &:hover {
+        .icon {
+          color: $text_light;
+        }
+      }
     }
     &.cancel {
-      @include button-edit_light;
-      margin-right: 1rem;
+      margin-right: 2rem;
     }
-    &.save_changes {
-      @include button-purple;
+  }
+}
+
+@media screen and (min-width: 500px) {
+  .actions {
+    button {
+      span {
+        display: inline;
+      }
+      .icon {
+        display: none;
+      }
+      &.discard {
+        @include button-edit_light;
+      }
+      &.save_as_draft {
+        @include button-save_light;
+        margin-right: 1rem;
+      }
+      &.save_and_send {
+        @include button-purple;
+      }
+      &.cancel {
+        @include button-edit_light;
+        margin-right: 1rem;
+      }
+      &.save_changes {
+        @include button-purple;
+      }
     }
   }
 }
