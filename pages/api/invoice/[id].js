@@ -1,4 +1,5 @@
 import prisma from "../../../lib/prisma";
+import { validateInvoice } from "../../../util/validators";
 
 export default async function handle(req, res) {
   const invoiceId = req.query.id;

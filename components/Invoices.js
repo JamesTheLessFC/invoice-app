@@ -59,7 +59,11 @@ export default function Invoices({
   };
 
   return (
-    <div className={styles.root}>
+    <div
+      className={`${styles.root} ${
+        showInvoiceForm ? styles.root_with_invoice_form : ""
+      }`}
+    >
       <InvoicesHeader
         filterOptions={filterOptions}
         filter={filter}

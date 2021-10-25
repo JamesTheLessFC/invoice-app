@@ -9,6 +9,9 @@
   p.label {
     color: $blue-gray;
   }
+  &_with_invoice_form {
+    display: none;
+  }
 }
 
 .container {
@@ -141,6 +144,12 @@ p.description {
 }
 
 @media screen and (min-width: 768px) {
+  .root {
+    &_with_invoice_form {
+      display: block;
+    }
+  }
+
   .actions {
     position: static;
     padding: 0;

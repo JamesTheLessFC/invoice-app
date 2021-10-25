@@ -75,7 +75,7 @@ export default function Home({ invoices, user }) {
     setShowInvoiceForm(true);
   };
 
-  const handleDiscardNewInvoiceClick = () => {
+  const hideInvoiceForm = () => {
     setShowInvoiceForm(false);
   };
 
@@ -112,12 +112,13 @@ export default function Home({ invoices, user }) {
           data={selectedInvoice}
           deselectInvoice={deselectInvoice}
           handleEditInvoiceClick={handleEditInvoiceClick}
+          showInvoiceForm={showInvoiceForm}
         />
       )}
       {showScreen && (
         <Screen>
           <InvoiceForm
-            handleDiscardNewInvoiceClick={handleDiscardNewInvoiceClick}
+            hideInvoiceForm={hideInvoiceForm}
             hidden={!showInvoiceForm}
             selectedInvoice={selectedInvoice}
           />

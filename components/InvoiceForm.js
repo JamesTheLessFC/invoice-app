@@ -66,7 +66,7 @@ const states = [
 ];
 
 export default function InvoiceForm({
-  handleDiscardNewInvoiceClick,
+  hideInvoiceForm,
   hidden,
   selectedInvoice,
 }) {
@@ -525,7 +525,7 @@ export default function InvoiceForm({
   return (
     <div className={`${styles.root} ${hidden ? styles.root_hidden : ""}`}>
       <div className={styles.back_button}>
-        <BackButton handleClick={handleDiscardNewInvoiceClick} />
+        <BackButton handleClick={hideInvoiceForm} />
       </div>
       <form>
         <h1 className={styles.form_title}>New Invoice</h1>
@@ -928,10 +928,7 @@ export default function InvoiceForm({
       </form>
       {selectedInvoice && selectedInvoice.status !== "draft" ? (
         <div className={styles.actions}>
-          <button
-            className={styles.cancel}
-            onClick={handleDiscardNewInvoiceClick}
-          >
+          <button className={styles.cancel} onClick={hideInvoiceForm}>
             <span>Cancel</span>
           </button>
           <button onClick={saveChanges} className={styles.save_changes}>
@@ -940,12 +937,9 @@ export default function InvoiceForm({
         </div>
       ) : (
         <div className={styles.actions}>
-          <button
-            className={styles.discard}
-            onClick={handleDiscardNewInvoiceClick}
-          >
+          <button className={styles.discard} onClick={hideInvoiceForm}>
             <FontAwesomeIcon icon={faTrash} className={styles.icon} />
-            <span>Discard</span>
+            <span>{selectedInvoice ? "Cancel" : "Discard"}</span>
           </button>
           <button onClick={saveAsDraft} className={styles.save_as_draft}>
             <FontAwesomeIcon icon={faSave} className={styles.icon} />

@@ -11,6 +11,7 @@ export default function Invoice({
   data,
   deselectInvoice,
   handleEditInvoiceClick,
+  showInvoiceForm,
 }) {
   const [hideDeleteModal, setHideDeleteModal] = useState(false);
   const [hideModalScreen, setHideModalScreen] = useState(true);
@@ -45,7 +46,11 @@ export default function Invoice({
   };
 
   return (
-    <div className={styles.root}>
+    <div
+      className={`${styles.root} ${
+        showInvoiceForm ? styles.root_with_invoice_form : ""
+      }`}
+    >
       <BackButton handleClick={deselectInvoice} />
       <div className={`${styles.container} ${styles.container_status}`}>
         <p className={styles.label}>Status</p>
