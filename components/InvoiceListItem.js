@@ -7,7 +7,7 @@ export default function InvoiceListItem({ data, selectInvoice }) {
     <li className={styles.root} onClick={() => selectInvoice(data)}>
       <p className={styles.id}>
         <span>#</span>
-        {data.id.slice(0, 5).toUpperCase()}...
+        {data.id.slice(-8).toUpperCase()}
       </p>
       <p className={styles.due_date}>Due {data.paymentDue}</p>
       <p className={styles.client_name}>{data.clientName}</p>

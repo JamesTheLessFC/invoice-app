@@ -69,13 +69,21 @@ export default function Invoice({
           <div>
             <p className={styles.id}>
               <span>#</span>
-              {data.id}
+              {data.id.toUpperCase()}
             </p>
             <p className={styles.description}>{data.description}</p>
           </div>
           <div className={styles.address}>
             <p>{data.senderStreet}</p>
-            <p>{data.senderCity}</p>
+            <p>{data.senderStreet2}</p>
+            <p>
+              {data.senderCity}
+              {data.senderState &&
+              data.senderState != "BLANK" &&
+              data.senderState != "NA"
+                ? ", " + data.senderState
+                : ""}
+            </p>
             <p>{data.senderZip}</p>
             <p>{data.senderCountry}</p>
           </div>
@@ -96,7 +104,15 @@ export default function Invoice({
             <p>{data.clientName}</p>
             <div className={styles.address}>
               <p>{data.clientStreet}</p>
-              <p>{data.clientCity}</p>
+              <p>{data.clientStreet2}</p>
+              <p>
+                {data.clientCity}
+                {data.clientState &&
+                data.clientState != "BLANK" &&
+                data.clientState != "NA"
+                  ? ", " + data.clientState
+                  : ""}
+              </p>
               <p>{data.clientZip}</p>
               <p>{data.clientCountry}</p>
             </div>
