@@ -145,7 +145,7 @@ export default function InvoiceForm({
       clientState: clientState === "" ? "BLANK" : clientState,
       clientZip,
       clientCountry,
-      invoiceDate,
+      invoiceDate: invoiceDate.toISOString(),
       paymentTerms,
       items: items.map((item) => ({
         name: item.name,
@@ -193,6 +193,7 @@ export default function InvoiceForm({
       ...prepareInvoiceObj(),
       status: "PENDING",
     };
+    console.log(body);
     try {
       let response;
       if (selectedInvoice) {
@@ -549,7 +550,7 @@ export default function InvoiceForm({
             />
           </div>
           <div className={styles.label_input_container}>
-            <label>Address 2</label>
+            <label>Address 2 (Optional)</label>
             <input
               type="text"
               value={senderStreet2}
@@ -683,7 +684,7 @@ export default function InvoiceForm({
             />
           </div>
           <div className={styles.label_input_container}>
-            <label>Address 2</label>
+            <label>Address 2 (Optional)</label>
             <input
               type="text"
               value={clientStreet2}

@@ -69,7 +69,6 @@ export default function CustomDatePicker({ date, handleDateChange, error }) {
         minDetail="month"
         value={date}
         onChange={handleDateChange}
-        //showNeighboringMonth={false}
       />
     </div>
   );

@@ -47,6 +47,7 @@ export const getServerSideProps = async ({ req, res }) => {
       total: item.price * item.quantity,
     })),
   }));
+  console.log(invoices);
   return {
     props: { invoices, user },
   };

@@ -58,11 +58,11 @@ const isEmpty = (field) => {
   return String(field).trim() === "";
 };
 
-const isValidDate = (date) => {
+const isValidDateString = (dateString) => {
   return (
-    date &&
-    Object.prototype.toString.call(date) === "[object Date]" &&
-    !isNaN(date)
+    dateString &&
+    Object.prototype.toString.call(new Date(dateString)) === "[object Date]" &&
+    !isNaN(new Date(dateString))
   );
 };
 
@@ -89,10 +89,10 @@ const isValidEmail = (emailAddress) => {
 
 export const validateInvoice = (invoice) => {
   const errors = {};
-  const emptyErrMsg = "Must not be empty";
+  const emptyErrMsg = "Required";
   if (isEmpty(invoice.senderStreet)) errors.senderStreet = emptyErrMsg;
   if (isEmpty(invoice.senderCity)) errors.senderCity = emptyErrMsg;
-  if (isEmpty(invoice.senderState)) {
+  if (isEmpty(invoice.senderState) || invoice.senderState === "BLANK") {
     errors.senderState = emptyErrMsg;
   } else if (
     invoice.senderCountry === "United States" &&
@@ -110,7 +110,7 @@ export const validateInvoice = (invoice) => {
   }
   if (isEmpty(invoice.clientStreet)) errors.clientStreet = emptyErrMsg;
   if (isEmpty(invoice.clientCity)) errors.clientCity = emptyErrMsg;
-  if (isEmpty(invoice.clientState)) {
+  if (isEmpty(invoice.clientState) || invoice.clientState === "BLANK") {
     errors.clientState = emptyErrMsg;
   } else if (
     invoice.clientCountry === "United States" &&
@@ -126,7 +126,8 @@ export const validateInvoice = (invoice) => {
   } else if (![1, 7, 14, 30].includes(invoice.paymentTerms)) {
     errors.paymentTerms = "Must be 1, 7, 14, or 30";
   }
-  if (!isValidDate(invoice.invoiceDate)) errors.invoiceDate = "Invalid date";
+  if (!isValidDateString(invoice.invoiceDate))
+    errors.invoiceDate = "Invalid date";
   if (invoice.items.length < 1) {
     errors.items = "Must include at least 1 item";
   } else {
