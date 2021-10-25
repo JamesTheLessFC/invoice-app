@@ -13,6 +13,13 @@ export default async function handle(req, res) {
     });
     res.json(result);
   } else if (req.method === "PUT") {
+    if (!req.body.status) req.body.status = "DRAFT";
+    if (req.body.status !== "DRAFT") {
+      const validationResults = validateInvoice(req.body);
+      if (!validationResults.valid) {
+        return res.status(400).json({ errors: validationResults.errors });
+      }
+    }
     const result = await prisma.invoice.update({
       where: {
         id: invoiceId,

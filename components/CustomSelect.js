@@ -3,7 +3,13 @@ import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
 
-export default function CustomSelect({ options, value, setValue, type }) {
+export default function CustomSelect({
+  options,
+  value,
+  handleValueChange,
+  type,
+  error,
+}) {
   const [hideOptions, setHideOptions] = useState(true);
 
   useEffect(() => {
@@ -30,20 +36,24 @@ export default function CustomSelect({ options, value, setValue, type }) {
   const handleOptionClick = (e, option) => {
     e.preventDefault();
     if (type !== "state") {
-      setValue(option);
+      handleValueChange(option);
     } else {
-      setValue(option.split(" ")[0]);
+      handleValueChange(option.split(" ")[0]);
     }
   };
 
   return (
-    <div className={`${styles.root} ${hideOptions ? "" : styles.root_focused}`}>
+    <div
+      className={`${styles.root} ${hideOptions ? "" : styles.root_focused} ${
+        error ? styles.root_with_error : ""
+      }`}
+    >
       {type === "terms" ? (
         <span>
           Net {value} {value === 1 ? "Day" : "Days"}
         </span>
       ) : (
-        <span>{value === "" ? "--" : value}</span>
+        <span>{value === "" ? "--" : value === "NA" ? "N/A" : value}</span>
       )}
       <button className={styles.toggleOptionsButton} onClick={toggleOptions}>
         <FontAwesomeIcon icon={hideOptions ? faChevronDown : faChevronUp} />
@@ -69,7 +79,11 @@ export default function CustomSelect({ options, value, setValue, type }) {
                     Net {option} {option === 1 ? "Day" : "Days"}
                   </span>
                 ) : (
-                  <span>{option}</span>
+                  <span>
+                    {option === "NA (Outside USA)"
+                      ? "N/A (Outside USA)"
+                      : option}
+                  </span>
                 )}
               </button>
             </li>

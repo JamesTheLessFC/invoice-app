@@ -8,6 +8,9 @@
   &_focused {
     border-color: $light-purple;
   }
+  &_with_error {
+    border-color: $red;
+  }
   span {
     text-transform: capitalize;
   }

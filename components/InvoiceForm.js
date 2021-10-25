@@ -12,6 +12,7 @@ import { useState, useEffect } from "react";
 import { nanoid } from "nanoid";
 
 const states = [
+  "NA (Outside USA)",
   "AL (Alabama)",
   "AK (Alaska)",
   "AZ (Arizona)",
@@ -87,13 +88,18 @@ export default function InvoiceForm({
   const [paymentTerms, setPaymentTerms] = useState(1);
   const [description, setDescription] = useState("");
   const [items, setItems] = useState([]);
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     if (selectedInvoice) {
       setSenderStreet(selectedInvoice.senderStreet);
       setSenderStreet2(selectedInvoice.senderStreet2);
       setSenderCity(selectedInvoice.senderCity);
-      setSenderState(selectedInvoice.senderState);
+      setSenderState(
+        selectedInvoice.senderState === "BLANK"
+          ? ""
+          : selectedInvoice.senderState
+      );
       setSenderZip(selectedInvoice.senderZip);
       setSenderCountry(selectedInvoice.senderCountry);
       setClientName(selectedInvoice.clientName);
@@ -101,7 +107,11 @@ export default function InvoiceForm({
       setClientStreet(selectedInvoice.clientStreet);
       setClientStreet2(selectedInvoice.clientStreet2);
       setClientCity(selectedInvoice.clientCity);
-      setClientState(selectedInvoice.clientState);
+      setClientState(
+        selectedInvoice.clientState === "BLANK"
+          ? ""
+          : selectedInvoice.clientState
+      );
       setClientZip(selectedInvoice.clientZip);
       setClientCountry(selectedInvoice.clientCountry);
       setInvoiceDate(new Date(selectedInvoice.invoiceDate));
@@ -124,7 +134,7 @@ export default function InvoiceForm({
       senderStreet,
       senderStreet2,
       senderCity,
-      senderState,
+      senderState: senderState === "" ? "BLANK" : senderState,
       senderZip,
       senderCountry,
       clientName,
@@ -132,15 +142,15 @@ export default function InvoiceForm({
       clientStreet,
       clientStreet2,
       clientCity,
-      clientState,
+      clientState: clientState === "" ? "BLANK" : clientState,
       clientZip,
       clientCountry,
       invoiceDate,
       paymentTerms,
       items: items.map((item) => ({
         name: item.name,
-        price: Number(item.price),
-        quantity: Number(item.quantity),
+        price: item.price,
+        quantity: item.quantity,
       })),
     };
   };
@@ -169,6 +179,8 @@ export default function InvoiceForm({
           const jsonResponse = await response.json();
           console.log(`Invoice #${jsonResponse.id} created!`);
         }
+        const jsonResponse = await response.json();
+        console.log(jsonResponse);
       }
     } catch (err) {
       console.error(err);
@@ -182,26 +194,30 @@ export default function InvoiceForm({
       status: "PENDING",
     };
     try {
+      let response;
       if (selectedInvoice) {
-        const response = await fetch(`/api/invoice/${selectedInvoice.id}`, {
+        response = await fetch(`/api/invoice/${selectedInvoice.id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(body),
         });
-        if (response.ok) {
-          const jsonResponse = await response.json();
-          console.log(`Invoice #${jsonResponse.id} updated!`);
-        }
       } else {
-        const response = await fetch("/api/invoice", {
+        response = await fetch("/api/invoice", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(body),
         });
-        if (response.ok) {
-          const jsonResponse = await response.json();
-          console.log(`Invoice #${jsonResponse.id} created!`);
-        }
+      }
+      const jsonResponse = await response.json();
+      if (response.ok) {
+        console.log(
+          `Invoice #${jsonResponse.id} ${
+            selectedInvoice ? "updated" : "created"
+          }!`
+        );
+      } else if (response.status === 400) {
+        console.log(jsonResponse);
+        setErrors(jsonResponse.errors);
       }
     } catch (err) {
       console.error(err);
@@ -217,9 +233,12 @@ export default function InvoiceForm({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
+      const jsonResponse = await response.json();
       if (response.ok) {
-        const jsonResponse = await response.json();
         console.log(`Invoice #${jsonResponse.id} updated!`);
+      } else if (response.status === 400) {
+        console.log(jsonResponse);
+        setErrors(jsonResponse.errors);
       }
     } catch (err) {
       console.error(err);
@@ -228,6 +247,14 @@ export default function InvoiceForm({
 
   const handleSenderStreetChange = (e) => {
     setSenderStreet(e.target.value);
+    if (errors.senderStreet) {
+      setErrors((prevState) => {
+        return {
+          ...prevState,
+          senderStreet: "",
+        };
+      });
+    }
   };
 
   const handleSenderStreet2Change = (e) => {
@@ -236,26 +263,86 @@ export default function InvoiceForm({
 
   const handleSenderCityChange = (e) => {
     setSenderCity(e.target.value);
+    if (errors.senderCity) {
+      setErrors((prevState) => {
+        return {
+          ...prevState,
+          senderCity: "",
+        };
+      });
+    }
+  };
+
+  const handleSenderStateChange = (state) => {
+    setSenderState(state);
+    if (errors.senderState) {
+      setErrors((prevState) => {
+        return {
+          ...prevState,
+          senderState: "",
+        };
+      });
+    }
   };
 
   const handleSenderZipChange = (e) => {
     setSenderZip(e.target.value);
+    if (errors.senderZip) {
+      setErrors((prevState) => {
+        return {
+          ...prevState,
+          senderZip: "",
+        };
+      });
+    }
   };
 
   const handleSenderCountryChange = (e) => {
     setSenderCountry(e.target.value);
+    if (errors.senderCountry) {
+      setErrors((prevState) => {
+        return {
+          ...prevState,
+          senderCountry: "",
+        };
+      });
+    }
   };
 
   const handleClientNameChange = (e) => {
     setClientName(e.target.value);
+    if (errors.clientName) {
+      setErrors((prevState) => {
+        return {
+          ...prevState,
+          clientName: "",
+        };
+      });
+    }
   };
 
   const handleClientEmailChange = (e) => {
     setClientEmail(e.target.value);
+    if (errors.clientEmail) {
+      setErrors((prevState) => {
+        return {
+          ...prevState,
+          clientEmail: "",
+        };
+      });
+    }
   };
 
   const handleClientStreetChange = (e) => {
     setClientStreet(e.target.value);
+    if (errors.clientStreet) {
+      setErrors((prevState) => {
+        return {
+          ...prevState,
+          clientStreet: "",
+        };
+      });
+    }
   };
 
   const handleClientStreet2Change = (e) => {
@@ -264,28 +351,102 @@ export default function InvoiceForm({
 
   const handleClientCityChange = (e) => {
     setClientCity(e.target.value);
+    if (errors.clientCity) {
+      setErrors((prevState) => {
+        return {
+          ...prevState,
+          clientCity: "",
+        };
+      });
+    }
+  };
+
+  const handleClientStateChange = (state) => {
+    setClientState(state);
+    if (errors.clientCity) {
+      setErrors((prevState) => {
+        return {
+          ...prevState,
+          clientState: "",
+        };
+      });
+    }
   };
 
   const handleClientZipChange = (e) => {
     setClientZip(e.target.value);
+    if (errors.clientZip) {
+      setErrors((prevState) => {
+        return {
+          ...prevState,
+          clientZip: "",
+        };
+      });
+    }
   };
 
   const handleClientCountryChange = (e) => {
     setClientCountry(e.target.value);
+    if (errors.clientCountry) {
+      setErrors((prevState) => {
+        return {
+          ...prevState,
+          clientCountry: "",
+        };
+      });
+    }
   };
 
   const handleDescriptionChange = (e) => {
     setDescription(e.target.value);
+    if (errors.description) {
+      setErrors((prevState) => {
+        return {
+          ...prevState,
+          description: "",
+        };
+      });
+    }
   };
 
-  const handleItemValueChange = (e, itemId, property) => {
+  const handleInvoiceDateChange = (date) => {
+    console.log(date);
+    setInvoiceDate(date);
+    if (errors.invoiceDate) {
+      setErrors((prevState) => {
+        return {
+          ...prevState,
+          invoiceDate: "",
+        };
+      });
+    }
+  };
+
+  const handlePaymentTermsChange = (terms) => {
+    setPaymentTerms(terms);
+    if (errors.paymentTerms) {
+      setErrors((prevState) => {
+        return {
+          ...prevState,
+          paymentTerms: "",
+        };
+      });
+    }
+  };
+
+  const handleItemValueChange = (e, itemId, property, index) => {
     e.preventDefault();
     setItems((prevState) => {
       return prevState.map((item) => {
         if (item.id !== itemId) return item;
         return {
           ...item,
-          [property]: e.target.value,
+          [property]:
+            property === "name"
+              ? e.target.value
+              : isNaN(Number(e.target.value)) || e.target.value === ""
+              ? 0
+              : Number(e.target.value),
           total:
             property === "quantity"
               ? e.target.value * item.price
@@ -294,6 +455,15 @@ export default function InvoiceForm({
               : item.quantity * item.price,
         };
       });
+    });
+    setErrors((prevState) => {
+      return {
+        ...prevState,
+        [`item${index}`]: {
+          ...prevState[`item${index}`],
+          [property]: "",
+        },
+      };
     });
   };
 
@@ -315,6 +485,38 @@ export default function InvoiceForm({
 
   const deleteItem = (e, itemId) => {
     e.preventDefault();
+    const updatedErrors = {};
+    const deletedErrors = {};
+    const itemIndex = items.findIndex((item) => item.id === itemId);
+    //find item errors that have an item index greater than the deleted item's index and update their index to be 1 less than before
+    Object.entries(errors)
+      .filter(
+        (entry) =>
+          entry[0].slice(0, 4) === "item" &&
+          Number(entry[0].slice(4)) > itemIndex
+      )
+      .forEach((entry) => {
+        updatedErrors[`item${Number(entry[0].slice(4)) - 1}`] = entry[1];
+      });
+    // find item errors that have an index greater than or equal to the new amount of items (1 less than before) and remove these errors
+    Object.entries(errors)
+      .filter(
+        (entry) =>
+          entry[0].slice(0, 4) === "item" &&
+          Number(entry[0].slice(4)) >= items.length - 1
+      )
+      .forEach((entry) => {
+        deletedErrors[`item${entry[0].slice(4)}`] = {};
+      });
+
+    setErrors((prevState) => {
+      return {
+        ...prevState,
+        ...updatedErrors,
+        ...deletedErrors,
+      };
+    });
+
     setItems((prevState) => {
       return prevState.filter((item) => item.id !== itemId);
     });
@@ -329,8 +531,17 @@ export default function InvoiceForm({
         <h1 className={styles.form_title}>New Invoice</h1>
         <fieldset>
           <p className={styles.fieldset_title}>BILL FROM</p>
-          <div className={styles.label_input_container}>
-            <label>Address 1</label>
+          <div
+            className={`${styles.label_input_container} ${
+              errors.senderStreet ? styles.label_input_container_with_error : ""
+            }`}
+          >
+            <div className={styles.label_error_container}>
+              <label>Address 1</label>
+              <p className={styles.error}>
+                {errors.senderStreet ? errors.senderStreet : ""}
+              </p>
+            </div>
             <input
               type="text"
               value={senderStreet}
@@ -345,33 +556,72 @@ export default function InvoiceForm({
               onChange={handleSenderStreet2Change}
             />
           </div>
-          <div className={`${styles.label_input_container} ${styles.city}`}>
-            <label>City</label>
+          <div
+            className={`${styles.label_input_container} ${styles.city} ${
+              errors.senderCity ? styles.label_input_container_with_error : ""
+            }`}
+          >
+            <div className={styles.label_error_container}>
+              <label>City</label>
+              <p className={styles.error}>
+                {errors.senderCity ? errors.senderCity : ""}
+              </p>
+            </div>
             <input
               type="text"
               value={senderCity}
               onChange={handleSenderCityChange}
             />
           </div>
-          <div className={`${styles.label_input_container} ${styles.state}`}>
-            <label>State</label>
+          <div
+            className={`${styles.label_input_container} ${styles.state} ${
+              errors.senderState ? styles.label_input_container_with_error : ""
+            }`}
+          >
+            <div className={styles.label_error_container}>
+              <label>State</label>
+              <p className={styles.error}>
+                {errors.senderState ? errors.senderState : ""}
+              </p>
+            </div>
             <CustomSelect
               options={states}
               value={senderState}
-              setValue={setSenderState}
+              handleValueChange={handleSenderStateChange}
               type="state"
+              error={errors.senderState}
             />
           </div>
-          <div className={`${styles.label_input_container} ${styles.zip}`}>
-            <label>ZIP/Postal Code</label>
+          <div
+            className={`${styles.label_input_container} ${styles.zip} ${
+              errors.senderZip ? styles.label_input_container_with_error : ""
+            }`}
+          >
+            <div className={styles.label_error_container}>
+              <label>ZIP/Postal Code</label>
+              <p className={styles.error}>
+                {errors.senderZip ? errors.senderZip : ""}
+              </p>
+            </div>
             <input
               type="text"
               value={senderZip}
               onChange={handleSenderZipChange}
             />
           </div>
-          <div className={`${styles.label_input_container} ${styles.country}`}>
-            <label>Country</label>
+          <div
+            className={`${styles.label_input_container} ${styles.country} ${
+              errors.senderCountry
+                ? styles.label_input_container_with_error
+                : ""
+            }`}
+          >
+            <div className={styles.label_error_container}>
+              <label>Country</label>
+              <p className={styles.error}>
+                {errors.senderCountry ? errors.senderCountry : ""}
+              </p>
+            </div>
             <input
               type="text"
               value={senderCountry}
@@ -381,24 +631,51 @@ export default function InvoiceForm({
         </fieldset>
         <fieldset>
           <p className={styles.fieldset_title}>BILL TO</p>
-          <div className={styles.label_input_container}>
-            <label>{"Client's Name"}</label>
+          <div
+            className={`${styles.label_input_container} ${
+              errors.clientName ? styles.label_input_container_with_error : ""
+            }`}
+          >
+            <div className={styles.label_error_container}>
+              <label>{"Client's Name"}</label>
+              <p className={styles.error}>
+                {errors.clientName ? errors.clientName : ""}
+              </p>
+            </div>
             <input
               type="text"
               value={clientName}
               onChange={handleClientNameChange}
             />
           </div>
-          <div className={styles.label_input_container}>
-            <label>{"Client's Email"}</label>
+          <div
+            className={`${styles.label_input_container} ${
+              errors.clientEmail ? styles.label_input_container_with_error : ""
+            }`}
+          >
+            <div className={styles.label_error_container}>
+              <label>{"Client's Email"}</label>
+              <p className={styles.error}>
+                {errors.clientEmail ? errors.clientEmail : ""}
+              </p>
+            </div>
             <input
               type="text"
               value={clientEmail}
               onChange={handleClientEmailChange}
             />
           </div>
-          <div className={styles.label_input_container}>
-            <label>Address 1</label>
+          <div
+            className={`${styles.label_input_container} ${
+              errors.clientStreet ? styles.label_input_container_with_error : ""
+            }`}
+          >
+            <div className={styles.label_error_container}>
+              <label>Address 1</label>
+              <p className={styles.error}>
+                {errors.clientStreet ? errors.clientStreet : ""}
+              </p>
+            </div>
             <input
               type="text"
               value={clientStreet}
@@ -413,33 +690,72 @@ export default function InvoiceForm({
               onChange={handleClientStreet2Change}
             />
           </div>
-          <div className={`${styles.label_input_container} ${styles.city}`}>
-            <label>City</label>
+          <div
+            className={`${styles.label_input_container} ${styles.city} ${
+              errors.clientCity ? styles.label_input_container_with_error : ""
+            }`}
+          >
+            <div className={styles.label_error_container}>
+              <label>City</label>
+              <p className={styles.error}>
+                {errors.clientCity ? errors.clientCity : ""}
+              </p>
+            </div>
             <input
               type="text"
               value={clientCity}
               onChange={handleClientCityChange}
             />
           </div>
-          <div className={`${styles.label_input_container} ${styles.state}`}>
-            <label>State</label>
+          <div
+            className={`${styles.label_input_container} ${styles.state} ${
+              errors.clientState ? styles.label_input_container_with_error : ""
+            }`}
+          >
+            <div className={styles.label_error_container}>
+              <label>State</label>
+              <p className={styles.error}>
+                {errors.clientState ? errors.clientState : ""}
+              </p>
+            </div>
             <CustomSelect
               options={states}
               value={clientState}
-              setValue={setClientState}
+              handleValueChange={handleClientStateChange}
               type="state"
+              error={errors.clientState}
             />
           </div>
-          <div className={`${styles.label_input_container} ${styles.zip}`}>
-            <label>ZIP/Postal Code</label>
+          <div
+            className={`${styles.label_input_container} ${styles.zip} ${
+              errors.clientZip ? styles.label_input_container_with_error : ""
+            }`}
+          >
+            <div className={styles.label_error_container}>
+              <label>ZIP/Postal Code</label>
+              <p className={styles.error}>
+                {errors.clientZip ? errors.clientZip : ""}
+              </p>
+            </div>
             <input
               type="text"
               value={clientZip}
               onChange={handleClientZipChange}
             />
           </div>
-          <div className={`${styles.label_input_container} ${styles.country}`}>
-            <label>Country</label>
+          <div
+            className={`${styles.label_input_container} ${styles.country} ${
+              errors.clientCountry
+                ? styles.label_input_container_with_error
+                : ""
+            }`}
+          >
+            <div className={styles.label_error_container}>
+              <label>Country</label>
+              <p className={styles.error}>
+                {errors.clientCountry ? errors.clientCountry : ""}
+              </p>
+            </div>
             <input
               type="text"
               value={clientCountry}
@@ -448,21 +764,53 @@ export default function InvoiceForm({
           </div>
         </fieldset>
         <fieldset>
-          <div className={`${styles.label_input_container} ${styles.date}`}>
-            <label>Invoice Date</label>
-            <CustomDatePicker date={invoiceDate} setDate={setInvoiceDate} />
+          <div
+            className={`${styles.label_input_container} ${styles.date} ${
+              errors.invoiceDate ? styles.label_input_container_with_error : ""
+            }`}
+          >
+            <div className={styles.label_error_container}>
+              <label>Invoice Date</label>
+              <p className={styles.error}>
+                {errors.invoiceDate ? errors.invoiceDate : ""}
+              </p>
+            </div>
+            <CustomDatePicker
+              date={invoiceDate}
+              handleDateChange={handleInvoiceDateChange}
+              error={errors.invoiceDate}
+            />
           </div>
-          <div className={`${styles.label_input_container} ${styles.terms}`}>
-            <label>Payment Terms</label>
+          <div
+            className={`${styles.label_input_container} ${styles.terms} ${
+              errors.paymentTerms ? styles.label_input_container_with_error : ""
+            }`}
+          >
+            <div className={styles.label_error_container}>
+              <label>Payment Terms</label>
+              <p className={styles.error}>
+                {errors.paymentTerms ? errors.paymentTerms : ""}
+              </p>
+            </div>
             <CustomSelect
               options={[1, 7, 14, 30]}
               value={paymentTerms}
-              setValue={setPaymentTerms}
+              handleValueChange={handlePaymentTermsChange}
               type="terms"
+              error={errors.paymentTerms}
             />
           </div>
-          <div className={styles.label_input_container}>
-            <label>Project Description</label>
+          <div
+            className={`${styles.label_input_container} ${
+              errors.description ? styles.label_input_container_with_error : ""
+            }`}
+          >
+            <div className={styles.label_error_container}>
+              <label>Project Description</label>
+              <p className={styles.error}>
+                {errors.description ? errors.description : ""}
+              </p>
+            </div>
             <input
               type="text"
               value={description}
@@ -470,41 +818,94 @@ export default function InvoiceForm({
             />
           </div>
         </fieldset>
-        <h2>Item List</h2>
+        <div className={styles.items_header_error_container}>
+          <h2>Item List</h2>
+          <p className={styles.error}>{errors.items ? errors.items : ""}</p>
+        </div>
         <ul className={styles.item_list}>
-          {items.map((item) => (
+          {items.map((item, index) => (
             <li key={item.id}>
               <fieldset>
                 <div
-                  className={`${styles.label_input_container} ${styles.item_name}`}
+                  className={`${styles.label_input_container} ${
+                    styles.item_name
+                  } ${
+                    errors[`item${index}`] && errors[`item${index}`].name
+                      ? styles.label_input_container_with_error
+                      : ""
+                  }`}
                 >
-                  <label>Item Name</label>
+                  <div className={styles.label_error_container}>
+                    <label>Item Name</label>
+                    <p className={styles.error}>
+                      {`${
+                        errors[`item${index}`] && errors[`item${index}`].name
+                          ? errors[`item${index}`].name
+                          : ""
+                      }`}
+                    </p>
+                  </div>
                   <input
                     type="text"
                     value={item.name}
-                    onChange={(e) => handleItemValueChange(e, item.id, "name")}
-                  />
-                </div>
-                <div
-                  className={`${styles.label_input_container} ${styles.item_quantity}`}
-                >
-                  <label>Qty.</label>
-                  <input
-                    type="text"
-                    value={item.quantity}
                     onChange={(e) =>
-                      handleItemValueChange(e, item.id, "quantity")
+                      handleItemValueChange(e, item.id, "name", index)
                     }
                   />
                 </div>
                 <div
-                  className={`${styles.label_input_container} ${styles.item_price}`}
+                  className={`${styles.label_input_container} ${
+                    styles.item_quantity
+                  } ${
+                    errors[`item${index}`] && errors[`item${index}`].quantity
+                      ? styles.label_input_container_with_error
+                      : ""
+                  }`}
                 >
-                  <label>Price</label>
+                  <div className={styles.label_error_container}>
+                    <label>Qty.</label>
+                    <p className={styles.error}>
+                      {`${
+                        errors[`item${index}`] &&
+                        errors[`item${index}`].quantity
+                          ? errors[`item${index}`].quantity
+                          : ""
+                      }`}
+                    </p>
+                  </div>
+                  <input
+                    type="text"
+                    value={item.quantity}
+                    onChange={(e) =>
+                      handleItemValueChange(e, item.id, "quantity", index)
+                    }
+                  />
+                </div>
+                <div
+                  className={`${styles.label_input_container} ${
+                    styles.item_price
+                  } ${
+                    errors[`item${index}`] && errors[`item${index}`].price
+                      ? styles.label_input_container_with_error
+                      : ""
+                  }`}
+                >
+                  <div className={styles.label_error_container}>
+                    <label>Price</label>
+                    <p className={styles.error}>
+                      {`${
+                        errors[`item${index}`] && errors[`item${index}`].price
+                          ? errors[`item${index}`].price
+                          : ""
+                      }`}
+                    </p>
+                  </div>
                   <input
                     type="text"
                     value={item.price}
-                    onChange={(e) => handleItemValueChange(e, item.id, "price")}
+                    onChange={(e) =>
+                      handleItemValueChange(e, item.id, "price", index)
+                    }
                   />
                 </div>
                 <div

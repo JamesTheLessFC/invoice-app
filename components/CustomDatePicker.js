@@ -8,7 +8,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useState, useEffect } from "react";
 
-export default function CustomDatePicker({ date, setDate }) {
+export default function CustomDatePicker({ date, handleDateChange, error }) {
   const [hideCalendar, setHideCalendar] = useState(true);
 
   useEffect(() => {
@@ -40,14 +40,11 @@ export default function CustomDatePicker({ date, setDate }) {
     });
   };
 
-  const handleChange = (value, e) => {
-    //e.stopPropagation();
-    setDate(value);
-  };
-
   return (
     <div
-      className={`${styles.root} ${hideCalendar ? "" : styles.root_focused}`}
+      className={`${styles.root} ${hideCalendar ? "" : styles.root_focused} ${
+        error ? styles.root_with_error : ""
+      }`}
     >
       <span>
         {date.toLocaleDateString("en-US", {
@@ -71,7 +68,7 @@ export default function CustomDatePicker({ date, setDate }) {
         prev2Label={null}
         minDetail="month"
         value={date}
-        onChange={handleChange}
+        onChange={handleDateChange}
         //showNeighboringMonth={false}
       />
     </div>

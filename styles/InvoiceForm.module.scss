@@ -10,13 +10,6 @@
   min-height: calc(100vh - 9rem);
   max-height: calc(100vh - 9rem);
   form {
-    & > h2 {
-      @include heading-2_sm;
-      font-weight: 500;
-      color: $text-secondary;
-      margin-top: 2rem;
-      margin-bottom: 0;
-    }
     fieldset {
       @include fieldset-reset;
       margin-top: 2rem;
@@ -37,6 +30,40 @@
   }
   input {
     @include textfield;
+  }
+  .label_error_container {
+    display: flex;
+    justify-content: space-between;
+  }
+  .error {
+    @include text_sm;
+    color: $red;
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+  }
+  &_with_error {
+    input {
+      border-color: $red;
+    }
+  }
+}
+
+.items_header_error_container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 2rem;
+  margin-bottom: 0;
+  h2 {
+    @include heading-2_sm;
+    font-weight: 500;
+    color: $text-secondary;
+    margin: 0;
+  }
+  .error {
+    @include text_sm;
+    color: $red;
+    margin: 0;
   }
 }
 
