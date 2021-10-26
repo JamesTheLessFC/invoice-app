@@ -5,7 +5,6 @@ import BackButton from "./BackButton";
 import { useState, useEffect } from "react";
 import ModalScreen from "./ModalScreen";
 import DeleteModal from "./DeleteModal";
-import { useRouter } from "next/router";
 
 export default function Invoice({
   data,
@@ -25,14 +24,35 @@ export default function Invoice({
   }, [hideDeleteModal]);
 
   const deleteInvoice = async () => {
-    const response = await fetch(`/api/invoice/${data.id}`, {
-      method: "DELETE",
-    });
-    if (response.ok) {
+    try {
+      const response = await fetch(`/api/invoice/${data.id}`, {
+        method: "DELETE",
+      });
       const jsonResponse = await response.json();
-      console.log(`Invoice #${jsonResponse.id} deleted!`);
-      deselectInvoice();
-      setHideDeleteModal(true);
+      if (response.ok) {
+        console.log(`Invoice #${jsonResponse.id} deleted!`);
+        deselectInvoice();
+        //setHideDeleteModal(true);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const markAsPaid = async () => {
+    const body = { status: "PAID" };
+    try {
+      const response = await fetch(`/api/invoice/${data.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      const jsonResponse = await response.json();
+      if (response.ok) {
+        console.log(`Invoice ${jsonResponse.id} marked as paid!`);
+      }
+    } catch (err) {
+      console.error(err);
     }
   };
 
@@ -61,7 +81,7 @@ export default function Invoice({
         <div className={styles.actions}>
           <button onClick={handleEditInvoiceClick}>Edit</button>
           <button onClick={handleDeleteClick}>Delete</button>
-          <button>Mark as Paid</button>
+          <button onClick={markAsPaid}>Mark as Paid</button>
         </div>
       </div>
       <div className={styles.container}>

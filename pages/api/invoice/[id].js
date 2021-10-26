@@ -15,7 +15,21 @@ export default async function handle(req, res) {
     res.json(result);
   } else if (req.method === "PUT") {
     if (!req.body.status) req.body.status = "DRAFT";
-    if (req.body.status !== "DRAFT") {
+    if (req.body.status === "PAID") {
+      const result = await prisma.invoice.update({
+        where: {
+          id: invoiceId,
+        },
+        data: {
+          status: "PAID",
+        },
+        select: {
+          id: true,
+        },
+      });
+      return res.json(result);
+    }
+    if (req.body.status === "PENDING") {
       const validationResults = validateInvoice(req.body);
       if (!validationResults.valid) {
         return res.status(400).json({ errors: validationResults.errors });
@@ -38,6 +52,6 @@ export default async function handle(req, res) {
         id: true,
       },
     });
-    res.json(result);
+    return res.json(result);
   }
 }
