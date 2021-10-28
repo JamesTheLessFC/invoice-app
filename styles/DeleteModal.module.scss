@@ -24,6 +24,21 @@
   }
   h1 {
     @include body_xxl;
+    display: flex;
+    align-items: center;
+    span {
+      margin-left: 1rem;
+    }
+    .icon {
+      font-size: 2rem;
+      color: $status-pending;
+      &_success {
+        color: $green;
+      }
+      &_failure {
+        color: $red;
+      }
+    }
   }
   p {
     @include body_lg;
@@ -38,10 +53,19 @@
   display: flex;
   justify-content: flex-end;
   button {
-    @include button-edit_light;
-    &:last-child {
+    &.delete {
       margin-left: 1rem;
       @include button-delete;
+    }
+    &.cancel {
+      @include button-edit_light;
+    }
+    &.return {
+      @include button-reset;
+      color: $purple;
+      &:hover {
+        text-decoration: underline;
+      }
     }
   }
 }

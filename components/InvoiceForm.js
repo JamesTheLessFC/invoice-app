@@ -10,6 +10,10 @@ import CustomDatePicker from "./CustomDatePicker";
 import CustomSelect from "./CustomSelect";
 import { useState, useEffect } from "react";
 import { nanoid } from "nanoid";
+import {
+  useAddInvoiceMutation,
+  useUpdateInvoiceByIdMutation,
+} from "../services/invoice";
 
 const states = [
   "NA (Outside USA)",
@@ -69,6 +73,7 @@ export default function InvoiceForm({
   hideInvoiceForm,
   hidden,
   selectedInvoice,
+  showToastMessage,
 }) {
   const [senderStreet, setSenderStreet] = useState("");
   const [senderStreet2, setSenderStreet2] = useState("");
@@ -89,6 +94,8 @@ export default function InvoiceForm({
   const [description, setDescription] = useState("");
   const [items, setItems] = useState([]);
   const [errors, setErrors] = useState({});
+  const [addInvoice, { data, error, isLoading, isSuccess, isError }] =
+    useAddInvoiceMutation();
 
   useEffect(() => {
     if (selectedInvoice) {
@@ -155,35 +162,49 @@ export default function InvoiceForm({
     };
   };
 
+  const addNewInvoice = async () => {
+    const body = prepareInvoiceObj();
+    try {
+      const response = await addInvoice(body).unwrap();
+      showToastMessage(
+        "success",
+        `Invoice #${response.id.slice(-8).toUpperCase()} created successfully!`
+      );
+    } catch (err) {
+      showToastMessage("error", "Oops! Something went wrong");
+    }
+  };
+
   const saveAsDraft = async (e) => {
     e.preventDefault();
     const body = prepareInvoiceObj();
+    let response;
     try {
       if (selectedInvoice) {
-        const response = await fetch(`/api/invoice/${selectedInvoice.id}`, {
+        response = await fetch(`/api/invoice/${selectedInvoice.id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(body),
         });
-        if (response.ok) {
-          const jsonResponse = await response.json();
-          console.log(`Invoice #${jsonResponse.id} updated!`);
-        }
       } else {
-        const response = await fetch("/api/invoice", {
+        response = await fetch("/api/invoice", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(body),
         });
-        if (response.ok) {
-          const jsonResponse = await response.json();
-          console.log(`Invoice #${jsonResponse.id} created!`);
-        }
-        const jsonResponse = await response.json();
-        console.log(jsonResponse);
+      }
+      const jsonResponse = await response.json();
+      if (response.ok) {
+        showToastMessage(
+          "success",
+          `Invoice #${jsonResponse.id.slice(-8).toUpperCase()} ${
+            selectedInvoice ? "updated" : "created"
+          } successfully!`
+        );
       }
     } catch (err) {
       console.error(err);
+      showToastMessage("error", "Oops! Something went wrong.");
     }
   };
 
@@ -211,10 +232,11 @@ export default function InvoiceForm({
       }
       const jsonResponse = await response.json();
       if (response.ok) {
-        console.log(
-          `Invoice #${jsonResponse.id} ${
+        showToastMessage(
+          "success",
+          `Invoice #${jsonResponse.id.slice(-8).toUpperCase()} ${
             selectedInvoice ? "updated" : "created"
-          }!`
+          } successfully!`
         );
       } else if (response.status === 400) {
         console.log(jsonResponse);
@@ -222,6 +244,7 @@ export default function InvoiceForm({
       }
     } catch (err) {
       console.error(err);
+      showToastMessage("error", "Oops! Something went wrong.");
     }
   };
 
@@ -236,13 +259,19 @@ export default function InvoiceForm({
       });
       const jsonResponse = await response.json();
       if (response.ok) {
-        console.log(`Invoice #${jsonResponse.id} updated!`);
+        showToastMessage(
+          "success",
+          `Invoice #${jsonResponse.id
+            .slice(-8)
+            .toUpperCase()} updated successfully!`
+        );
       } else if (response.status === 400) {
         console.log(jsonResponse);
         setErrors(jsonResponse.errors);
       }
     } catch (err) {
       console.error(err);
+      showToastMessage("error", "Oops! Something went wrong.");
     }
   };
 
@@ -529,7 +558,11 @@ export default function InvoiceForm({
         <BackButton handleClick={hideInvoiceForm} />
       </div>
       <form>
-        <h1 className={styles.form_title}>New Invoice</h1>
+        <h1 className={styles.form_title}>
+          {selectedInvoice
+            ? "Invoice #" + selectedInvoice.id.slice(-8).toUpperCase()
+            : "New Invoice"}
+        </h1>
         <fieldset>
           <p className={styles.fieldset_title}>BILL FROM</p>
           <div
@@ -942,7 +975,10 @@ export default function InvoiceForm({
             <FontAwesomeIcon icon={faTrash} className={styles.icon} />
             <span>{selectedInvoice ? "Cancel" : "Discard"}</span>
           </button>
-          <button onClick={saveAsDraft} className={styles.save_as_draft}>
+          <button
+            onClick={selectedInvoice ? saveAsDraft : addNewInvoice}
+            className={styles.save_as_draft}
+          >
             <FontAwesomeIcon icon={faSave} className={styles.icon} />
             <span>Save as Draft</span>
           </button>

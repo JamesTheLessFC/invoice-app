@@ -1,10 +1,16 @@
 import { faChevronRight, faCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from "../styles/InvoiceListItem.module.scss";
+import { useRouter } from "next/router";
 
 export default function InvoiceListItem({ data, selectInvoice }) {
+  const router = useRouter();
+
   return (
-    <li className={styles.root} onClick={() => selectInvoice(data)}>
+    <li
+      className={styles.root}
+      onClick={() => router.push(`/invoice/${data.id}`)}
+    >
       <p className={styles.id}>
         <span>#</span>
         {data.id.slice(-8).toUpperCase()}

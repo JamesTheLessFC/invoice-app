@@ -1,19 +1,25 @@
 import styles from "../styles/Invoice.module.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircle } from "@fortawesome/free-solid-svg-icons";
+import { faCircle, faSpinner } from "@fortawesome/free-solid-svg-icons";
 import BackButton from "./BackButton";
 import { useState, useEffect } from "react";
 import ModalScreen from "./ModalScreen";
 import DeleteModal from "./DeleteModal";
+import { useUpdateInvoiceByIdMutation } from "../services/invoice";
+import { useRouter } from "next/router";
 
 export default function Invoice({
   data,
   deselectInvoice,
   handleEditInvoiceClick,
   showInvoiceForm,
+  showToastMessage,
 }) {
   const [hideDeleteModal, setHideDeleteModal] = useState(false);
   const [hideModalScreen, setHideModalScreen] = useState(true);
+  const [updateInvoiceById, { isLoading: isUpdating }] =
+    useUpdateInvoiceByIdMutation();
+  const router = useRouter();
 
   useEffect(() => {
     if (hideDeleteModal) {
@@ -23,45 +29,47 @@ export default function Invoice({
     }
   }, [hideDeleteModal]);
 
-  const deleteInvoice = async () => {
+  const markAsPaid = async () => {
+    const body = { id: data.id, status: "PAID" };
     try {
-      const response = await fetch(`/api/invoice/${data.id}`, {
-        method: "DELETE",
-      });
-      const jsonResponse = await response.json();
-      if (response.ok) {
-        console.log(`Invoice #${jsonResponse.id} deleted!`);
-        deselectInvoice();
-        //setHideDeleteModal(true);
-      }
+      const response = await updateInvoiceById(body).unwrap();
+      showToastMessage(
+        "success",
+        `Invoice #${response.id.slice(-8).toUpperCase()} marked as paid!`
+      );
     } catch (err) {
       console.error(err);
+      showToastMessage("error", "Oops! Something went wrong.");
     }
   };
 
-  const markAsPaid = async () => {
-    const body = { status: "PAID" };
-    try {
-      const response = await fetch(`/api/invoice/${data.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
-      const jsonResponse = await response.json();
-      if (response.ok) {
-        console.log(`Invoice ${jsonResponse.id} marked as paid!`);
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  };
+  // const markAsPaid = async () => {
+  //   const body = { status: "PAID" };
+  //   try {
+  //     const response = await fetch(`/api/invoice/${data.id}`, {
+  //       method: "PUT",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify(body),
+  //     });
+  //     const jsonResponse = await response.json();
+  //     if (response.ok) {
+  //       showToastMessage(
+  //         "success",
+  //         `Invoice #${jsonResponse.id.slice(-8).toUpperCase()} marked as paid!`
+  //       );
+  //     }
+  //   } catch (err) {
+  //     console.error(err);
+  //     showToastMessage("error", "Oops! Something went wrong.");
+  //   }
+  // };
 
   const handleDeleteClick = () => {
     setHideModalScreen(false);
     setHideDeleteModal(false);
   };
 
-  const handleCancelDeleteClick = () => {
+  const cancelDelete = () => {
     setHideDeleteModal(true);
   };
 
@@ -71,7 +79,7 @@ export default function Invoice({
         showInvoiceForm ? styles.root_with_invoice_form : ""
       }`}
     >
-      <BackButton handleClick={deselectInvoice} />
+      <BackButton handleClick={() => router.push("/invoices")} />
       <div className={`${styles.container} ${styles.container_status}`}>
         <p className={styles.label}>Status</p>
         <p className={`${styles.status} ${styles[`status_${data.status}`]}`}>
@@ -195,8 +203,9 @@ export default function Invoice({
         <ModalScreen>
           <DeleteModal
             hidden={hideDeleteModal}
-            handleCancelDeleteClick={handleCancelDeleteClick}
-            deleteInvoice={deleteInvoice}
+            cancelDelete={cancelDelete}
+            invoiceId={data.id}
+            deselectInvoice={deselectInvoice}
           />
         </ModalScreen>
       )}

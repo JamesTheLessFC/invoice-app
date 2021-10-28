@@ -1,0 +1,83 @@
+@import "./variables.scss";
+
+.root {
+  background-color: $light-blue;
+  padding: 1rem 0.5rem 1rem 1rem;
+  border-radius: 5px;
+  width: 90%;
+  position: fixed;
+  bottom: 3rem;
+  @include shadow-2;
+  transform: translate(-50%, 0%);
+  left: 50%;
+  transition: left 0.5s ease-out;
+  z-index: 20;
+  &_hidden {
+    left: 125%;
+  }
+  & > div {
+    display: flex;
+    align-items: center;
+    border-left: 5px solid;
+    padding: 0.25rem 1rem;
+    width: 100%;
+  }
+  p {
+    @include body_lg;
+    margin: 0 2rem 0 1rem;
+    flex-grow: 1;
+  }
+  button {
+    @include button-reset;
+    font-size: 1.5rem;
+    color: $navbar-bg;
+    &:hover {
+      color: $text_light;
+    }
+  }
+  .icon {
+    font-size: 2rem;
+  }
+  &_success {
+    background-color: $light-green;
+    & > div {
+      border-left-color: $green;
+    }
+    .icon {
+      color: $green;
+    }
+  }
+  &_error {
+    background-color: $light-red_2;
+    & > div {
+      border-left-color: $red;
+    }
+    .icon {
+      color: $red;
+    }
+  }
+}
+
+@media screen and (min-width: 576px) {
+  .root {
+    width: 55%;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .root {
+    width: 45%;
+  }
+}
+
+@media screen and (min-width: 992px) {
+  .root {
+    width: 40%;
+  }
+}
+
+@media screen and (min-width: 1199px) {
+  .root {
+    width: 30%;
+  }
+}

@@ -1,20 +1,102 @@
+import {
+  faCheckCircle,
+  faExclamationCircle,
+  faExclamationTriangle,
+  faSpinner,
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from "../styles/DeleteModal.module.scss";
+import { useDeleteInvoiceByIdMutation } from "../services/invoice";
+import { useRouter } from "next/router";
 
 export default function DeleteModal({
   hidden,
-  handleCancelDeleteClick,
-  deleteInvoice,
+  cancelDelete,
+  invoiceId,
+  deselectInvoice,
 }) {
+  const [
+    deleteInvoiceById,
+    {
+      data: deletionResultData,
+      isLoading: isDeleting,
+      isSuccess: deleteSuccess,
+      isError: deleteFailure,
+    },
+  ] = useDeleteInvoiceByIdMutation();
+  const router = useRouter();
+
+  const deleteInvoice = () => {
+    deleteInvoiceById(invoiceId);
+  };
+
   return (
     <div className={`${styles.root} ${hidden ? styles.root_hidden : ""}`}>
-      <h1>Confirm Deletion</h1>
+      <h1>
+        <FontAwesomeIcon
+          icon={
+            deleteSuccess
+              ? faCheckCircle
+              : deleteFailure
+              ? faExclamationCircle
+              : faExclamationTriangle
+          }
+          className={`${styles.icon} ${
+            deleteSuccess
+              ? styles.icon_success
+              : deleteFailure
+              ? styles.icon_failure
+              : ""
+          }`}
+        />
+        <span>
+          {deleteSuccess
+            ? "Success!"
+            : deleteFailure
+            ? "Oops!"
+            : "Confirm Deletion"}
+        </span>
+      </h1>
       <p>
-        Are you sure you want to delete invoice #XM9141? This action cannot be
-        undone.
+        {deleteSuccess
+          ? `Invoice #${deletionResultData.id
+              .slice(-8)
+              .toUpperCase()} has been deleted.`
+          : deleteFailure
+          ? `Something went wrong. Invoice #${invoiceId
+              .slice(-8)
+              .toUpperCase()} could not be deleted.`
+          : `Are you sure you want to delete invoice #
+        ${invoiceId.slice(-8).toUpperCase()}? This action cannot be undone.`}
       </p>
       <div className={styles.actions}>
-        <button onClick={handleCancelDeleteClick}>Cancel</button>
-        <button onClick={deleteInvoice}>Delete</button>
+        {deleteSuccess ? (
+          <button
+            className={styles.return}
+            onClick={() => router.push("/invoices")}
+          >
+            Return to invoices
+          </button>
+        ) : (
+          <>
+            <button className={styles.cancel} onClick={cancelDelete}>
+              Cancel
+            </button>
+            <button
+              className={styles.delete}
+              onClick={deleteInvoice}
+              disabled={isDeleting}
+            >
+              {isDeleting ? (
+                <FontAwesomeIcon icon={faSpinner} spin />
+              ) : deleteFailure ? (
+                "Try again"
+              ) : (
+                "Delete"
+              )}
+            </button>
+          </>
+        )}
       </div>
     </div>
   );
