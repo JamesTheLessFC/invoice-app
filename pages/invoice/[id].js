@@ -1,4 +1,4 @@
-import styles from "../../styles/Home.module.scss";
+import styles from "../../styles/page.module.scss";
 import Invoice from "../../components/Invoice";
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/client";

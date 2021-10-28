@@ -1,5 +1,5 @@
-import styles from "../styles/Home.module.scss";
-import { useSession, getSession } from "next-auth/client";
+import styles from "../styles/page.module.scss";
+import { useSession } from "next-auth/client";
 import { useGetInvoicesQuery } from "../services/invoice";
 import AppBar from "../components/AppBar";
 import Invoices from "../components/Invoices";
@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import InvoiceForm from "../components/InvoiceForm";
 import Screen from "../components/Screen";
 import Toast from "../components/Toast";
+import { useRouter } from "next/router";
 
 export default function InvoicesPage() {
   const [session, loading] = useSession();
@@ -17,6 +18,13 @@ export default function InvoicesPage() {
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [toastType, setToastType] = useState("");
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!session) {
+      router.push("/");
+    }
+  }, [session, router]);
 
   useEffect(() => {
     if (showToast) {
@@ -67,9 +75,9 @@ export default function InvoicesPage() {
     setHideToast(true);
   };
 
-  if (!session) {
-    return <div>Loading session...</div>;
-  }
+  // if (!session) {
+  //   router.push("/");
+  // }
 
   if (isLoading) {
     return <div className={styles.root}>Loading data...</div>;

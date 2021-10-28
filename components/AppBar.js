@@ -12,7 +12,7 @@ import {
 import Link from "next/link";
 import { signOut, useSession } from "next-auth/client";
 
-export default function AppBar({ user }) {
+export default function AppBar() {
   const [session, loading] = useSession();
 
   return (
@@ -29,9 +29,9 @@ export default function AppBar({ user }) {
         </button>
         <div className={styles.divider}>&nbsp;</div>
         <div className={styles.avatar_name_container}>
-          {user?.image ? (
+          {session ? (
             <Image
-              src={user.image}
+              src={session.user.image}
               alt="avatar"
               width={32}
               height={32}
@@ -40,15 +40,15 @@ export default function AppBar({ user }) {
           ) : (
             <FontAwesomeIcon icon={faUserCircle} className={styles.icon} />
           )}
-          {user ? (
-            <p className={styles.name}>{user.name || user.login}</p>
+          {session ? (
+            <p className={styles.name}>{session.user.name}</p>
           ) : (
             <p className={styles.name}>Anonymous User</p>
           )}
         </div>
         <div className={styles.divider}>&nbsp;</div>
         {loading ? (
-          <FontAwesomeIcon icon={faSpinner} className={styles.icon} />
+          <FontAwesomeIcon icon={faSpinner} spin className={styles.icon} />
         ) : !session ? (
           <Link href="/api/auth/signin">
             <a>
