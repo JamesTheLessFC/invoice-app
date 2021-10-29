@@ -14,6 +14,8 @@ import {
   useAddInvoiceMutation,
   useUpdateInvoiceByIdMutation,
 } from "../services/invoice";
+import { useDispatch } from "react-redux";
+import { showToast } from "../features/toast/toastSlice";
 
 const states = [
   "NA (Outside USA)",
@@ -73,7 +75,6 @@ export default function InvoiceForm({
   hideInvoiceForm,
   hidden,
   selectedInvoice,
-  showToastMessage,
 }) {
   const [senderStreet, setSenderStreet] = useState("");
   const [senderStreet2, setSenderStreet2] = useState("");
@@ -94,8 +95,10 @@ export default function InvoiceForm({
   const [description, setDescription] = useState("");
   const [items, setItems] = useState([]);
   const [errors, setErrors] = useState({});
-  const [addInvoice, { data, error, isLoading, isSuccess, isError }] =
-    useAddInvoiceMutation();
+  const [addInvoice, { isLoading: isAdding }] = useAddInvoiceMutation();
+  const [updateInvoice, { isLoading: isUpdating }] =
+    useUpdateInvoiceByIdMutation();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (selectedInvoice) {
@@ -162,118 +165,156 @@ export default function InvoiceForm({
     };
   };
 
-  const addNewInvoice = async () => {
-    const body = prepareInvoiceObj();
-    try {
-      const response = await addInvoice(body).unwrap();
-      showToastMessage(
-        "success",
-        `Invoice #${response.id.slice(-8).toUpperCase()} created successfully!`
-      );
-    } catch (err) {
-      showToastMessage("error", "Oops! Something went wrong");
-    }
-  };
-
-  const saveAsDraft = async (e) => {
-    e.preventDefault();
-    const body = prepareInvoiceObj();
-    let response;
-    try {
-      if (selectedInvoice) {
-        response = await fetch(`/api/invoice/${selectedInvoice.id}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(body),
-        });
-      } else {
-        response = await fetch("/api/invoice", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(body),
-        });
-      }
-      const jsonResponse = await response.json();
-      if (response.ok) {
-        showToastMessage(
-          "success",
-          `Invoice #${jsonResponse.id.slice(-8).toUpperCase()} ${
-            selectedInvoice ? "updated" : "created"
-          } successfully!`
-        );
-      }
-    } catch (err) {
-      console.error(err);
-      showToastMessage("error", "Oops! Something went wrong.");
-    }
-  };
-
-  const saveAndSend = async (e) => {
-    e.preventDefault();
+  const addNewInvoice = async (status = "DRAFT") => {
     const body = {
       ...prepareInvoiceObj(),
-      status: "PENDING",
+      status,
     };
-    console.log(body);
     try {
-      let response;
-      if (selectedInvoice) {
-        response = await fetch(`/api/invoice/${selectedInvoice.id}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(body),
-        });
-      } else {
-        response = await fetch("/api/invoice", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(body),
-        });
-      }
-      const jsonResponse = await response.json();
-      if (response.ok) {
-        showToastMessage(
-          "success",
-          `Invoice #${jsonResponse.id.slice(-8).toUpperCase()} ${
-            selectedInvoice ? "updated" : "created"
-          } successfully!`
-        );
-      } else if (response.status === 400) {
-        console.log(jsonResponse);
-        setErrors(jsonResponse.errors);
-      }
+      const response = await addInvoice(body).unwrap();
+      dispatch(
+        showToast({
+          type: "success",
+          message: `Invoice #${response.id
+            .slice(-8)
+            .toUpperCase()} created successfully!`,
+        })
+      );
     } catch (err) {
-      console.error(err);
-      showToastMessage("error", "Oops! Something went wrong.");
+      dispatch(
+        showToast({
+          type: "error",
+          message: "Oops! Something went wrong",
+        })
+      );
     }
   };
 
-  const saveChanges = async (e) => {
-    e.preventDefault();
-    const body = prepareInvoiceObj();
+  const editInvoice = async (status) => {
+    const body = {
+      ...prepareInvoiceObj(),
+      id: selectedInvoice.id,
+      status,
+    };
     try {
-      const response = await fetch(`/api/invoice/${selectedInvoice.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
-      const jsonResponse = await response.json();
-      if (response.ok) {
-        showToastMessage(
-          "success",
-          `Invoice #${jsonResponse.id
+      const response = await updateInvoice(body).unwrap();
+      dispatch(
+        showToast({
+          type: "success",
+          message: `Invoice #${response.id
             .slice(-8)
-            .toUpperCase()} updated successfully!`
-        );
-      } else if (response.status === 400) {
-        console.log(jsonResponse);
-        setErrors(jsonResponse.errors);
-      }
+            .toUpperCase()} updated successfully!`,
+        })
+      );
     } catch (err) {
-      console.error(err);
-      showToastMessage("error", "Oops! Something went wrong.");
+      dispatch(
+        showToast({
+          type: "error",
+          message: "Oops! Something went wrong",
+        })
+      );
     }
   };
+
+  // const saveAsDraft = async (e) => {
+  //   e.preventDefault();
+  //   const body = prepareInvoiceObj();
+  //   let response;
+  //   try {
+  //     if (selectedInvoice) {
+  //       response = await fetch(`/api/invoice/${selectedInvoice.id}`, {
+  //         method: "PUT",
+  //         headers: { "Content-Type": "application/json" },
+  //         body: JSON.stringify(body),
+  //       });
+  //     } else {
+  //       response = await fetch("/api/invoice", {
+  //         method: "POST",
+  //         headers: { "Content-Type": "application/json" },
+  //         body: JSON.stringify(body),
+  //       });
+  //     }
+  //     const jsonResponse = await response.json();
+  //     if (response.ok) {
+  //       showToastMessage(
+  //         "success",
+  //         `Invoice #${jsonResponse.id.slice(-8).toUpperCase()} ${
+  //           selectedInvoice ? "updated" : "created"
+  //         } successfully!`
+  //       );
+  //     }
+  //   } catch (err) {
+  //     console.error(err);
+  //     showToastMessage("error", "Oops! Something went wrong.");
+  //   }
+  // };
+
+  // const saveAndSend = async (e) => {
+  //   e.preventDefault();
+  //   const body = {
+  //     ...prepareInvoiceObj(),
+  //     status: "PENDING",
+  //   };
+  //   console.log(body);
+  //   try {
+  //     let response;
+  //     if (selectedInvoice) {
+  //       response = await fetch(`/api/invoice/${selectedInvoice.id}`, {
+  //         method: "PUT",
+  //         headers: { "Content-Type": "application/json" },
+  //         body: JSON.stringify(body),
+  //       });
+  //     } else {
+  //       response = await fetch("/api/invoice", {
+  //         method: "POST",
+  //         headers: { "Content-Type": "application/json" },
+  //         body: JSON.stringify(body),
+  //       });
+  //     }
+  //     const jsonResponse = await response.json();
+  //     if (response.ok) {
+  //       showToastMessage(
+  //         "success",
+  //         `Invoice #${jsonResponse.id.slice(-8).toUpperCase()} ${
+  //           selectedInvoice ? "updated" : "created"
+  //         } successfully!`
+  //       );
+  //     } else if (response.status === 400) {
+  //       console.log(jsonResponse);
+  //       setErrors(jsonResponse.errors);
+  //     }
+  //   } catch (err) {
+  //     console.error(err);
+  //     showToastMessage("error", "Oops! Something went wrong.");
+  //   }
+  // };
+
+  // const saveChanges = async (e) => {
+  //   e.preventDefault();
+  //   const body = prepareInvoiceObj();
+  //   try {
+  //     const response = await fetch(`/api/invoice/${selectedInvoice.id}`, {
+  //       method: "PUT",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify(body),
+  //     });
+  //     const jsonResponse = await response.json();
+  //     if (response.ok) {
+  //       showToastMessage(
+  //         "success",
+  //         `Invoice #${jsonResponse.id
+  //           .slice(-8)
+  //           .toUpperCase()} updated successfully!`
+  //       );
+  //     } else if (response.status === 400) {
+  //       console.log(jsonResponse);
+  //       setErrors(jsonResponse.errors);
+  //     }
+  //   } catch (err) {
+  //     console.error(err);
+  //     showToastMessage("error", "Oops! Something went wrong.");
+  //   }
+  // };
 
   const handleSenderStreetChange = (e) => {
     setSenderStreet(e.target.value);
@@ -965,7 +1006,10 @@ export default function InvoiceForm({
           <button className={styles.cancel} onClick={hideInvoiceForm}>
             <span>Cancel</span>
           </button>
-          <button onClick={saveChanges} className={styles.save_changes}>
+          <button
+            onClick={() => editInvoice(selectedInvoice.status.toUpperCase())}
+            className={styles.save_changes}
+          >
             <span>Save Changes</span>
           </button>
         </div>
@@ -976,13 +1020,22 @@ export default function InvoiceForm({
             <span>{selectedInvoice ? "Cancel" : "Discard"}</span>
           </button>
           <button
-            onClick={selectedInvoice ? saveAsDraft : addNewInvoice}
+            onClick={
+              selectedInvoice ? () => editInvoice("DRAFT") : addNewInvoice
+            }
             className={styles.save_as_draft}
           >
             <FontAwesomeIcon icon={faSave} className={styles.icon} />
             <span>Save as Draft</span>
           </button>
-          <button onClick={saveAndSend} className={styles.save_and_send}>
+          <button
+            onClick={
+              selectedInvoice
+                ? () => editInvoice(selectedInvoice.status.toUpperCase())
+                : () => addInvoice("PENDING")
+            }
+            className={styles.save_and_send}
+          >
             <FontAwesomeIcon icon={faPaperPlane} className={styles.icon} />
             <span>Save &amp; Send</span>
           </button>

@@ -7,6 +7,25 @@
   min-height: calc(100vh - 4rem);
   background-color: $bg_light;
   margin-top: 4rem;
+  &_no_content {
+    justify-content: center;
+    padding: 1rem;
+    text-align: center;
+    h3 {
+      @include heading-default;
+      margin-top: 1.5rem;
+    }
+  }
+}
+
+.spinner_icon {
+  font-size: 5rem;
+  color: $blue-gray;
+}
+
+.error_icon {
+  font-size: 5rem;
+  color: $red;
 }
 
 @media screen and (min-width: 992px) {

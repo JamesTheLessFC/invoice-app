@@ -8,6 +8,11 @@ import AppBar from "../../components/AppBar";
 import Toast from "../../components/Toast";
 import Screen from "../../components/Screen";
 import InvoiceForm from "../../components/InvoiceForm";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faSpinner,
+  faExclamationCircle,
+} from "@fortawesome/free-solid-svg-icons";
 
 export default function InvoicePage() {
   const router = useRouter();
@@ -20,6 +25,12 @@ export default function InvoicePage() {
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [toastType, setToastType] = useState("");
+
+  useEffect(() => {
+    if (!session) {
+      router.push("/");
+    }
+  }, [session, router]);
 
   useEffect(() => {
     if (showToast) {
@@ -66,21 +77,35 @@ export default function InvoicePage() {
     setHideToast(true);
   };
 
-  if (!session) {
-    return <div>Loading session...</div>;
-  }
-
   if (isLoading) {
-    return <div className={styles.root}>Loading data...</div>;
+    return (
+      <div className={`${styles.root} ${styles.root_no_content}`}>
+        <AppBar />
+        <FontAwesomeIcon
+          icon={faSpinner}
+          spin
+          className={styles.spinner_icon}
+        />
+      </div>
+    );
   }
 
   if (error) {
-    return <div className={styles.root}>Oops, an error occured</div>;
+    return (
+      <div className={`${styles.root} ${styles.root_no_content}`}>
+        <AppBar />
+        <FontAwesomeIcon
+          icon={faExclamationCircle}
+          className={styles.error_icon}
+        />
+        <h3>Oops! Something went wrong.</h3>
+      </div>
+    );
   }
 
   return (
     <div className={styles.root}>
-      <AppBar user={session.user} />
+      <AppBar />
       <Invoice
         data={data.invoice}
         handleEditInvoiceClick={handleEditInvoiceClick}

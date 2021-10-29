@@ -7,19 +7,26 @@ import ModalScreen from "./ModalScreen";
 import DeleteModal from "./DeleteModal";
 import { useUpdateInvoiceByIdMutation } from "../services/invoice";
 import { useRouter } from "next/router";
+import Toast from "./Toast";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  selectToast,
+  hideToast,
+  showToast,
+} from "../features/toast/toastSlice";
 
 export default function Invoice({
   data,
-  deselectInvoice,
   handleEditInvoiceClick,
   showInvoiceForm,
-  showToastMessage,
 }) {
   const [hideDeleteModal, setHideDeleteModal] = useState(false);
   const [hideModalScreen, setHideModalScreen] = useState(true);
   const [updateInvoiceById, { isLoading: isUpdating }] =
     useUpdateInvoiceByIdMutation();
   const router = useRouter();
+  const toast = useSelector(selectToast);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (hideDeleteModal) {
@@ -33,36 +40,21 @@ export default function Invoice({
     const body = { id: data.id, status: "PAID" };
     try {
       const response = await updateInvoiceById(body).unwrap();
-      showToastMessage(
-        "success",
-        `Invoice #${response.id.slice(-8).toUpperCase()} marked as paid!`
+      dispatch(
+        showToast({
+          type: "success",
+          message: `Invoice #${response.id
+            .slice(-8)
+            .toUpperCase()} marked as paid!`,
+        })
       );
     } catch (err) {
       console.error(err);
-      showToastMessage("error", "Oops! Something went wrong.");
+      dispatch(
+        showToast({ type: "error", message: "Oops! Something went wrong." })
+      );
     }
   };
-
-  // const markAsPaid = async () => {
-  //   const body = { status: "PAID" };
-  //   try {
-  //     const response = await fetch(`/api/invoice/${data.id}`, {
-  //       method: "PUT",
-  //       headers: { "Content-Type": "application/json" },
-  //       body: JSON.stringify(body),
-  //     });
-  //     const jsonResponse = await response.json();
-  //     if (response.ok) {
-  //       showToastMessage(
-  //         "success",
-  //         `Invoice #${jsonResponse.id.slice(-8).toUpperCase()} marked as paid!`
-  //       );
-  //     }
-  //   } catch (err) {
-  //     console.error(err);
-  //     showToastMessage("error", "Oops! Something went wrong.");
-  //   }
-  // };
 
   const handleDeleteClick = () => {
     setHideModalScreen(false);
@@ -205,9 +197,16 @@ export default function Invoice({
             hidden={hideDeleteModal}
             cancelDelete={cancelDelete}
             invoiceId={data.id}
-            deselectInvoice={deselectInvoice}
           />
         </ModalScreen>
+      )}
+      {toast.active && (
+        <Toast
+          type={toast.type}
+          hideToast={toast.hide}
+          closeToast={() => dispatch(hideToast())}
+          message={toast.message}
+        />
       )}
     </div>
   );
