@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   active: false,
-  hide: true,
+  hidden: true,
   message: "",
   type: "",
 };
@@ -23,7 +23,7 @@ export const showToast = createAsyncThunk(
 export const hideToast = createAsyncThunk(
   "toast/hideToast",
   (arg, { dispatch, getState }) => {
-    if (!getState().toast.hide) {
+    if (!getState().toast.hidden) {
       dispatch(hide());
       setTimeout(() => {
         dispatch(deactivate());
@@ -39,17 +39,17 @@ const toastSlice = createSlice({
     activate: (state) => ({
       ...state,
       active: true,
-      hide: true,
+      hidden: true,
     }),
     show: (state, action) => ({
       ...state,
-      hide: false,
+      hidden: false,
       message: action.payload.message,
       type: action.payload.type,
     }),
     hide: (state) => ({
       ...state,
-      hide: true,
+      hidden: true,
     }),
     deactivate: (state) => initialState,
   },

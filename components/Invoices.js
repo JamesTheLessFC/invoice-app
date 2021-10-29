@@ -78,14 +78,6 @@ export default function Invoices({
         showInvoiceForm={showInvoiceForm}
       />
       {filteredInvoices.length === 0 && <EmptyMessage />}
-      {/* {showScreen && (
-        <Screen>
-          <InvoiceForm
-            handleDiscardNewInvoiceClick={handleDiscardNewInvoiceClick}
-            hidden={!showInvoiceForm}
-          />
-        </Screen>
-      )} */}
     </div>
   );
 }

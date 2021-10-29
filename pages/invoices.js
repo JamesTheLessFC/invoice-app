@@ -15,20 +15,19 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
+import { selectToast, hideToast } from "../features/toast/toastSlice";
 import {
-  selectToast,
-  showToast,
-  hideToast,
-} from "../features/toast/toastSlice";
+  selectInvoiceForm,
+  showInvoiceForm,
+} from "../features/invoiceForm/invoiceFormSlice";
 
 export default function InvoicesPage() {
   const [session, loading] = useSession();
   const { data, error, isLoading } = useGetInvoicesQuery();
-  const [showInvoiceForm, setShowInvoiceForm] = useState(false);
-  const [showScreen, setShowScreen] = useState(false);
   const router = useRouter();
   const dispatch = useDispatch();
   const toast = useSelector(selectToast);
+  const invoiceForm = useSelector(selectInvoiceForm);
 
   useEffect(() => {
     if (!session) {
@@ -36,22 +35,8 @@ export default function InvoicesPage() {
     }
   }, [session, router]);
 
-  useEffect(() => {
-    if (!showInvoiceForm) {
-      setTimeout(() => {
-        setShowScreen(false);
-      }, 500);
-    } else {
-      setShowScreen(true);
-    }
-  }, [showInvoiceForm]);
-
   const handleAddNewInvoiceClick = () => {
-    setShowInvoiceForm(true);
-  };
-
-  const hideInvoiceForm = () => {
-    setShowInvoiceForm(false);
+    dispatch(showInvoiceForm());
   };
 
   if (isLoading) {
@@ -88,12 +73,9 @@ export default function InvoicesPage() {
         handleAddNewInvoiceClick={handleAddNewInvoiceClick}
         showInvoiceForm={showInvoiceForm}
       />
-      {showScreen && (
+      {invoiceForm.open && (
         <Screen>
-          <InvoiceForm
-            hideInvoiceForm={hideInvoiceForm}
-            hidden={!showInvoiceForm}
-          />
+          <InvoiceForm />
         </Screen>
       )}
       {toast.active && (

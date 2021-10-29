@@ -14,68 +14,15 @@ import {
   useAddInvoiceMutation,
   useUpdateInvoiceByIdMutation,
 } from "../services/invoice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { showToast } from "../features/toast/toastSlice";
-
-const states = [
-  "NA (Outside USA)",
-  "AL (Alabama)",
-  "AK (Alaska)",
-  "AZ (Arizona)",
-  "AR (Arkansas)",
-  "CA (California)",
-  "CO (Colorado)",
-  "CT (Connecticut)",
-  "DE (Delaware)",
-  "DC (District of Columbia)",
-  "FL (Florida)",
-  "GA (Georgia)",
-  "HI (Hawaii)",
-  "ID (Idaho)",
-  "IL (Illinois)",
-  "IN (Indiana)",
-  "IA (Iowa)",
-  "KS (Kansas)",
-  "KY (Kentucky)",
-  "LA (Louisiana)",
-  "ME (Maine)",
-  "MD (Maryland)",
-  "MA (Massachusetts)",
-  "MI (Michigan)",
-  "MN (Minnesota)",
-  "MS (Mississippi)",
-  "MT (Montana)",
-  "NE (Nebraska)",
-  "NV (Nevada)",
-  "NH (New Hampshire)",
-  "NJ (New Jersey)",
-  "NM (New Mexico)",
-  "NY (New York)",
-  "NC (North Carolina)",
-  "ND (North Dakota)",
-  "OH (Ohio)",
-  "OK (Oklahoma)",
-  "OR (Oregon)",
-  "PA (Pennsylvania)",
-  "RI (Rhode Island)",
-  "SC (South Carolina)",
-  "SD (South Dakota)",
-  "TN (Tennessee)",
-  "TX (Texas)",
-  "UT (Utah)",
-  "VT (Vermont)",
-  "VA (Virgina)",
-  "WA (Washington)",
-  "WV (West Virginia)",
-  "WI (Wisconsin)",
-  "WY (Wyoming)",
-];
-
-export default function InvoiceForm({
+import {
+  selectInvoiceForm,
   hideInvoiceForm,
-  hidden,
-  selectedInvoice,
-}) {
+} from "../features/invoiceForm/invoiceFormSlice";
+import { states } from "../util/states";
+
+export default function InvoiceForm({ invoice }) {
   const [senderStreet, setSenderStreet] = useState("");
   const [senderStreet2, setSenderStreet2] = useState("");
   const [senderCity, setSenderCity] = useState("");
@@ -99,36 +46,33 @@ export default function InvoiceForm({
   const [updateInvoice, { isLoading: isUpdating }] =
     useUpdateInvoiceByIdMutation();
   const dispatch = useDispatch();
+  const invoiceForm = useSelector(selectInvoiceForm);
 
   useEffect(() => {
-    if (selectedInvoice) {
-      setSenderStreet(selectedInvoice.senderStreet);
-      setSenderStreet2(selectedInvoice.senderStreet2);
-      setSenderCity(selectedInvoice.senderCity);
+    if (invoice) {
+      setSenderStreet(invoice.senderStreet);
+      setSenderStreet2(invoice.senderStreet2);
+      setSenderCity(invoice.senderCity);
       setSenderState(
-        selectedInvoice.senderState === "BLANK"
-          ? ""
-          : selectedInvoice.senderState
+        invoice.senderState === "BLANK" ? "" : invoice.senderState
       );
-      setSenderZip(selectedInvoice.senderZip);
-      setSenderCountry(selectedInvoice.senderCountry);
-      setClientName(selectedInvoice.clientName);
-      setClientEmail(selectedInvoice.clientEmail);
-      setClientStreet(selectedInvoice.clientStreet);
-      setClientStreet2(selectedInvoice.clientStreet2);
-      setClientCity(selectedInvoice.clientCity);
+      setSenderZip(invoice.senderZip);
+      setSenderCountry(invoice.senderCountry);
+      setClientName(invoice.clientName);
+      setClientEmail(invoice.clientEmail);
+      setClientStreet(invoice.clientStreet);
+      setClientStreet2(invoice.clientStreet2);
+      setClientCity(invoice.clientCity);
       setClientState(
-        selectedInvoice.clientState === "BLANK"
-          ? ""
-          : selectedInvoice.clientState
+        invoice.clientState === "BLANK" ? "" : invoice.clientState
       );
-      setClientZip(selectedInvoice.clientZip);
-      setClientCountry(selectedInvoice.clientCountry);
-      setInvoiceDate(new Date(selectedInvoice.invoiceDate));
-      setPaymentTerms(selectedInvoice.paymentTerms);
-      setDescription(selectedInvoice.description);
+      setClientZip(invoice.clientZip);
+      setClientCountry(invoice.clientCountry);
+      setInvoiceDate(new Date(invoice.invoiceDate));
+      setPaymentTerms(invoice.paymentTerms);
+      setDescription(invoice.description);
       setItems(
-        selectedInvoice.items.map((item) => {
+        invoice.items.map((item) => {
           return {
             ...item,
             id: nanoid(),
@@ -136,7 +80,7 @@ export default function InvoiceForm({
         })
       );
     }
-  }, [selectedInvoice]);
+  }, [invoice]);
 
   const prepareInvoiceObj = () => {
     return {
@@ -193,7 +137,7 @@ export default function InvoiceForm({
   const editInvoice = async (status) => {
     const body = {
       ...prepareInvoiceObj(),
-      id: selectedInvoice.id,
+      id: invoice.id,
       status,
     };
     try {
@@ -215,106 +159,6 @@ export default function InvoiceForm({
       );
     }
   };
-
-  // const saveAsDraft = async (e) => {
-  //   e.preventDefault();
-  //   const body = prepareInvoiceObj();
-  //   let response;
-  //   try {
-  //     if (selectedInvoice) {
-  //       response = await fetch(`/api/invoice/${selectedInvoice.id}`, {
-  //         method: "PUT",
-  //         headers: { "Content-Type": "application/json" },
-  //         body: JSON.stringify(body),
-  //       });
-  //     } else {
-  //       response = await fetch("/api/invoice", {
-  //         method: "POST",
-  //         headers: { "Content-Type": "application/json" },
-  //         body: JSON.stringify(body),
-  //       });
-  //     }
-  //     const jsonResponse = await response.json();
-  //     if (response.ok) {
-  //       showToastMessage(
-  //         "success",
-  //         `Invoice #${jsonResponse.id.slice(-8).toUpperCase()} ${
-  //           selectedInvoice ? "updated" : "created"
-  //         } successfully!`
-  //       );
-  //     }
-  //   } catch (err) {
-  //     console.error(err);
-  //     showToastMessage("error", "Oops! Something went wrong.");
-  //   }
-  // };
-
-  // const saveAndSend = async (e) => {
-  //   e.preventDefault();
-  //   const body = {
-  //     ...prepareInvoiceObj(),
-  //     status: "PENDING",
-  //   };
-  //   console.log(body);
-  //   try {
-  //     let response;
-  //     if (selectedInvoice) {
-  //       response = await fetch(`/api/invoice/${selectedInvoice.id}`, {
-  //         method: "PUT",
-  //         headers: { "Content-Type": "application/json" },
-  //         body: JSON.stringify(body),
-  //       });
-  //     } else {
-  //       response = await fetch("/api/invoice", {
-  //         method: "POST",
-  //         headers: { "Content-Type": "application/json" },
-  //         body: JSON.stringify(body),
-  //       });
-  //     }
-  //     const jsonResponse = await response.json();
-  //     if (response.ok) {
-  //       showToastMessage(
-  //         "success",
-  //         `Invoice #${jsonResponse.id.slice(-8).toUpperCase()} ${
-  //           selectedInvoice ? "updated" : "created"
-  //         } successfully!`
-  //       );
-  //     } else if (response.status === 400) {
-  //       console.log(jsonResponse);
-  //       setErrors(jsonResponse.errors);
-  //     }
-  //   } catch (err) {
-  //     console.error(err);
-  //     showToastMessage("error", "Oops! Something went wrong.");
-  //   }
-  // };
-
-  // const saveChanges = async (e) => {
-  //   e.preventDefault();
-  //   const body = prepareInvoiceObj();
-  //   try {
-  //     const response = await fetch(`/api/invoice/${selectedInvoice.id}`, {
-  //       method: "PUT",
-  //       headers: { "Content-Type": "application/json" },
-  //       body: JSON.stringify(body),
-  //     });
-  //     const jsonResponse = await response.json();
-  //     if (response.ok) {
-  //       showToastMessage(
-  //         "success",
-  //         `Invoice #${jsonResponse.id
-  //           .slice(-8)
-  //           .toUpperCase()} updated successfully!`
-  //       );
-  //     } else if (response.status === 400) {
-  //       console.log(jsonResponse);
-  //       setErrors(jsonResponse.errors);
-  //     }
-  //   } catch (err) {
-  //     console.error(err);
-  //     showToastMessage("error", "Oops! Something went wrong.");
-  //   }
-  // };
 
   const handleSenderStreetChange = (e) => {
     setSenderStreet(e.target.value);
@@ -594,14 +438,18 @@ export default function InvoiceForm({
   };
 
   return (
-    <div className={`${styles.root} ${hidden ? styles.root_hidden : ""}`}>
+    <div
+      className={`${styles.root} ${
+        invoiceForm.hidden ? styles.root_hidden : ""
+      }`}
+    >
       <div className={styles.back_button}>
         <BackButton handleClick={hideInvoiceForm} />
       </div>
       <form>
         <h1 className={styles.form_title}>
-          {selectedInvoice
-            ? "Invoice #" + selectedInvoice.id.slice(-8).toUpperCase()
+          {invoice
+            ? "Invoice #" + invoice.id.slice(-8).toUpperCase()
             : "New Invoice"}
         </h1>
         <fieldset>
@@ -1001,13 +849,16 @@ export default function InvoiceForm({
         </ul>
         <button onClick={addItem}>+ Add New Item</button>
       </form>
-      {selectedInvoice && selectedInvoice.status !== "draft" ? (
+      {invoice && invoice.status !== "draft" ? (
         <div className={styles.actions}>
-          <button className={styles.cancel} onClick={hideInvoiceForm}>
+          <button
+            className={styles.cancel}
+            onClick={() => dispatch(hideInvoiceForm())}
+          >
             <span>Cancel</span>
           </button>
           <button
-            onClick={() => editInvoice(selectedInvoice.status.toUpperCase())}
+            onClick={() => editInvoice(invoice.status.toUpperCase())}
             className={styles.save_changes}
           >
             <span>Save Changes</span>
@@ -1015,14 +866,15 @@ export default function InvoiceForm({
         </div>
       ) : (
         <div className={styles.actions}>
-          <button className={styles.discard} onClick={hideInvoiceForm}>
+          <button
+            className={styles.discard}
+            onClick={() => dispatch(hideInvoiceForm())}
+          >
             <FontAwesomeIcon icon={faTrash} className={styles.icon} />
-            <span>{selectedInvoice ? "Cancel" : "Discard"}</span>
+            <span>{invoice ? "Cancel" : "Discard"}</span>
           </button>
           <button
-            onClick={
-              selectedInvoice ? () => editInvoice("DRAFT") : addNewInvoice
-            }
+            onClick={invoice ? () => editInvoice("DRAFT") : addNewInvoice}
             className={styles.save_as_draft}
           >
             <FontAwesomeIcon icon={faSave} className={styles.icon} />
@@ -1030,8 +882,8 @@ export default function InvoiceForm({
           </button>
           <button
             onClick={
-              selectedInvoice
-                ? () => editInvoice(selectedInvoice.status.toUpperCase())
+              invoice
+                ? () => editInvoice(invoice.status.toUpperCase())
                 : () => addInvoice("PENDING")
             }
             className={styles.save_and_send}

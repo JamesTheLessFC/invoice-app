@@ -13,18 +13,28 @@ import {
   faSpinner,
   faExclamationCircle,
 } from "@fortawesome/free-solid-svg-icons";
+import {
+  selectInvoiceForm,
+  showInvoiceForm,
+} from "../../features/invoiceForm/invoiceFormSlice";
+import { selectToast, showToast } from "../../features/toast/toastSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function InvoicePage() {
   const router = useRouter();
   const { id } = router.query;
   const [session, loading] = useSession();
   const { data, error, isLoading } = useGetInvoiceByIdQuery(id);
-  const [showInvoiceForm, setShowInvoiceForm] = useState(false);
-  const [showScreen, setShowScreen] = useState(false);
-  const [hideToast, setHideToast] = useState(true);
-  const [showToast, setShowToast] = useState(false);
-  const [toastMessage, setToastMessage] = useState("");
-  const [toastType, setToastType] = useState("");
+  // const [showInvoiceForm, setShowInvoiceForm] = useState(false);
+  // const [showScreen, setShowScreen] = useState(false);
+  // const [hideToast, setHideToast] = useState(true);
+  // const [showToast, setShowToast] = useState(false);
+  // const [toastMessage, setToastMessage] = useState("");
+  // const [toastType, setToastType] = useState("");
+
+  const toast = useSelector(selectToast);
+  const invoiceForm = useSelector(selectInvoiceForm);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (!session) {
@@ -32,50 +42,50 @@ export default function InvoicePage() {
     }
   }, [session, router]);
 
-  useEffect(() => {
-    if (showToast) {
-      setHideToast(false);
-      setTimeout(() => {
-        setHideToast(true);
-      }, 2500);
-    }
-  }, [showToast]);
+  // useEffect(() => {
+  //   if (showToast) {
+  //     setHideToast(false);
+  //     setTimeout(() => {
+  //       setHideToast(true);
+  //     }, 2500);
+  //   }
+  // }, [showToast]);
 
-  useEffect(() => {
-    if (hideToast) {
-      setTimeout(() => {
-        setShowToast(false);
-      }, 500);
-    }
-  }, [hideToast]);
+  // useEffect(() => {
+  //   if (hideToast) {
+  //     setTimeout(() => {
+  //       setShowToast(false);
+  //     }, 500);
+  //   }
+  // }, [hideToast]);
 
-  useEffect(() => {
-    if (!showInvoiceForm) {
-      setTimeout(() => {
-        setShowScreen(false);
-      }, 500);
-    } else {
-      setShowScreen(true);
-    }
-  }, [showInvoiceForm]);
+  // useEffect(() => {
+  //   if (!showInvoiceForm) {
+  //     setTimeout(() => {
+  //       setShowScreen(false);
+  //     }, 500);
+  //   } else {
+  //     setShowScreen(true);
+  //   }
+  // }, [showInvoiceForm]);
 
   const handleEditInvoiceClick = () => {
-    setShowInvoiceForm(true);
+    dispatch(showInvoiceForm());
   };
 
-  const hideInvoiceForm = () => {
-    setShowInvoiceForm(false);
-  };
+  // const hideInvoiceForm = () => {
+  //   setShowInvoiceForm(false);
+  // };
 
-  const showToastMessage = (type, message) => {
-    setToastMessage(message);
-    setToastType(type);
-    setShowToast(true);
-  };
+  // const showToastMessage = (type, message) => {
+  //   setToastMessage(message);
+  //   setToastType(type);
+  //   setShowToast(true);
+  // };
 
-  const closeToast = () => {
-    setHideToast(true);
-  };
+  // const closeToast = () => {
+  //   setHideToast(true);
+  // };
 
   if (isLoading) {
     return (
@@ -109,27 +119,13 @@ export default function InvoicePage() {
       <Invoice
         data={data.invoice}
         handleEditInvoiceClick={handleEditInvoiceClick}
-        showInvoiceForm={showInvoiceForm}
-        showToastMessage={showToastMessage}
       />
-      {showScreen && (
+      {invoiceForm.open && (
         <Screen>
-          <InvoiceForm
-            hideInvoiceForm={hideInvoiceForm}
-            hidden={!showInvoiceForm}
-            showToastMessage={showToastMessage}
-            selectedInvoice={data.invoice}
-          />
+          <InvoiceForm invoice={data.invoice} />
         </Screen>
       )}
-      {showToast && (
-        <Toast
-          type={toastType}
-          hideToast={hideToast}
-          closeToast={closeToast}
-          message={toastMessage}
-        />
-      )}
+      {toast.active && <Toast />}
     </div>
   );
 }

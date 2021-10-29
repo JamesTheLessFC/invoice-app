@@ -5,25 +5,30 @@ import {
   faExclamationCircle,
   faTimes,
 } from "@fortawesome/free-solid-svg-icons";
+import { useDispatch, useSelector } from "react-redux";
+import { selectToast, hideToast } from "../features/toast/toastSlice";
 
-export default function Toast({ type, hideToast, closeToast, message }) {
+export default function Toast() {
+  const toast = useSelector(selectToast);
+  const dispatch = useDispatch();
+
   return (
     <div
       className={`${styles.root} ${
-        type === "success"
+        toast.type === "success"
           ? styles.root_success
-          : type === "error"
+          : toast.type === "error"
           ? styles.root_error
           : ""
-      } ${hideToast ? styles.root_hidden : ""}`}
+      } ${toast.hidden ? styles.root_hidden : ""}`}
     >
       <div>
         <FontAwesomeIcon
-          icon={type === "success" ? faCheckCircle : faExclamationCircle}
+          icon={toast.type === "success" ? faCheckCircle : faExclamationCircle}
           className={styles.icon}
         />
-        <p>{message}</p>
-        <button onClick={closeToast}>
+        <p>{toast.message}</p>
+        <button onClick={() => dispatch(hideToast())}>
           <FontAwesomeIcon icon={faTimes} />
         </button>
       </div>
