@@ -1,6 +1,6 @@
 import styles from "../../styles/page.module.scss";
 import Invoice from "../../components/Invoice";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useSession } from "next-auth/client";
 import { useGetInvoiceByIdQuery } from "../../services/invoice";
 import { useRouter } from "next/router";
@@ -13,79 +13,24 @@ import {
   faSpinner,
   faExclamationCircle,
 } from "@fortawesome/free-solid-svg-icons";
-import {
-  selectInvoiceForm,
-  showInvoiceForm,
-} from "../../features/invoiceForm/invoiceFormSlice";
-import { selectToast, showToast } from "../../features/toast/toastSlice";
-import { useDispatch, useSelector } from "react-redux";
+import { selectInvoiceForm } from "../../features/invoiceForm/invoiceFormSlice";
+import { selectToast } from "../../features/toast/toastSlice";
+import { useSelector } from "react-redux";
 
 export default function InvoicePage() {
   const router = useRouter();
   const { id } = router.query;
   const [session, loading] = useSession();
   const { data, error, isLoading } = useGetInvoiceByIdQuery(id);
-  // const [showInvoiceForm, setShowInvoiceForm] = useState(false);
-  // const [showScreen, setShowScreen] = useState(false);
-  // const [hideToast, setHideToast] = useState(true);
-  // const [showToast, setShowToast] = useState(false);
-  // const [toastMessage, setToastMessage] = useState("");
-  // const [toastType, setToastType] = useState("");
 
   const toast = useSelector(selectToast);
   const invoiceForm = useSelector(selectInvoiceForm);
-  const dispatch = useDispatch();
 
   useEffect(() => {
     if (!session) {
       router.push("/");
     }
   }, [session, router]);
-
-  // useEffect(() => {
-  //   if (showToast) {
-  //     setHideToast(false);
-  //     setTimeout(() => {
-  //       setHideToast(true);
-  //     }, 2500);
-  //   }
-  // }, [showToast]);
-
-  // useEffect(() => {
-  //   if (hideToast) {
-  //     setTimeout(() => {
-  //       setShowToast(false);
-  //     }, 500);
-  //   }
-  // }, [hideToast]);
-
-  // useEffect(() => {
-  //   if (!showInvoiceForm) {
-  //     setTimeout(() => {
-  //       setShowScreen(false);
-  //     }, 500);
-  //   } else {
-  //     setShowScreen(true);
-  //   }
-  // }, [showInvoiceForm]);
-
-  const handleEditInvoiceClick = () => {
-    dispatch(showInvoiceForm());
-  };
-
-  // const hideInvoiceForm = () => {
-  //   setShowInvoiceForm(false);
-  // };
-
-  // const showToastMessage = (type, message) => {
-  //   setToastMessage(message);
-  //   setToastType(type);
-  //   setShowToast(true);
-  // };
-
-  // const closeToast = () => {
-  //   setHideToast(true);
-  // };
 
   if (isLoading) {
     return (
@@ -116,10 +61,7 @@ export default function InvoicePage() {
   return (
     <div className={styles.root}>
       <AppBar />
-      <Invoice
-        data={data.invoice}
-        handleEditInvoiceClick={handleEditInvoiceClick}
-      />
+      <Invoice data={data.invoice} />
       {invoiceForm.open && (
         <Screen>
           <InvoiceForm invoice={data.invoice} />

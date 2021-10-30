@@ -8,13 +8,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from "../styles/DeleteModal.module.scss";
 import { useDeleteInvoiceByIdMutation } from "../services/invoice";
 import { useRouter } from "next/router";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  hideDeleteModal,
+  selectDeleteModal,
+} from "../features/deleteModal/deleteModalSlice";
 
-export default function DeleteModal({
-  hidden,
-  cancelDelete,
-  invoiceId,
-  deselectInvoice,
-}) {
+export default function DeleteModal({ invoiceId }) {
   const [
     deleteInvoiceById,
     {
@@ -25,13 +25,16 @@ export default function DeleteModal({
     },
   ] = useDeleteInvoiceByIdMutation();
   const router = useRouter();
-
+  const dispatch = useDispatch();
+  const deleteModal = useSelector(selectDeleteModal);
   const deleteInvoice = () => {
     deleteInvoiceById(invoiceId);
   };
 
   return (
-    <div className={`${styles.root} ${hidden ? styles.root_hidden : ""}`}>
+    <div
+      className={`${styles.root} ${deleteModal.hide ? styles.root_hidden : ""}`}
+    >
       <h1>
         <FontAwesomeIcon
           icon={
@@ -79,7 +82,10 @@ export default function DeleteModal({
           </button>
         ) : (
           <>
-            <button className={styles.cancel} onClick={cancelDelete}>
+            <button
+              className={styles.cancel}
+              onClick={() => dispatch(hideDeleteModal())}
+            >
               Cancel
             </button>
             <button

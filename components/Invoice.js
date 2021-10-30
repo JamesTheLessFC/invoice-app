@@ -9,25 +9,33 @@ import { useUpdateInvoiceByIdMutation } from "../services/invoice";
 import { useRouter } from "next/router";
 import { useSelector, useDispatch } from "react-redux";
 import { selectToast, showToast } from "../features/toast/toastSlice";
-import { selectInvoiceForm } from "../features/invoiceForm/invoiceFormSlice";
+import {
+  selectInvoiceForm,
+  showInvoiceForm,
+} from "../features/invoiceForm/invoiceFormSlice";
+import {
+  selectDeleteModal,
+  showDeleteModal,
+} from "../features/deleteModal/deleteModalSlice";
 
 export default function Invoice({ data, handleEditInvoiceClick }) {
-  const [hideDeleteModal, setHideDeleteModal] = useState(false);
-  const [hideModalScreen, setHideModalScreen] = useState(true);
+  // const [hideDeleteModal, setHideDeleteModal] = useState(false);
+  // const [hideModalScreen, setHideModalScreen] = useState(true);
   const [updateInvoiceById, { isLoading: isUpdating }] =
     useUpdateInvoiceByIdMutation();
   const router = useRouter();
   const toast = useSelector(selectToast);
   const dispatch = useDispatch();
   const invoiceForm = useSelector(selectInvoiceForm);
+  const deleteModal = useSelector(selectDeleteModal);
 
-  useEffect(() => {
-    if (hideDeleteModal) {
-      setTimeout(() => {
-        setHideModalScreen(true);
-      }, 500);
-    }
-  }, [hideDeleteModal]);
+  // useEffect(() => {
+  //   if (hideDeleteModal) {
+  //     setTimeout(() => {
+  //       setHideModalScreen(true);
+  //     }, 500);
+  //   }
+  // }, [hideDeleteModal]);
 
   const markAsPaid = async () => {
     const body = { id: data.id, status: "PAID" };
@@ -50,13 +58,14 @@ export default function Invoice({ data, handleEditInvoiceClick }) {
   };
 
   const handleDeleteClick = () => {
-    setHideModalScreen(false);
-    setHideDeleteModal(false);
+    // setHideModalScreen(false);
+    // setHideDeleteModal(false);
+    dispatch(showDeleteModal());
   };
 
-  const cancelDelete = () => {
-    setHideDeleteModal(true);
-  };
+  // const cancelDelete = () => {
+  //   setHideDeleteModal(true);
+  // };
 
   return (
     <div
@@ -72,7 +81,7 @@ export default function Invoice({ data, handleEditInvoiceClick }) {
           <span>&nbsp;&nbsp;{data.status}</span>
         </p>
         <div className={styles.actions}>
-          <button onClick={handleEditInvoiceClick}>Edit</button>
+          <button onClick={() => dispatch(showInvoiceForm())}>Edit</button>
           <button onClick={handleDeleteClick}>Delete</button>
           <button onClick={markAsPaid} disabled={isUpdating}>
             {isUpdating ? (
@@ -190,13 +199,9 @@ export default function Invoice({ data, handleEditInvoiceClick }) {
           </div>
         </div>
       </div>
-      {!hideModalScreen && (
+      {deleteModal.open && (
         <ModalScreen>
-          <DeleteModal
-            hidden={hideDeleteModal}
-            cancelDelete={cancelDelete}
-            invoiceId={data.id}
-          />
+          <DeleteModal invoiceId={data.id} />
         </ModalScreen>
       )}
     </div>
