@@ -129,6 +129,9 @@ export default function InvoiceForm({ invoice }) {
       clientZip,
       clientCountry,
       invoiceDate: invoiceDate.toISOString(),
+      paymentDue: new Date(
+        invoiceDate.getTime() + paymentTerms * 24 * 60 * 60 * 1000
+      ).toISOString(),
       paymentTerms,
       items: items.map((item) => ({
         name: item.name,

@@ -17,8 +17,10 @@ export default async function handle(req, res) {
       include: {
         items: true,
       },
+      orderBy: {
+        paymentDue: "asc",
+      },
     });
-    console.log(invoicesData);
     const invoices = invoicesData.map((invoice) => ({
       ...invoice,
       total:
@@ -29,10 +31,9 @@ export default async function handle(req, res) {
           : invoice.items.length === 1
           ? invoice.items[0].price * invoice.items[0].quantity
           : 0,
-      paymentDue: new Date(
-        invoice.invoiceDate.getTime() +
-          invoice.paymentTerms * 24 * 60 * 60 * 1000
-      ).toLocaleDateString("en-US", { dateStyle: "medium" }),
+      paymentDue: invoice.paymentDue.toLocaleDateString("en-US", {
+        dateStyle: "medium",
+      }),
       invoiceDate: invoice.invoiceDate.toLocaleDateString("en-US", {
         dateStyle: "medium",
       }),

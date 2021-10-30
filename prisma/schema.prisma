@@ -80,6 +80,8 @@ model Item {
 
 model Invoice {
   id            String   @id @default(cuid())
+  createdAt     DateTime @default(now())
+  paymentDue    DateTime
   invoiceDate   DateTime @default(now())
   description   String?
   paymentTerms  Int      @default(30)

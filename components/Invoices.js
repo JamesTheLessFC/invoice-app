@@ -14,17 +14,21 @@ export default function Invoices({ data }) {
 
   useEffect(() => {
     if (filter.length > 0) {
+      // setFilteredInvoices(
+      //   data
+      //     .filter((invoice) => filter.includes(invoice.status))
+      //     .sort((a, b) => new Date(a.paymentDue) - new Date(b.paymentDue))
+      // );
       setFilteredInvoices(
-        data
-          .filter((invoice) => filter.includes(invoice.status))
-          .sort((a, b) => new Date(a.paymentDue) - new Date(b.paymentDue))
+        data.filter((invoice) => filter.includes(invoice.status))
       );
     } else {
-      setFilteredInvoices(
-        [...data].sort(
-          (a, b) => new Date(a.paymentDue) - new Date(b.paymentDue)
-        )
-      );
+      // setFilteredInvoices(
+      //   [...data].sort(
+      //     (a, b) => new Date(a.paymentDue) - new Date(b.paymentDue)
+      //   )
+      // );
+      setFilteredInvoices(data);
     }
   }, [filter, data]);
 
