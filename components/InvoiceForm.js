@@ -52,6 +52,7 @@ export default function InvoiceForm({ invoice }) {
   const dispatch = useDispatch();
   const invoiceForm = useSelector(selectInvoiceForm);
   const [activeButton, setActiveButton] = useState("");
+  const [isValid, setIsValid] = useState(false);
 
   useEffect(() => {
     if (invoice) {
@@ -98,6 +99,17 @@ export default function InvoiceForm({ invoice }) {
       setErrors(addError.data.errors);
     }
   }, [addError]);
+
+  useEffect(() => {
+    setIsValid(
+      Object.values(errors).every((val) => {
+        if (typeof val === "object") {
+          return Object.values(val).every((innerVal) => innerVal === "");
+        }
+        return val === "";
+      })
+    );
+  }, [errors]);
 
   const prepareInvoiceObj = () => {
     return {
@@ -329,7 +341,7 @@ export default function InvoiceForm({ invoice }) {
 
   const handleClientStateChange = (state) => {
     setClientState(state);
-    if (errors.clientCity) {
+    if (errors.clientState) {
       setErrors((prevState) => {
         return {
           ...prevState,
@@ -447,6 +459,14 @@ export default function InvoiceForm({ invoice }) {
         },
       ];
     });
+    if (errors.items) {
+      setErrors((prevState) => {
+        return {
+          ...prevState,
+          items: "",
+        };
+      });
+    }
   };
 
   const deleteItem = (e, itemId) => {
@@ -915,7 +935,7 @@ export default function InvoiceForm({ invoice }) {
           <button
             onClick={() => editInvoice(invoice.status.toUpperCase())}
             className={styles.save_changes}
-            disabled={isUpdating}
+            disabled={isUpdating || !isValid}
           >
             <span className={styles.icon_xs_only}>
               <FontAwesomeIcon icon={faSave} />
@@ -964,7 +984,7 @@ export default function InvoiceForm({ invoice }) {
           <button
             onClick={saveAndSend}
             className={styles.save_and_send}
-            disabled={isAdding || isUpdating}
+            disabled={isAdding || isUpdating || !isValid}
           >
             <span className={styles.icon_xs_only}>
               {(isAdding || isUpdating) && activeButton === "save and send" ? (

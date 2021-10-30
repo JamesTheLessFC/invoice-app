@@ -132,6 +132,10 @@ $transparent-black: hsla(0, 0%, 0%, 0.6);
   padding: 1rem 1.5rem;
   border-radius: 2rem;
   cursor: pointer;
+  &:disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
 }
 
 @mixin button-with-icon {
