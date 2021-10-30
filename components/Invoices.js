@@ -13,12 +13,26 @@ export default function Invoices({ data }) {
   const invoiceForm = useSelector(selectInvoiceForm);
 
   useEffect(() => {
+    setFilteredInvoices((prevState) => {
+      return [...prevState].sort(
+        (a, b) => new Date(a.paymentDue) - new Date(b.paymentDue)
+      );
+    });
+  }, []);
+
+  useEffect(() => {
     if (filter.length > 0) {
       setFilteredInvoices(
-        data.filter((invoice) => filter.includes(invoice.status))
+        data
+          .filter((invoice) => filter.includes(invoice.status))
+          .sort((a, b) => new Date(a.paymentDue) - new Date(b.paymentDue))
       );
     } else {
-      setFilteredInvoices(data);
+      setFilteredInvoices(
+        [...data].sort(
+          (a, b) => new Date(a.paymentDue) - new Date(b.paymentDue)
+        )
+      );
     }
   }, [filter, data]);
 

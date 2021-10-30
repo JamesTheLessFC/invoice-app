@@ -18,6 +18,7 @@ export default async function handle(req, res) {
         items: true,
       },
     });
+    console.log(invoicesData);
     const invoices = invoicesData.map((invoice) => ({
       ...invoice,
       total:
