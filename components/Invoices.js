@@ -13,14 +13,6 @@ export default function Invoices({ data }) {
   const invoiceForm = useSelector(selectInvoiceForm);
 
   useEffect(() => {
-    setFilteredInvoices((prevState) => {
-      return [...prevState].sort(
-        (a, b) => new Date(a.paymentDue) - new Date(b.paymentDue)
-      );
-    });
-  }, []);
-
-  useEffect(() => {
     if (filter.length > 0) {
       setFilteredInvoices(
         data
