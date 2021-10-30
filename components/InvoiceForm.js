@@ -23,6 +23,7 @@ import {
   hideInvoiceForm,
 } from "../features/invoiceForm/invoiceFormSlice";
 import { states } from "../util/states";
+import { validateInvoice } from "../util/validators";
 
 export default function InvoiceForm({ invoice }) {
   const [senderStreet, setSenderStreet] = useState("");
@@ -130,6 +131,12 @@ export default function InvoiceForm({ invoice }) {
       ...prepareInvoiceObj(),
       status,
     };
+    if (body.status !== "DRAFT") {
+      const validationResults = validateInvoice(body);
+      if (!validationResults.valid) {
+        return setErrors(validationResults.errors);
+      }
+    }
     try {
       const response = await addInvoice(body).unwrap();
       dispatch(
@@ -141,12 +148,14 @@ export default function InvoiceForm({ invoice }) {
         })
       );
     } catch (err) {
-      dispatch(
-        showToast({
-          type: "error",
-          message: "Oops! Something went wrong",
-        })
-      );
+      if (err.status !== 400) {
+        dispatch(
+          showToast({
+            type: "error",
+            message: "Oops! Something went wrong",
+          })
+        );
+      }
     }
   };
 
@@ -156,6 +165,12 @@ export default function InvoiceForm({ invoice }) {
       id: invoice.id,
       status,
     };
+    if (body.status !== "DRAFT") {
+      const validationResults = validateInvoice(body);
+      if (!validationResults.valid) {
+        return setErrors(validationResults.errors);
+      }
+    }
     try {
       const response = await updateInvoice(body).unwrap();
       dispatch(
@@ -167,12 +182,14 @@ export default function InvoiceForm({ invoice }) {
         })
       );
     } catch (err) {
-      dispatch(
-        showToast({
-          type: "error",
-          message: "Oops! Something went wrong",
-        })
-      );
+      if (err.status !== 400) {
+        dispatch(
+          showToast({
+            type: "error",
+            message: "Oops! Something went wrong",
+          })
+        );
+      }
     }
   };
 
