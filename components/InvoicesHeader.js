@@ -2,19 +2,25 @@ import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from "../styles/InvoicesHeader.module.scss";
 import InvoicesFilter from "./InvoicesFilter";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  selectInvoiceForm,
+  showInvoiceForm,
+} from "../features/invoiceForm/invoiceFormSlice";
 
 export default function InvoicesHeader({
   filter,
   filterOptions,
   handleFilterSelect,
   invoiceCount,
-  showInvoiceForm,
-  handleAddNewInvoiceClick,
 }) {
+  const invoiceForm = useSelector(selectInvoiceForm);
+  const dispatch = useDispatch();
+
   return (
     <div
       className={`${styles.root} ${
-        showInvoiceForm ? styles.root_with_form : ""
+        invoiceForm.open ? styles.root_with_form : ""
       }`}
     >
       <div className={styles.align_left}>
@@ -28,7 +34,10 @@ export default function InvoicesHeader({
         filterOptions={filterOptions}
         handleFilterSelect={handleFilterSelect}
       />
-      <button className={styles.button_add} onClick={handleAddNewInvoiceClick}>
+      <button
+        className={styles.button_add}
+        onClick={() => dispatch(showInvoiceForm())}
+      >
         <span className={styles.icon}>
           <FontAwesomeIcon icon={faPlus} />
         </span>

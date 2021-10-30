@@ -4,6 +4,9 @@ import { validateInvoice } from "../../../util/validators";
 
 export default async function handle(req, res) {
   const session = await getSession({ req });
+  if (!session) {
+    return res.status(401).json({ message: "User not signed in" });
+  }
   if (!req.body.status) req.body.status = "DRAFT";
   if (req.body.status !== "DRAFT") {
     const validationResults = validateInvoice(req.body);

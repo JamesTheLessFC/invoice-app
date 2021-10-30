@@ -1,6 +1,8 @@
 import {
   faPaperPlane,
   faSave,
+  faSpinner,
+  faTimes,
   faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -47,6 +49,7 @@ export default function InvoiceForm({ invoice }) {
     useUpdateInvoiceByIdMutation();
   const dispatch = useDispatch();
   const invoiceForm = useSelector(selectInvoiceForm);
+  const [activeButton, setActiveButton] = useState("");
 
   useEffect(() => {
     if (invoice) {
@@ -157,6 +160,24 @@ export default function InvoiceForm({ invoice }) {
           message: "Oops! Something went wrong",
         })
       );
+    }
+  };
+
+  const saveAsDraft = () => {
+    setActiveButton("save as draft");
+    if (invoice) {
+      editInvoice("DRAFT");
+    } else {
+      addInvoice();
+    }
+  };
+
+  const saveAndSend = () => {
+    setActiveButton("save and send");
+    if (invoice) {
+      editInvoice("PENDING");
+    } else {
+      addInvoice("PENDING");
     }
   };
 
@@ -444,7 +465,7 @@ export default function InvoiceForm({ invoice }) {
       }`}
     >
       <div className={styles.back_button}>
-        <BackButton handleClick={hideInvoiceForm} />
+        <BackButton handleClick={() => dispatch(hideInvoiceForm())} />
       </div>
       <form>
         <h1 className={styles.form_title}>
@@ -855,13 +876,26 @@ export default function InvoiceForm({ invoice }) {
             className={styles.cancel}
             onClick={() => dispatch(hideInvoiceForm())}
           >
+            <span className={styles.icon_xs_only}>
+              <FontAwesomeIcon icon={faTimes} className={styles.icon} />
+            </span>
             <span>Cancel</span>
           </button>
           <button
             onClick={() => editInvoice(invoice.status.toUpperCase())}
             className={styles.save_changes}
+            disabled={isUpdating}
           >
-            <span>Save Changes</span>
+            <span className={styles.icon_xs_only}>
+              <FontAwesomeIcon icon={faSave} />
+            </span>
+            <span>
+              {isUpdating ? (
+                <FontAwesomeIcon icon={faSpinner} spin />
+              ) : (
+                "Save Changes"
+              )}
+            </span>
           </button>
         </div>
       ) : (
@@ -870,26 +904,48 @@ export default function InvoiceForm({ invoice }) {
             className={styles.discard}
             onClick={() => dispatch(hideInvoiceForm())}
           >
-            <FontAwesomeIcon icon={faTrash} className={styles.icon} />
+            <span className={styles.icon_xs_only}>
+              <FontAwesomeIcon icon={invoice ? faTimes : faTrash} />
+            </span>
             <span>{invoice ? "Cancel" : "Discard"}</span>
           </button>
           <button
-            onClick={invoice ? () => editInvoice("DRAFT") : addNewInvoice}
+            onClick={saveAsDraft}
             className={styles.save_as_draft}
+            disabled={isAdding || isUpdating}
           >
-            <FontAwesomeIcon icon={faSave} className={styles.icon} />
-            <span>Save as Draft</span>
+            <span className={styles.icon_xs_only}>
+              {(isAdding || isUpdating) && activeButton === "save as draft" ? (
+                <FontAwesomeIcon icon={faSpinner} spin />
+              ) : (
+                <FontAwesomeIcon icon={faSave} />
+              )}
+            </span>
+            <span>
+              {(isAdding || isUpdating) && activeButton === "save as draft" ? (
+                <FontAwesomeIcon icon={faSpinner} spin />
+              ) : (
+                "Save as Draft"
+              )}
+            </span>
           </button>
           <button
-            onClick={
-              invoice
-                ? () => editInvoice(invoice.status.toUpperCase())
-                : () => addInvoice("PENDING")
-            }
+            onClick={saveAndSend}
             className={styles.save_and_send}
+            disabled={isAdding || isUpdating}
           >
-            <FontAwesomeIcon icon={faPaperPlane} className={styles.icon} />
-            <span>Save &amp; Send</span>
+            <span className={styles.icon_xs_only}>
+              {(isAdding || isUpdating) && activeButton === "save and send" ? (
+                <FontAwesomeIcon icon={faSpinner} spin />
+              ) : (
+                <FontAwesomeIcon icon={faPaperPlane} />
+              )}
+            </span>
+            {(isAdding || isUpdating) && activeButton === "save and send" ? (
+              <FontAwesomeIcon icon={faSpinner} spin />
+            ) : (
+              <span>Save &amp; Send</span>
+            )}
           </button>
         </div>
       )}

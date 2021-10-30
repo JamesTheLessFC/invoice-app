@@ -3,7 +3,7 @@ import { useSession } from "next-auth/client";
 import { useGetInvoicesQuery } from "../services/invoice";
 import AppBar from "../components/AppBar";
 import Invoices from "../components/Invoices";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import InvoiceForm from "../components/InvoiceForm";
 import Screen from "../components/Screen";
 import Toast from "../components/Toast";
@@ -14,18 +14,13 @@ import {
   faSpinner,
 } from "@fortawesome/free-solid-svg-icons";
 import { useSelector } from "react-redux";
-import { useDispatch } from "react-redux";
 import { selectToast, hideToast } from "../features/toast/toastSlice";
-import {
-  selectInvoiceForm,
-  showInvoiceForm,
-} from "../features/invoiceForm/invoiceFormSlice";
+import { selectInvoiceForm } from "../features/invoiceForm/invoiceFormSlice";
 
 export default function InvoicesPage() {
   const [session, loading] = useSession();
   const { data, error, isLoading } = useGetInvoicesQuery();
   const router = useRouter();
-  const dispatch = useDispatch();
   const toast = useSelector(selectToast);
   const invoiceForm = useSelector(selectInvoiceForm);
 
@@ -34,10 +29,6 @@ export default function InvoicesPage() {
       router.push("/");
     }
   }, [session, router]);
-
-  const handleAddNewInvoiceClick = () => {
-    dispatch(showInvoiceForm());
-  };
 
   if (isLoading) {
     return (
@@ -68,24 +59,13 @@ export default function InvoicesPage() {
   return (
     <div className={styles.root}>
       <AppBar />
-      <Invoices
-        data={data.invoices}
-        handleAddNewInvoiceClick={handleAddNewInvoiceClick}
-        showInvoiceForm={showInvoiceForm}
-      />
+      <Invoices data={data.invoices} />
       {invoiceForm.open && (
         <Screen>
           <InvoiceForm />
         </Screen>
       )}
-      {toast.active && (
-        <Toast
-          type={toast.type}
-          hideToast={toast.hide}
-          closeToast={() => dispatch(hideToast())}
-          message={toast.message}
-        />
-      )}
+      {toast.active && <Toast />}
     </div>
   );
 }

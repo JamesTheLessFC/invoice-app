@@ -161,10 +161,10 @@
         color: $light-purple;
       }
     }
-    span {
+    span:not(.icon_xs_only) {
       display: none;
     }
-    .icon {
+    .icon_xs_only {
       font-size: 2rem;
       color: $purple;
     }
@@ -199,10 +199,10 @@
 @media screen and (min-width: 500px) {
   .actions {
     button {
-      span {
+      span:not(.icon_xs_only) {
         display: inline;
       }
-      .icon {
+      .icon_xs_only {
         display: none;
       }
       &.discard {

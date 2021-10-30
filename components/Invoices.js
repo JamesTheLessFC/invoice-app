@@ -1,33 +1,16 @@
 import InvoiceList from "../components/InvoiceList";
-//import data from "../data.json";
 import InvoicesHeader from "../components/InvoicesHeader";
 import { useState, useEffect } from "react";
 import EmptyMessage from "./EmptyMessage";
 import styles from "../styles/Invoices.module.scss";
-import InvoiceForm from "./InvoiceForm";
-import Screen from "./Screen";
+import { useSelector } from "react-redux";
+import { selectInvoiceForm } from "../features/invoiceForm/invoiceFormSlice";
 
-export default function Invoices({
-  data,
-  selectInvoice,
-  handleAddNewInvoiceClick,
-  showInvoiceForm,
-}) {
+export default function Invoices({ data }) {
   const filterOptions = ["paid", "pending", "draft"];
   const [filter, setFilter] = useState([]);
   const [filteredInvoices, setFilteredInvoices] = useState(data);
-  // const [showInvoiceForm, setShowInvoiceForm] = useState(false);
-  // const [showScreen, setShowScreen] = useState(false);
-
-  // useEffect(() => {
-  //   if (!showInvoiceForm) {
-  //     setTimeout(() => {
-  //       setShowScreen(false);
-  //     }, 500);
-  //   } else {
-  //     setShowScreen(true);
-  //   }
-  // }, [showInvoiceForm]);
+  const invoiceForm = useSelector(selectInvoiceForm);
 
   useEffect(() => {
     if (filter.length > 0) {
@@ -38,14 +21,6 @@ export default function Invoices({
       setFilteredInvoices(data);
     }
   }, [filter, data]);
-
-  // const handleAddNewInvoiceClick = () => {
-  //   setShowInvoiceForm(true);
-  // };
-
-  // const handleDiscardNewInvoiceClick = () => {
-  //   setShowInvoiceForm(false);
-  // };
 
   const handleFilterSelect = (e, selectedStatus) => {
     e.stopPropagation();
@@ -61,7 +36,7 @@ export default function Invoices({
   return (
     <div
       className={`${styles.root} ${
-        showInvoiceForm ? styles.root_with_invoice_form : ""
+        invoiceForm.open ? styles.root_with_invoice_form : ""
       }`}
     >
       <InvoicesHeader
@@ -69,14 +44,8 @@ export default function Invoices({
         filter={filter}
         handleFilterSelect={handleFilterSelect}
         invoiceCount={filteredInvoices.length}
-        showInvoiceForm={showInvoiceForm}
-        handleAddNewInvoiceClick={handleAddNewInvoiceClick}
       />
-      <InvoiceList
-        data={filteredInvoices}
-        selectInvoice={selectInvoice}
-        showInvoiceForm={showInvoiceForm}
-      />
+      <InvoiceList data={filteredInvoices} />
       {filteredInvoices.length === 0 && <EmptyMessage />}
     </div>
   );

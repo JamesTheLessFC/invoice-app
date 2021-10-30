@@ -7,19 +7,11 @@ import ModalScreen from "./ModalScreen";
 import DeleteModal from "./DeleteModal";
 import { useUpdateInvoiceByIdMutation } from "../services/invoice";
 import { useRouter } from "next/router";
-import Toast from "./Toast";
 import { useSelector, useDispatch } from "react-redux";
-import {
-  selectToast,
-  hideToast,
-  showToast,
-} from "../features/toast/toastSlice";
+import { selectToast, showToast } from "../features/toast/toastSlice";
+import { selectInvoiceForm } from "../features/invoiceForm/invoiceFormSlice";
 
-export default function Invoice({
-  data,
-  handleEditInvoiceClick,
-  showInvoiceForm,
-}) {
+export default function Invoice({ data, handleEditInvoiceClick }) {
   const [hideDeleteModal, setHideDeleteModal] = useState(false);
   const [hideModalScreen, setHideModalScreen] = useState(true);
   const [updateInvoiceById, { isLoading: isUpdating }] =
@@ -27,6 +19,7 @@ export default function Invoice({
   const router = useRouter();
   const toast = useSelector(selectToast);
   const dispatch = useDispatch();
+  const invoiceForm = useSelector(selectInvoiceForm);
 
   useEffect(() => {
     if (hideDeleteModal) {
@@ -68,7 +61,7 @@ export default function Invoice({
   return (
     <div
       className={`${styles.root} ${
-        showInvoiceForm ? styles.root_with_invoice_form : ""
+        invoiceForm.open ? styles.root_with_invoice_form : ""
       }`}
     >
       <BackButton handleClick={() => router.push("/invoices")} />
@@ -81,7 +74,13 @@ export default function Invoice({
         <div className={styles.actions}>
           <button onClick={handleEditInvoiceClick}>Edit</button>
           <button onClick={handleDeleteClick}>Delete</button>
-          <button onClick={markAsPaid}>Mark as Paid</button>
+          <button onClick={markAsPaid} disabled={isUpdating}>
+            {isUpdating ? (
+              <FontAwesomeIcon icon={faSpinner} spin />
+            ) : (
+              "Mark as Paid"
+            )}
+          </button>
         </div>
       </div>
       <div className={styles.container}>
@@ -199,14 +198,6 @@ export default function Invoice({
             invoiceId={data.id}
           />
         </ModalScreen>
-      )}
-      {toast.active && (
-        <Toast
-          type={toast.type}
-          hideToast={toast.hide}
-          closeToast={() => dispatch(hideToast())}
-          message={toast.message}
-        />
       )}
     </div>
   );

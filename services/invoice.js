@@ -24,10 +24,10 @@ export const invoiceApi = createApi({
             [{ type: "Invoices", id: "LIST" }],
     }),
     addInvoice: builder.mutation({
-      query: (post) => ({
+      query: (invoice) => ({
         url: "invoice",
         method: "POST",
-        body: post,
+        body: invoice,
       }),
       invalidatesTags: [{ type: "Invoices", id: "LIST" }],
     }),
