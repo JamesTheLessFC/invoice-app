@@ -30,10 +30,16 @@ export default function DeleteModal({ invoiceId }) {
   const deleteInvoice = () => {
     deleteInvoiceById(invoiceId);
   };
+  const returnToInvoices = () => {
+    dispatch(hideDeleteModal());
+    router.push("/invoices");
+  };
 
   return (
     <div
-      className={`${styles.root} ${deleteModal.hide ? styles.root_hidden : ""}`}
+      className={`${styles.root} ${
+        deleteModal.hidden ? styles.root_hidden : ""
+      }`}
     >
       <h1>
         <FontAwesomeIcon
@@ -74,10 +80,7 @@ export default function DeleteModal({ invoiceId }) {
       </p>
       <div className={styles.actions}>
         {deleteSuccess ? (
-          <button
-            className={styles.return}
-            onClick={() => router.push("/invoices")}
-          >
+          <button className={styles.return} onClick={returnToInvoices}>
             Return to invoices
           </button>
         ) : (
@@ -85,6 +88,7 @@ export default function DeleteModal({ invoiceId }) {
             <button
               className={styles.cancel}
               onClick={() => dispatch(hideDeleteModal())}
+              disabled={isDeleting}
             >
               Cancel
             </button>

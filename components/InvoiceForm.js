@@ -875,6 +875,7 @@ export default function InvoiceForm({ invoice }) {
           <button
             className={styles.cancel}
             onClick={() => dispatch(hideInvoiceForm())}
+            disabled={isUpdating}
           >
             <span className={styles.icon_xs_only}>
               <FontAwesomeIcon icon={faTimes} className={styles.icon} />
@@ -903,6 +904,7 @@ export default function InvoiceForm({ invoice }) {
           <button
             className={styles.discard}
             onClick={() => dispatch(hideInvoiceForm())}
+            disabled={isAdding || isUpdating}
           >
             <span className={styles.icon_xs_only}>
               <FontAwesomeIcon icon={invoice ? faTimes : faTrash} />
