@@ -44,8 +44,9 @@ export default function InvoiceForm({ invoice }) {
   const [description, setDescription] = useState("");
   const [items, setItems] = useState([]);
   const [errors, setErrors] = useState({});
-  const [addInvoice, { isLoading: isAdding }] = useAddInvoiceMutation();
-  const [updateInvoice, { isLoading: isUpdating }] =
+  const [addInvoice, { isLoading: isAdding, error: addError }] =
+    useAddInvoiceMutation();
+  const [updateInvoice, { isLoading: isUpdating, error: updateError }] =
     useUpdateInvoiceByIdMutation();
   const dispatch = useDispatch();
   const invoiceForm = useSelector(selectInvoiceForm);
@@ -84,6 +85,18 @@ export default function InvoiceForm({ invoice }) {
       );
     }
   }, [invoice]);
+
+  useEffect(() => {
+    if (updateError?.data?.errors) {
+      setErrors(updateError.data.errors);
+    }
+  }, [updateError]);
+
+  useEffect(() => {
+    if (addError?.data?.errors) {
+      setErrors(addError.data.errors);
+    }
+  }, [addError]);
 
   const prepareInvoiceObj = () => {
     return {
@@ -168,7 +181,7 @@ export default function InvoiceForm({ invoice }) {
     if (invoice) {
       editInvoice("DRAFT");
     } else {
-      addInvoice();
+      addNewInvoice();
     }
   };
 
@@ -177,7 +190,7 @@ export default function InvoiceForm({ invoice }) {
     if (invoice) {
       editInvoice("PENDING");
     } else {
-      addInvoice("PENDING");
+      addNewInvoice("PENDING");
     }
   };
 
