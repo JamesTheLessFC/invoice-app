@@ -17,7 +17,6 @@ import { useSelector, useDispatch } from "react-redux";
 import { selectToast } from "../../features/toast/toastSlice";
 import { selectInvoiceForm } from "../../features/invoiceForm/invoiceFormSlice";
 import { selectInvoiceList } from "../../features/invoiceList/invoiceListSlice";
-import { arraysAreEqual } from "../../util/helperFunctions";
 
 export async function getServerSideProps({ query }) {
   const pageString = query.page;
@@ -96,7 +95,7 @@ export default function InvoicesPage({ page, filters }) {
           Previous
         </button>
         <button
-          disabled={!(page * 2 <= data.count)}
+          disabled={!(page * 2 < data.count)}
           onClick={() => navigateToPage(page + 1)}
         >
           Next
