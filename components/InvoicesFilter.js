@@ -6,13 +6,20 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from "../styles/InvoicesFilter.module.scss";
 import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  selectInvoiceList,
+  addFilter,
+  removeFilter,
+} from "../features/invoiceList/invoiceListSlice";
+import { useRouter } from "next/router";
 
-export default function InvoicesFilter({
-  filter,
-  filterOptions,
-  handleFilterSelect,
-}) {
+export default function InvoicesFilter() {
   const [hideOptions, setHideOptions] = useState(true);
+  const invoiceList = useSelector(selectInvoiceList);
+  const dispatch = useDispatch();
+  const filterOptions = ["paid", "pending", "draft"];
+  const router = useRouter();
 
   useEffect(() => {
     if (!hideOptions) {
@@ -27,6 +34,29 @@ export default function InvoicesFilter({
       };
     }
   }, [hideOptions]);
+
+  const handleOptionSelect = (e, option) => {
+    e.stopPropagation();
+    let selectedFilters = invoiceList.filters;
+    if (selectedFilters.includes(option)) {
+      dispatch(removeFilter(option));
+      selectedFilters = selectedFilters.filter((val) => val !== option);
+    } else {
+      dispatch(addFilter(option));
+      selectedFilters = [...selectedFilters, option];
+    }
+    router.push(
+      `/invoices?${
+        selectedFilters.length > 0
+          ? `filter=${
+              selectedFilters.length > 1
+                ? selectedFilters.join(",")
+                : selectedFilters[0]
+            }&`
+          : ""
+      }page=1`
+    );
+  };
 
   const toggleOptions = (e) => {
     e.stopPropagation();
@@ -46,11 +76,13 @@ export default function InvoicesFilter({
           <li key={option}>
             <button
               className={styles.option_button}
-              onClick={(e) => handleFilterSelect(e, option)}
+              onClick={(e) => handleOptionSelect(e, option)}
             >
               <span
                 className={`${styles.checkbox} ${
-                  filter.includes(option) ? styles.checkbox_checked : ""
+                  invoiceList.filters.includes(option)
+                    ? styles.checkbox_checked
+                    : ""
                 }`}
               >
                 <FontAwesomeIcon icon={faCheck} className={styles.check} />

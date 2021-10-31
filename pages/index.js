@@ -4,15 +4,29 @@ import { useEffect } from "react";
 import { useSession } from "next-auth/client";
 import { SignInMessage } from "../components/SignInMessage";
 import router from "next/router";
+import { useSelector } from "react-redux";
+import { selectInvoiceList } from "../features/invoiceList/invoiceListSlice";
 
 export default function Home() {
   const [session, loading] = useSession();
+  const invoiceList = useSelector(selectInvoiceList);
 
   useEffect(() => {
     if (session) {
-      router.push("/invoices");
+      const selectedFilters = invoiceList.filters;
+      router.push(
+        `/invoices?${
+          selectedFilters.length > 0
+            ? `filter=${
+                selectedFilters.length > 1
+                  ? selectedFilters.join(",")
+                  : selectedFilters[0]
+              }&`
+            : ""
+        }page=1`
+      );
     }
-  }, [session]);
+  }, [session, invoiceList.filters]);
 
   if (!session) {
     return (

@@ -8,12 +8,7 @@ import {
   showInvoiceForm,
 } from "../features/invoiceForm/invoiceFormSlice";
 
-export default function InvoicesHeader({
-  filter,
-  filterOptions,
-  handleFilterSelect,
-  invoiceCount,
-}) {
+export default function InvoicesHeader({ invoiceCount }) {
   const invoiceForm = useSelector(selectInvoiceForm);
   const dispatch = useDispatch();
 
@@ -29,11 +24,7 @@ export default function InvoicesHeader({
           {invoiceCount} Invoice{invoiceCount !== 1 ? "s" : ""}
         </p>
       </div>
-      <InvoicesFilter
-        filter={filter}
-        filterOptions={filterOptions}
-        handleFilterSelect={handleFilterSelect}
-      />
+      <InvoicesFilter />
       <button
         className={styles.button_add}
         onClick={() => dispatch(showInvoiceForm())}

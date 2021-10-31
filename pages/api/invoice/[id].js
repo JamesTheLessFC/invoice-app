@@ -30,7 +30,7 @@ export default async function handle(req, res) {
           : invoiceData.items.length === 1
           ? invoiceData.items[0].price * invoiceData.items[0].quantity
           : 0,
-      paymentDue: invoice.paymentDue.toLocaleDateString("en-US", {
+      paymentDue: invoiceData.paymentDue.toLocaleDateString("en-US", {
         dateStyle: "medium",
       }),
       invoiceDate: invoiceData.invoiceDate.toLocaleDateString("en-US", {

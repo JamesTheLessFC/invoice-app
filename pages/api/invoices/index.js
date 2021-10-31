@@ -7,10 +7,15 @@ export default async function handle(req, res) {
     return res.status(401).json({ message: "User not signed in" });
   }
 
-  const user = session.user;
-
   if (req.method === "GET") {
-    const invoicesData = await prisma.invoice.findMany({
+    const countQuery = {
+      where: {
+        user: { email: session.user.email },
+      },
+    };
+    const dataQuery = {
+      take: 3,
+      skip: (Number(req.query.page) - 1) * 2,
       where: {
         user: { email: session.user.email },
       },
@@ -20,7 +25,28 @@ export default async function handle(req, res) {
       orderBy: {
         paymentDue: "asc",
       },
-    });
+    };
+    if (req.query.filter) {
+      dataQuery.where = {
+        ...dataQuery.where,
+        status: {
+          in: req.query.filter.split(",").map((fil) => fil.toUpperCase()),
+        },
+      };
+      countQuery.where = {
+        ...countQuery.where,
+        status: {
+          in: req.query.filter.split(",").map((fil) => fil.toUpperCase()),
+        },
+      };
+    }
+    const count = await prisma.invoice.count(countQuery);
+    const invoicesData = await prisma.invoice.findMany(dataQuery);
+    let endOfSet = true;
+    if (invoicesData.length === 3) {
+      invoicesData.pop(); // remove the last invoice, which we fetched only to see if there were more
+      endOfSet = false; // there are still more invoices to fetch
+    }
     const invoices = invoicesData.map((invoice) => ({
       ...invoice,
       total:
@@ -43,6 +69,6 @@ export default async function handle(req, res) {
         total: item.price * item.quantity,
       })),
     }));
-    return res.json({ invoices });
+    return res.json({ invoices, endOfSet, count });
   }
 }

@@ -8,7 +8,12 @@ export const invoiceApi = createApi({
   tagTypes: ["Invoices"],
   endpoints: (builder) => ({
     getInvoices: builder.query({
-      query: () => "invoices",
+      query: ({ page = 1, filters = [] }) =>
+        `invoices?${
+          filters.length > 0
+            ? `filter=${filters.length > 1 ? filters.join(",") : filters[0]}&`
+            : ""
+        }page=${page}`,
       // Provides a list of `Invoices` by `id`.
       // If any mutation is executed that `invalidate`s any of these tags, this query will re-run to be always up-to-date.
       // The `LIST` id is a "virtual id" I just made up to be able to invalidate this query specifically if a new `Invoices` element was added.

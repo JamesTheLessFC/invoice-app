@@ -4,6 +4,7 @@ import { setupListeners } from "@reduxjs/toolkit/query";
 import { invoiceApi } from "./services/invoice";
 import invoiceFormReducer from "./features/invoiceForm/invoiceFormSlice";
 import deleteModalReducer from "./features/deleteModal/deleteModalSlice";
+import invoiceListReducer from "./features/invoiceList/invoiceListSlice";
 
 export const store = configureStore({
   reducer: {
@@ -11,6 +12,7 @@ export const store = configureStore({
     toast: toastReducer,
     invoiceForm: invoiceFormReducer,
     deleteModal: deleteModalReducer,
+    invoiceList: invoiceListReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(invoiceApi.middleware),
