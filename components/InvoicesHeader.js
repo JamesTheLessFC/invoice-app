@@ -14,6 +14,18 @@ export default function InvoicesHeader() {
   const invoiceList = useSelector(selectInvoiceList);
   const dispatch = useDispatch();
 
+  const getInvoiceCountLine = () => {
+    const count = invoiceList.invoiceCount;
+    const page = invoiceList.page;
+    const max = 2;
+    const lastPage = Math.ceil(count / max) === page;
+    const firstOnPage = max * page - (max - 1);
+    const lastOnPage = lastPage ? count : firstOnPage + max - 1;
+    return `Invoice${lastOnPage !== firstOnPage ? "s" : ""} ${firstOnPage}${
+      lastOnPage !== firstOnPage ? `-${lastOnPage}` : ""
+    } of ${count}`;
+  };
+
   return (
     <div
       className={`${styles.root} ${
@@ -22,10 +34,7 @@ export default function InvoicesHeader() {
     >
       <div className={styles.align_left}>
         <h2>Invoices</h2>
-        <p>
-          {invoiceList.invoiceCount} Invoice
-          {invoiceList.invoiceCount !== 1 ? "s" : ""}
-        </p>
+        <p>{getInvoiceCountLine()}</p>
       </div>
       <InvoicesFilter />
       <button

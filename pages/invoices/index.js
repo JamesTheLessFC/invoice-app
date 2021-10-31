@@ -19,6 +19,7 @@ import { selectInvoiceForm } from "../../features/invoiceForm/invoiceFormSlice";
 import {
   selectInvoiceList,
   setFilters,
+  setInvoiceCount,
   setPage,
 } from "../../features/invoiceList/invoiceListSlice";
 import { arraysAreEqual } from "../../util/helperFunctions";
@@ -54,10 +55,17 @@ export default function InvoicesPage({ page, filters }) {
     if (!arraysAreEqual(filters, invoiceList.filters)) {
       dispatch(setFilters(filters));
     }
+  }, [invoiceList.filters, filters, dispatch]);
+
+  useEffect(() => {
     if (page !== invoiceList.page) {
       dispatch(setPage(page));
     }
-  });
+  }, [dispatch, invoiceList.page, page]);
+
+  useEffect(() => {
+    dispatch(setInvoiceCount(data?.count ? data.count : 0));
+  }, [data, dispatch]);
 
   const navigateToPage = (page) => {
     const selectedFilters = invoiceList.filters;
