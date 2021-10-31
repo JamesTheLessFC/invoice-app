@@ -19,6 +19,7 @@ import { selectInvoiceForm } from "../../features/invoiceForm/invoiceFormSlice";
 import {
   selectInvoiceList,
   setFilters,
+  setPage,
 } from "../../features/invoiceList/invoiceListSlice";
 import { arraysAreEqual } from "../../util/helperFunctions";
 
@@ -52,6 +53,9 @@ export default function InvoicesPage({ page, filters }) {
   useEffect(() => {
     if (!arraysAreEqual(filters, invoiceList.filters)) {
       dispatch(setFilters(filters));
+    }
+    if (page !== invoiceList.page) {
+      dispatch(setPage(page));
     }
   });
 

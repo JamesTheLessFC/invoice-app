@@ -2,7 +2,6 @@ import styles from "../styles/Invoice.module.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircle, faSpinner } from "@fortawesome/free-solid-svg-icons";
 import BackButton from "./BackButton";
-import { useState, useEffect } from "react";
 import ModalScreen from "./ModalScreen";
 import DeleteModal from "./DeleteModal";
 import { useUpdateInvoiceByIdMutation } from "../services/invoice";
@@ -17,10 +16,9 @@ import {
   selectDeleteModal,
   showDeleteModal,
 } from "../features/deleteModal/deleteModalSlice";
+import { selectInvoiceList } from "../features/invoiceList/invoiceListSlice";
 
-export default function Invoice({ data, handleEditInvoiceClick }) {
-  // const [hideDeleteModal, setHideDeleteModal] = useState(false);
-  // const [hideModalScreen, setHideModalScreen] = useState(true);
+export default function Invoice({ data }) {
   const [updateInvoiceById, { isLoading: isUpdating }] =
     useUpdateInvoiceByIdMutation();
   const router = useRouter();
@@ -28,14 +26,7 @@ export default function Invoice({ data, handleEditInvoiceClick }) {
   const dispatch = useDispatch();
   const invoiceForm = useSelector(selectInvoiceForm);
   const deleteModal = useSelector(selectDeleteModal);
-
-  // useEffect(() => {
-  //   if (hideDeleteModal) {
-  //     setTimeout(() => {
-  //       setHideModalScreen(true);
-  //     }, 500);
-  //   }
-  // }, [hideDeleteModal]);
+  const invoiceList = useSelector(selectInvoiceList);
 
   const markAsPaid = async () => {
     const body = { id: data.id, status: "PAID" };
@@ -58,14 +49,24 @@ export default function Invoice({ data, handleEditInvoiceClick }) {
   };
 
   const handleDeleteClick = () => {
-    // setHideModalScreen(false);
-    // setHideDeleteModal(false);
     dispatch(showDeleteModal());
   };
 
-  // const cancelDelete = () => {
-  //   setHideDeleteModal(true);
-  // };
+  const handleBackClick = () => {
+    const selectedFilters = invoiceList.filters;
+    const page = invoiceList.page;
+    router.push(
+      `/invoices?${
+        selectedFilters.length > 0
+          ? `filter=${
+              selectedFilters.length > 1
+                ? selectedFilters.join(",")
+                : selectedFilters[0]
+            }&`
+          : ""
+      }page=${page}`
+    );
+  };
 
   return (
     <div
@@ -73,7 +74,7 @@ export default function Invoice({ data, handleEditInvoiceClick }) {
         invoiceForm.open ? styles.root_with_invoice_form : ""
       }`}
     >
-      <BackButton handleClick={() => router.push("/invoices")} />
+      <BackButton handleClick={handleBackClick} />
       <div className={`${styles.container} ${styles.container_status}`}>
         <p className={styles.label}>Status</p>
         <p className={`${styles.status} ${styles[`status_${data.status}`]}`}>

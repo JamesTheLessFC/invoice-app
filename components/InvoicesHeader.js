@@ -7,9 +7,11 @@ import {
   selectInvoiceForm,
   showInvoiceForm,
 } from "../features/invoiceForm/invoiceFormSlice";
+import { selectInvoiceList } from "../features/invoiceList/invoiceListSlice";
 
-export default function InvoicesHeader({ invoiceCount }) {
+export default function InvoicesHeader() {
   const invoiceForm = useSelector(selectInvoiceForm);
+  const invoiceList = useSelector(selectInvoiceList);
   const dispatch = useDispatch();
 
   return (
@@ -21,7 +23,8 @@ export default function InvoicesHeader({ invoiceCount }) {
       <div className={styles.align_left}>
         <h2>Invoices</h2>
         <p>
-          {invoiceCount} Invoice{invoiceCount !== 1 ? "s" : ""}
+          {invoiceList.invoiceCount} Invoice
+          {invoiceList.invoiceCount !== 1 ? "s" : ""}
         </p>
       </div>
       <InvoicesFilter />
