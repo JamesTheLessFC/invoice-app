@@ -16,14 +16,18 @@ import {
 import { useSelector, useDispatch } from "react-redux";
 import { selectToast } from "../../features/toast/toastSlice";
 import { selectInvoiceForm } from "../../features/invoiceForm/invoiceFormSlice";
-import { selectInvoiceList } from "../../features/invoiceList/invoiceListSlice";
+import {
+  selectInvoiceList,
+  setFilters,
+} from "../../features/invoiceList/invoiceListSlice";
+import { arraysAreEqual } from "../../util/helperFunctions";
 
 export async function getServerSideProps({ query }) {
   const pageString = query.page;
   const filter = query.filter ? query.filter : null;
   let filters = [];
   if (filter) {
-    filters = filter.split(",").map((status) => status.toUpperCase());
+    filters = filter.split(",");
   }
   return {
     props: { page: Number(pageString), filters },
@@ -39,11 +43,17 @@ export default function InvoicesPage({ page, filters }) {
   const invoiceList = useSelector(selectInvoiceList);
   const dispatch = useDispatch();
 
+  // useEffect(() => {
+  //   if (!session) {
+  //     router.push("/");
+  //   }
+  // }, [session, router]);
+
   useEffect(() => {
-    if (!session) {
-      router.push("/");
+    if (!arraysAreEqual(filters, invoiceList.filters)) {
+      dispatch(setFilters(filters));
     }
-  }, [session, router]);
+  });
 
   const navigateToPage = (page) => {
     const selectedFilters = invoiceList.filters;

@@ -8,11 +8,11 @@ import { Provider as SessionProvider } from "next-auth/client";
 
 function MyApp({ Component, pageProps }) {
   return (
-    <SessionProvider session={pageProps.session}>
-      <StoreProvider store={store}>
+    <StoreProvider store={store}>
+      <SessionProvider session={pageProps.session}>
         <Component {...pageProps} />
-      </StoreProvider>
-    </SessionProvider>
+      </SessionProvider>
+    </StoreProvider>
   );
 }
 
