@@ -5,6 +5,7 @@ const initialState = {
   invoiceCount: 0,
   page: 1,
   pages: [1],
+  maxPerPage: 10,
 };
 
 const invoiceListSlice = createSlice({

@@ -63,7 +63,12 @@ export default function InvoicesFooter() {
           )}
       </div>
       <button
-        disabled={!(invoiceList.page * 10 < invoiceList.invoiceCount)}
+        disabled={
+          !(
+            invoiceList.page * invoiceList.maxPerPage <
+            invoiceList.invoiceCount
+          )
+        }
         onClick={() => navigateToPage(invoiceList.page + 1)}
       >
         <FontAwesomeIcon icon={faChevronRight} />
