@@ -71,7 +71,7 @@ export default function InvoicesPage({ page, filters }) {
     if (data?.count) {
       dispatch(setInvoiceCount(data.count));
       let pages = [];
-      const maxPerPage = 2;
+      const maxPerPage = 10;
       const numPages = Math.ceil(data.count / maxPerPage);
       for (let i = 1; i <= numPages; i++) {
         pages.push(i);

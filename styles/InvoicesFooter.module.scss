@@ -3,6 +3,8 @@
 .root {
   display: flex;
   justify-content: space-between;
+  margin-bottom: 3rem;
+  margin-top: 3rem;
   & > button {
     @include button-reset;
     color: $purple;

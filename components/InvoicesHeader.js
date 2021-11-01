@@ -17,7 +17,7 @@ export default function InvoicesHeader() {
   const getInvoiceCountLine = () => {
     const count = invoiceList.invoiceCount;
     const page = invoiceList.page;
-    const max = 2;
+    const max = 10;
     const lastPage = Math.ceil(count / max) === page;
     const firstOnPage = max * page - (max - 1);
     const lastOnPage = lastPage ? count : firstOnPage + max - 1;
