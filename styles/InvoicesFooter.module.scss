@@ -1,0 +1,53 @@
+@import "./variables.scss";
+
+.root {
+  display: flex;
+  justify-content: space-between;
+  & > button {
+    @include button-reset;
+    color: $purple;
+    font-size: 1.25rem;
+    &:hover {
+      color: $light-purple;
+    }
+    &:first-child {
+      margin-right: 0.5rem;
+    }
+    &:last-child {
+      margin-left: 0.5rem;
+    }
+    &:disabled {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+  }
+}
+
+.page_link_buttons {
+  display: flex;
+  p {
+    @include text_sm;
+    margin: 0;
+    color: $blue-gray;
+    &:first-child {
+      margin-left: 0.75rem;
+    }
+    &:last-child {
+      margin-right: 0.75rem;
+    }
+  }
+  button {
+    @include button-reset;
+    @include text_sm;
+    margin: 0 0.5rem;
+    padding: 0.25rem;
+    color: $blue-gray;
+    &.active {
+      border-bottom: 2px solid $purple;
+      color: $purple;
+    }
+    &:hover {
+      color: $purple;
+    }
+  }
+}

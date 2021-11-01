@@ -4,6 +4,7 @@ const initialState = {
   filters: [],
   invoiceCount: 0,
   page: 1,
+  pages: [1],
 };
 
 const invoiceListSlice = createSlice({
@@ -33,6 +34,9 @@ const invoiceListSlice = createSlice({
     setPage(state, action) {
       state.page = action.payload;
     },
+    setPages(state, action) {
+      state.pages = action.payload;
+    },
   },
 });
 
@@ -44,6 +48,7 @@ export const {
   incrementPage,
   decrementPage,
   setPage,
+  setPages,
 } = invoiceListSlice.actions;
 export const selectInvoiceList = (state) => state.invoiceList;
 export default invoiceListSlice.reducer;

@@ -14,6 +14,7 @@ export default function Home() {
   useEffect(() => {
     if (session) {
       const selectedFilters = invoiceList.filters;
+      const page = invoiceList.page;
       router.push(
         `/invoices?${
           selectedFilters.length > 0
@@ -23,10 +24,10 @@ export default function Home() {
                   : selectedFilters[0]
               }&`
             : ""
-        }page=1`
+        }page=${page}`
       );
     }
-  }, [session, invoiceList.filters]);
+  }, [session, invoiceList.filters, invoiceList.page]);
 
   if (!session) {
     return (

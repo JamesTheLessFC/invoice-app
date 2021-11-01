@@ -21,6 +21,7 @@ import {
   setFilters,
   setInvoiceCount,
   setPage,
+  setPages,
 } from "../../features/invoiceList/invoiceListSlice";
 import { arraysAreEqual } from "../../util/helperFunctions";
 
@@ -41,9 +42,12 @@ export default function InvoicesPage({ page, filters }) {
   const router = useRouter();
   const toast = useSelector(selectToast);
   const invoiceForm = useSelector(selectInvoiceForm);
-  const { data, error, isFetching } = useGetInvoicesQuery({ page, filters });
   const invoiceList = useSelector(selectInvoiceList);
   const dispatch = useDispatch();
+  const { data, error, isFetching } = useGetInvoicesQuery({
+    page: invoiceList.page,
+    filters: invoiceList.filters,
+  });
 
   // useEffect(() => {
   //   if (!session) {
@@ -64,23 +68,17 @@ export default function InvoicesPage({ page, filters }) {
   }, [dispatch, invoiceList.page, page]);
 
   useEffect(() => {
-    dispatch(setInvoiceCount(data?.count ? data.count : 0));
+    if (data?.count) {
+      dispatch(setInvoiceCount(data.count));
+      let pages = [];
+      const maxPerPage = 2;
+      const numPages = Math.ceil(data.count / maxPerPage);
+      for (let i = 1; i <= numPages; i++) {
+        pages.push(i);
+      }
+      dispatch(setPages(pages));
+    }
   }, [data, dispatch]);
-
-  const navigateToPage = (page) => {
-    const selectedFilters = invoiceList.filters;
-    router.push(
-      `/invoices?${
-        selectedFilters.length > 0
-          ? `filter=${
-              selectedFilters.length > 1
-                ? selectedFilters.join(",")
-                : selectedFilters[0]
-            }&`
-          : ""
-      }page=${page}`
-    );
-  };
 
   if (isFetching) {
     return (
@@ -112,17 +110,6 @@ export default function InvoicesPage({ page, filters }) {
     <div className={styles.root}>
       <AppBar />
       <Invoices data={data.invoices} />
-      <div>
-        <button disabled={page === 1} onClick={() => navigateToPage(page - 1)}>
-          Previous
-        </button>
-        <button
-          disabled={!(page * 2 < data.count)}
-          onClick={() => navigateToPage(page + 1)}
-        >
-          Next
-        </button>
-      </div>
       {invoiceForm.open && (
         <Screen>
           <InvoiceForm />

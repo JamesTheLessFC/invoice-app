@@ -21,7 +21,7 @@ export default function InvoicesHeader() {
     const lastPage = Math.ceil(count / max) === page;
     const firstOnPage = max * page - (max - 1);
     const lastOnPage = lastPage ? count : firstOnPage + max - 1;
-    return `Invoice${lastOnPage !== firstOnPage ? "s" : ""} ${firstOnPage}${
+    return `${firstOnPage}${
       lastOnPage !== firstOnPage ? `-${lastOnPage}` : ""
     } of ${count}`;
   };
