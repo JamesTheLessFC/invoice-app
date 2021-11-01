@@ -56,20 +56,6 @@ export default async function handle(req, res) {
     res.json(result);
   } else if (req.method === "PUT") {
     if (!req.body.status) req.body.status = "DRAFT";
-    if (req.body.status === "PAID") {
-      const result = await prisma.invoice.update({
-        where: {
-          id: invoiceId,
-        },
-        data: {
-          status: "PAID",
-        },
-        select: {
-          id: true,
-        },
-      });
-      return res.json(result);
-    }
     if (req.body.status === "PENDING") {
       const validationResults = validateInvoice(req.body);
       if (!validationResults.valid) {
@@ -94,5 +80,22 @@ export default async function handle(req, res) {
       },
     });
     return res.json(result);
+  } else if (req.method === "PATCH") {
+    if (req.body.status === "PAID" || req.body.status === "PENDING") {
+      const result = await prisma.invoice.update({
+        where: {
+          id: invoiceId,
+        },
+        data: {
+          status: req.body.status,
+        },
+        select: {
+          id: true,
+        },
+      });
+      return res.json(result);
+    } else {
+      return res.status(400).json({ error: "status must be paid or pending" });
+    }
   }
 }

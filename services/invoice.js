@@ -53,6 +53,17 @@ export const invoiceApi = createApi({
         { type: "Invoices", id: "LIST" },
       ],
     }),
+    patchInvoiceById: builder.mutation({
+      query: ({ id, ...body }) => ({
+        url: `invoice/${id}`,
+        method: "PATCH",
+        body,
+      }),
+      invalidatesTags: (result, error, { id }) => [
+        { type: "Invoices", id },
+        { type: "Invoices", id: "LIST" },
+      ],
+    }),
     deleteInvoiceById: builder.mutation({
       query: (id) => ({ url: `invoice/${id}`, method: "DELETE" }),
       // Invalidates all queries that subscribe to this Invoice `id` only.
@@ -71,5 +82,6 @@ export const {
   useGetInvoiceByIdQuery,
   useAddInvoiceMutation,
   useUpdateInvoiceByIdMutation,
+  usePatchInvoiceByIdMutation,
   useDeleteInvoiceByIdMutation,
 } = invoiceApi;

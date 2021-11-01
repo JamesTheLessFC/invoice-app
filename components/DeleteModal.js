@@ -13,6 +13,7 @@ import {
   hideDeleteModal,
   selectDeleteModal,
 } from "../features/deleteModal/deleteModalSlice";
+import { selectInvoiceList } from "../features/invoiceList/invoiceListSlice";
 
 export default function DeleteModal({ invoiceId }) {
   const [
@@ -27,12 +28,26 @@ export default function DeleteModal({ invoiceId }) {
   const router = useRouter();
   const dispatch = useDispatch();
   const deleteModal = useSelector(selectDeleteModal);
+  const invoiceList = useSelector(selectInvoiceList);
+
   const deleteInvoice = () => {
     deleteInvoiceById(invoiceId);
   };
   const returnToInvoices = () => {
     dispatch(hideDeleteModal());
-    router.push("/invoices");
+    const selectedFilters = invoiceList.filters;
+    const page = invoiceList.page;
+    router.push(
+      `/invoices?${
+        selectedFilters.length > 0
+          ? `filter=${
+              selectedFilters.length > 1
+                ? selectedFilters.join(",")
+                : selectedFilters[0]
+            }&`
+          : ""
+      }page=${page}`
+    );
   };
 
   return (

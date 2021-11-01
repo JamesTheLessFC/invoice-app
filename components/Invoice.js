@@ -4,7 +4,7 @@ import { faCircle, faSpinner } from "@fortawesome/free-solid-svg-icons";
 import BackButton from "./BackButton";
 import ModalScreen from "./ModalScreen";
 import DeleteModal from "./DeleteModal";
-import { useUpdateInvoiceByIdMutation } from "../services/invoice";
+import { usePatchInvoiceByIdMutation } from "../services/invoice";
 import { useRouter } from "next/router";
 import { useSelector, useDispatch } from "react-redux";
 import { selectToast, showToast } from "../features/toast/toastSlice";
@@ -19,8 +19,8 @@ import {
 import { selectInvoiceList } from "../features/invoiceList/invoiceListSlice";
 
 export default function Invoice({ data }) {
-  const [updateInvoiceById, { isLoading: isUpdating }] =
-    useUpdateInvoiceByIdMutation();
+  const [patchInvoiceById, { isLoading: isUpdating }] =
+    usePatchInvoiceByIdMutation();
   const router = useRouter();
   const toast = useSelector(selectToast);
   const dispatch = useDispatch();
@@ -34,7 +34,7 @@ export default function Invoice({ data }) {
       status: data.status === "pending" ? "PAID" : "PENDING",
     };
     try {
-      const response = await updateInvoiceById(body).unwrap();
+      const response = await patchInvoiceById(body).unwrap();
       dispatch(
         showToast({
           type: "success",
@@ -87,13 +87,16 @@ export default function Invoice({ data }) {
         <div className={styles.actions}>
           <button onClick={() => dispatch(showInvoiceForm())}>Edit</button>
           <button onClick={handleDeleteClick}>Delete</button>
-          <button onClick={toggleStatus} disabled={isUpdating}>
+          <button
+            onClick={toggleStatus}
+            disabled={isUpdating || data.status === "draft"}
+          >
             {isUpdating ? (
               <FontAwesomeIcon icon={faSpinner} spin />
-            ) : data.status === "pending" ? (
-              "Mark as Paid"
-            ) : (
+            ) : data.status === "paid" ? (
               "Mark as Pending"
+            ) : (
+              "Mark as Paid"
             )}
           </button>
         </div>
