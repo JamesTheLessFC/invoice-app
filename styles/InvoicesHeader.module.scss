@@ -24,7 +24,15 @@
 
 .button_add {
   @include button-purple;
-  @include button-with-icon;
+  .icon {
+    display: none;
+  }
+}
+
+@media screen and (min-width: 400px) {
+  .button_add {
+    @include button-with-icon;
+  }
 }
 
 @media screen and (min-width: 768px) {
