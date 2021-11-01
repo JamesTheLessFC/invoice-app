@@ -3,7 +3,7 @@ import Invoice from "../../components/Invoice";
 import { useEffect } from "react";
 import { useSession } from "next-auth/client";
 import { useGetInvoiceByIdQuery } from "../../services/invoice";
-import { useRouter } from "next/router";
+import { withRouter } from "next/router";
 import AppBar from "../../components/AppBar";
 import Toast from "../../components/Toast";
 import Screen from "../../components/Screen";
@@ -17,8 +17,7 @@ import { selectInvoiceForm } from "../../features/invoiceForm/invoiceFormSlice";
 import { selectToast } from "../../features/toast/toastSlice";
 import { useSelector } from "react-redux";
 
-export default function InvoicePage() {
-  const router = useRouter();
+function InvoicePage({ router }) {
   const { id } = router.query;
   const [session, loading] = useSession();
   const { data, error, isLoading } = useGetInvoiceByIdQuery(id);
@@ -71,3 +70,5 @@ export default function InvoicePage() {
     </div>
   );
 }
+
+export default withRouter(InvoicePage);

@@ -7,7 +7,7 @@ import { useEffect } from "react";
 import InvoiceForm from "../../components/InvoiceForm";
 import Screen from "../../components/Screen";
 import Toast from "../../components/Toast";
-import { useRouter } from "next/router";
+import { withRouter } from "next/router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faExclamationCircle,
@@ -37,9 +37,8 @@ export async function getServerSideProps({ query }) {
   };
 }
 
-export default function InvoicesPage({ page, filters }) {
+function InvoicesPage({ page, filters, router }) {
   const [session, loading] = useSession();
-  const router = useRouter();
   const toast = useSelector(selectToast);
   const invoiceForm = useSelector(selectInvoiceForm);
   const invoiceList = useSelector(selectInvoiceList);
@@ -49,11 +48,11 @@ export default function InvoicesPage({ page, filters }) {
     filters: invoiceList.filters,
   });
 
-  // useEffect(() => {
-  //   if (!session) {
-  //     router.push("/");
-  //   }
-  // }, [session, router]);
+  useEffect(() => {
+    if (!session) {
+      router.push("/");
+    }
+  }, [session, router]);
 
   useEffect(() => {
     if (!arraysAreEqual(filters, invoiceList.filters)) {
@@ -119,3 +118,5 @@ export default function InvoicesPage({ page, filters }) {
     </div>
   );
 }
+
+export default withRouter(InvoicesPage);

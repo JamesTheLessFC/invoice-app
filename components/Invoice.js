@@ -28,16 +28,19 @@ export default function Invoice({ data }) {
   const deleteModal = useSelector(selectDeleteModal);
   const invoiceList = useSelector(selectInvoiceList);
 
-  const markAsPaid = async () => {
-    const body = { id: data.id, status: "PAID" };
+  const toggleStatus = async () => {
+    const body = {
+      id: data.id,
+      status: data.status === "pending" ? "PAID" : "PENDING",
+    };
     try {
       const response = await updateInvoiceById(body).unwrap();
       dispatch(
         showToast({
           type: "success",
-          message: `Invoice #${response.id
-            .slice(-8)
-            .toUpperCase()} marked as paid!`,
+          message: `Invoice #${response.id.slice(-8).toUpperCase()} marked as ${
+            data.status === "pending" ? "paid" : "pending"
+          }!`,
         })
       );
     } catch (err) {
@@ -84,11 +87,13 @@ export default function Invoice({ data }) {
         <div className={styles.actions}>
           <button onClick={() => dispatch(showInvoiceForm())}>Edit</button>
           <button onClick={handleDeleteClick}>Delete</button>
-          <button onClick={markAsPaid} disabled={isUpdating}>
+          <button onClick={toggleStatus} disabled={isUpdating}>
             {isUpdating ? (
               <FontAwesomeIcon icon={faSpinner} spin />
-            ) : (
+            ) : data.status === "pending" ? (
               "Mark as Paid"
+            ) : (
+              "Mark as Pending"
             )}
           </button>
         </div>
