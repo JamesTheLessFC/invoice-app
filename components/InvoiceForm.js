@@ -909,7 +909,12 @@ export default function InvoiceForm({ invoice }) {
                   className={`${styles.label_input_container} ${styles.item_total}`}
                 >
                   <label>Total</label>
-                  <p className={styles.item_total}>{item.total.toFixed(2)}</p>
+                  <p className={styles.item_total}>
+                    {item.total.toLocaleString("en-US", {
+                      style: "currency",
+                      currency: "USD",
+                    })}
+                  </p>
                 </div>
                 <button
                   className={styles.delete_item_button}

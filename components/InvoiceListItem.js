@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from "../styles/InvoiceListItem.module.scss";
 import { useRouter } from "next/router";
 
-export default function InvoiceListItem({ data, selectInvoice }) {
+export default function InvoiceListItem({ data }) {
   const router = useRouter();
 
   return (
