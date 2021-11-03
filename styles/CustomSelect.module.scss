@@ -75,6 +75,10 @@
     margin-right: 0.5rem;
     &:last-child {
       border-bottom: none;
+      button {
+        border-bottom-left-radius: 5px;
+        border-bottom-right-radius: 5px;
+      }
     }
     button {
       @include button-reset;
