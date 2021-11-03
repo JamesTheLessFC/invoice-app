@@ -14,12 +14,55 @@
       @include fieldset-reset;
       margin-top: 2rem;
     }
-    & > button {
-      @include button-edit_light;
-      width: 100%;
-      margin-top: 2rem;
+  }
+  &_dark {
+    background-color: $element-bg_dark;
+    .fieldset_title {
+      color: $light-purple;
+    }
+    .form_title {
+      color: $white;
+    }
+    .label_input_container {
+      // label {
+      //   color: $white;
+      // }
+      input {
+        background-color: $element-bg-lighter_dark;
+        color: $white;
+        border: 1px solid transparent;
+      }
+      &_with_error {
+        input {
+          border-color: $red;
+        }
+      }
+    }
+    .add_new_item_button {
+      @include button-edit_dark;
+    }
+    .actions {
+      background-color: $text_light;
+      box-shadow: none;
+    }
+    .item_list {
+      li {
+        fieldset {
+          .item_total {
+            p {
+              color: $white;
+            }
+          }
+        }
+      }
     }
   }
+}
+
+.add_new_item_button {
+  @include button-edit_light;
+  width: 100%;
+  margin-top: 2rem;
 }
 
 .label_input_container {
@@ -57,7 +100,7 @@
   h2 {
     @include heading-2_sm;
     font-weight: 500;
-    color: $text-secondary;
+    color: $blue-gray;
     margin: 0;
   }
   .error {
@@ -138,6 +181,9 @@
         margin: 1rem 0;
         align-self: flex-end;
         font-size: 1.25rem;
+        &:hover {
+          color: $light-blue-gray;
+        }
       }
     }
   }
@@ -156,47 +202,72 @@
   box-shadow: 0 -5px 30px $shadow-color;
   button {
     @include button-reset;
-    &:hover {
-      .icon {
-        color: $light-purple;
-      }
-    }
     span:not(.icon_xs_only) {
       display: none;
     }
     .icon_xs_only {
       font-size: 2rem;
-      color: $purple;
     }
     &.discard {
       margin-right: auto;
-      .icon {
+      .icon_xs_only {
         color: $blue-gray;
       }
       &:hover {
-        .icon {
+        .icon_xs_only {
           opacity: 0.75;
         }
       }
     }
     &.save_as_draft {
       margin-right: 2rem;
-      .icon {
-        color: $navbar-bg;
+      .icon_xs_only {
+        color: $purple;
       }
       &:hover {
-        .icon {
-          color: $text_light;
+        .icon_xs_only {
+          color: $light-purple;
+        }
+      }
+    }
+    &.save_and_send,
+    &.save_changes {
+      .icon_xs_only {
+        color: $purple;
+      }
+      &:hover {
+        .icon_xs_only {
+          color: $light-purple;
         }
       }
     }
     &.cancel {
       margin-right: 2rem;
+      .icon_xs_only {
+        color: $blue-gray;
+      }
+      &:hover {
+        .icon_xs_only {
+          opacity: 0.75;
+        }
+      }
     }
   }
 }
 
 @media screen and (min-width: 500px) {
+  .root {
+    &_dark {
+      .actions {
+        button {
+          &.discard,
+          &.cancel {
+            @include button-save_light;
+          }
+        }
+      }
+    }
+  }
   .actions {
     button {
       span:not(.icon_xs_only) {
@@ -279,6 +350,13 @@
         background: $light-purple;
       }
     }
+    &_dark {
+      form {
+        &::-webkit-scrollbar-thumb {
+          background: $blue-gray;
+        }
+      }
+    }
   }
 
   .terms {
@@ -333,7 +411,7 @@
   .actions {
     width: 70%;
     border-bottom-right-radius: 1rem;
-    padding: 1rem 3rem 1rem calc(3rem + 9px);
+    padding: 1rem 3.5rem 1rem calc(3rem + 9px);
     animation: slide_right_md 0.5s ease-out 1;
     transition: left 0.5s ease-out;
   }
@@ -353,7 +431,7 @@
   }
 
   .actions {
-    padding-left: 7rem;
+    padding-left: 7.5rem;
   }
 }
 

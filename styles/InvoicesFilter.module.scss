@@ -24,6 +24,27 @@
   ul.hidden {
     max-height: 0;
   }
+  &_dark {
+    span:first-child {
+      color: $white;
+    }
+    ul {
+      background-color: $element-bg-lighter_dark;
+      box-shadow: none;
+    }
+    .option_button {
+      color: $white;
+      &:hover {
+        background-color: $element-bg_dark;
+      }
+    }
+    .checkbox {
+      background-color: $element-bg_dark;
+      &_checked {
+        background-color: $purple;
+      }
+    }
+  }
 }
 
 .toggle_button {

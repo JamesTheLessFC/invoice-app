@@ -8,12 +8,20 @@ import {
   faSignInAlt,
   faSignOutAlt,
   faSpinner,
+  faSun,
 } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 import { signOut, useSession } from "next-auth/client";
+import {
+  toggleDarkMode,
+  selectDarkMode,
+} from "../features/darkMode/darkModeSlice";
+import { useSelector, useDispatch } from "react-redux";
 
 export default function AppBar() {
   const [session, loading] = useSession();
+  const darkMode = useSelector(selectDarkMode);
+  const dispatch = useDispatch();
 
   return (
     <div className={styles.root}>
@@ -21,10 +29,10 @@ export default function AppBar() {
       <div className={styles.graphic_2}>&nbsp;</div>
       <Image src={logo} alt="logo" />
       <div className={styles.align_right}>
-        <button>
+        <button onClick={() => dispatch(toggleDarkMode())}>
           <FontAwesomeIcon
-            icon={faMoon}
-            className={`${styles.icon} ${styles.icon_moon}`}
+            icon={darkMode.on ? faSun : faMoon}
+            className={`${styles.icon} ${!darkMode.on ? styles.icon_moon : ""}`}
           />
         </button>
         <div className={styles.divider}>&nbsp;</div>

@@ -5,16 +5,10 @@
   @include textfield;
   background-color: $white;
   padding-right: 3rem !important;
-  &_focused {
-    border-color: $light-purple;
-  }
-  &_with_error {
-    border-color: $red;
-  }
   span {
     text-transform: capitalize;
   }
-  .toggleOptionsButton {
+  .toggle_options_button {
     color: $blue-gray;
     border: none;
     background-color: transparent;
@@ -25,6 +19,38 @@
     right: 1rem;
     top: 50%;
     cursor: pointer;
+  }
+  &_dark {
+    background-color: $element-bg-lighter_dark;
+    color: $white;
+    border-color: transparent;
+    .toggle_options_button {
+      color: $light-purple;
+    }
+    .options_container {
+      background-color: $element-bg-lighter_dark;
+      box-shadow: none;
+      .options {
+        li {
+          border-color: $element-bg_dark;
+          button {
+            color: $white;
+            &:hover {
+              background-color: $element-bg_dark;
+            }
+          }
+          button.active {
+            color: $light-purple;
+          }
+        }
+      }
+    }
+  }
+  &_focused {
+    border-color: $light-purple;
+  }
+  &_with_error {
+    border-color: $red;
   }
 }
 

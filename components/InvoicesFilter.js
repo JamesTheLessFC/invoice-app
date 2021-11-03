@@ -13,6 +13,7 @@ import {
   removeFilter,
 } from "../features/invoiceList/invoiceListSlice";
 import { useRouter } from "next/router";
+import { selectDarkMode } from "../features/darkMode/darkModeSlice";
 
 export default function InvoicesFilter() {
   const [hideOptions, setHideOptions] = useState(true);
@@ -20,6 +21,7 @@ export default function InvoicesFilter() {
   const dispatch = useDispatch();
   const filterOptions = ["paid", "pending", "draft"];
   const router = useRouter();
+  const darkMode = useSelector(selectDarkMode);
 
   useEffect(() => {
     if (!hideOptions) {
@@ -66,7 +68,7 @@ export default function InvoicesFilter() {
   };
 
   return (
-    <div className={styles.root}>
+    <div className={`${styles.root} ${darkMode.on ? styles.root_dark : ""}`}>
       <span>Filter</span>
       <button className={styles.toggle_button} onClick={toggleOptions}>
         <FontAwesomeIcon icon={hideOptions ? faChevronDown : faChevronUp} />

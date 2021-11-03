@@ -14,6 +14,7 @@ import {
   selectDeleteModal,
 } from "../features/deleteModal/deleteModalSlice";
 import { selectInvoiceList } from "../features/invoiceList/invoiceListSlice";
+import { selectDarkMode } from "../features/darkMode/darkModeSlice";
 
 export default function DeleteModal({ invoiceId }) {
   const [
@@ -29,6 +30,7 @@ export default function DeleteModal({ invoiceId }) {
   const dispatch = useDispatch();
   const deleteModal = useSelector(selectDeleteModal);
   const invoiceList = useSelector(selectInvoiceList);
+  const darkMode = useSelector(selectDarkMode);
 
   const deleteInvoice = () => {
     deleteInvoiceById(invoiceId);
@@ -54,7 +56,7 @@ export default function DeleteModal({ invoiceId }) {
     <div
       className={`${styles.root} ${
         deleteModal.hidden ? styles.root_hidden : ""
-      }`}
+      } ${darkMode.on ? styles.root_dark : ""}`}
     >
       <h1>
         <FontAwesomeIcon
@@ -81,7 +83,7 @@ export default function DeleteModal({ invoiceId }) {
             : "Confirm Deletion"}
         </span>
       </h1>
-      <p>
+      <p className={styles.body}>
         {deleteSuccess
           ? `Invoice #${deletionResultData.id
               .slice(-8)
@@ -90,8 +92,9 @@ export default function DeleteModal({ invoiceId }) {
           ? `Something went wrong. Invoice #${invoiceId
               .slice(-8)
               .toUpperCase()} could not be deleted.`
-          : `Are you sure you want to delete invoice #
-        ${invoiceId.slice(-8).toUpperCase()}? This action cannot be undone.`}
+          : `Are you sure you want to delete Invoice #${invoiceId
+              .slice(-8)
+              .toUpperCase()}? This action cannot be undone.`}
       </p>
       <div className={styles.actions}>
         {deleteSuccess ? (

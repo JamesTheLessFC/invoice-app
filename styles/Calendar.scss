@@ -2,7 +2,6 @@
 
 .react-calendar {
   width: 100%;
-  background: $white;
   border-radius: 5px;
   overflow: hidden;
   @include shadow-1;
@@ -29,9 +28,9 @@
   color: $text_light;
   &:first-child,
   &:last-child {
-    color: $light-purple;
+    color: $light-purple !important;
     &:hover {
-      color: $purple;
+      color: $purple !important;
     }
   }
 }
@@ -45,11 +44,11 @@
 }
 
 button.react-calendar__month-view__days__day--weekend {
-  color: $red;
+  color: $red !important;
 }
 
 button.react-calendar__month-view__days__day--neighboringMonth {
-  color: $text-secondary;
+  color: $text-secondary !important;
 }
 
 .react-calendar__tile {
@@ -61,14 +60,15 @@ button.react-calendar__month-view__days__day--neighboringMonth {
 
 .react-calendar__tile:enabled:hover,
 .react-calendar__tile:enabled:focus {
-  background-color: $light-blue;
+  background-color: $light-blue !important;
+  color: $text_light !important;
 }
 
 button.react-calendar__tile--now {
-  color: $purple;
+  color: $purple !important;
 }
 
-.react-calendar__tile--active {
+button.react-calendar__tile--active {
   background: $purple !important;
   color: white !important;
 }

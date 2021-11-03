@@ -40,11 +40,25 @@
       }
     }
   }
-  p {
+  .body {
     @include body_lg;
     color: $text-secondary;
     margin-top: 1rem;
     margin-bottom: 2rem;
+  }
+  &_dark {
+    background-color: $element-bg_dark;
+    h1,
+    .body {
+      color: $white;
+    }
+    .actions {
+      button {
+        &.cancel {
+          @include button-edit_dark;
+        }
+      }
+    }
   }
 }
 

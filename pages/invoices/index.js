@@ -24,6 +24,7 @@ import {
   setPages,
 } from "../../features/invoiceList/invoiceListSlice";
 import { arraysAreEqual } from "../../util/helperFunctions";
+import { selectDarkMode } from "../../features/darkMode/darkModeSlice";
 
 export async function getServerSideProps({ query }) {
   const pageString = query.page;
@@ -47,6 +48,7 @@ function InvoicesPage({ page, filters, router }) {
     page: invoiceList.page,
     filters: invoiceList.filters,
   });
+  const darkMode = useSelector(selectDarkMode);
 
   useEffect(() => {
     if (!session) {
@@ -81,7 +83,11 @@ function InvoicesPage({ page, filters, router }) {
 
   if (isFetching) {
     return (
-      <div className={`${styles.root} ${styles.root_no_content}`}>
+      <div
+        className={`${styles.root} ${styles.root_no_content} ${
+          darkMode.on ? styles.root_dark : ""
+        }`}
+      >
         <AppBar />
         <FontAwesomeIcon
           icon={faSpinner}
@@ -94,7 +100,11 @@ function InvoicesPage({ page, filters, router }) {
 
   if (error) {
     return (
-      <div className={`${styles.root} ${styles.root_no_content}`}>
+      <div
+        className={`${styles.root} ${styles.root_no_content} ${
+          darkMode.on ? styles.root_dark : ""
+        }`}
+      >
         <AppBar />
         <FontAwesomeIcon
           icon={faExclamationCircle}
@@ -106,7 +116,7 @@ function InvoicesPage({ page, filters, router }) {
   }
 
   return (
-    <div className={styles.root}>
+    <div className={`${styles.root} ${darkMode.on ? styles.root_dark : ""}`}>
       <AppBar />
       <Invoices data={data.invoices} />
       {invoiceForm.open && (

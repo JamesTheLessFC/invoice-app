@@ -7,9 +7,12 @@ import {
   faChevronRight,
 } from "@fortawesome/free-solid-svg-icons";
 import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+import { selectDarkMode } from "../features/darkMode/darkModeSlice";
 
 export default function CustomDatePicker({ date, handleDateChange, error }) {
   const [hideCalendar, setHideCalendar] = useState(true);
+  const darkMode = useSelector(selectDarkMode);
 
   useEffect(() => {
     if (!hideCalendar) {
@@ -44,7 +47,7 @@ export default function CustomDatePicker({ date, handleDateChange, error }) {
     <div
       className={`${styles.root} ${hideCalendar ? "" : styles.root_focused} ${
         error ? styles.root_with_error : ""
-      }`}
+      } ${darkMode.on ? styles.root_dark : ""}`}
     >
       <span>
         {date.toLocaleDateString("en-US", {

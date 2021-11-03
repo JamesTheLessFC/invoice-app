@@ -2,6 +2,8 @@ import styles from "../styles/CustomSelect.module.scss";
 import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
+import { useSelector } from "react-redux";
+import { selectDarkMode } from "../features/darkMode/darkModeSlice";
 
 export default function CustomSelect({
   options,
@@ -11,6 +13,7 @@ export default function CustomSelect({
   error,
 }) {
   const [hideOptions, setHideOptions] = useState(true);
+  const darkMode = useSelector(selectDarkMode);
 
   useEffect(() => {
     if (!hideOptions) {
@@ -46,7 +49,7 @@ export default function CustomSelect({
     <div
       className={`${styles.root} ${hideOptions ? "" : styles.root_focused} ${
         error ? styles.root_with_error : ""
-      }`}
+      } ${darkMode.on ? styles.root_dark : ""}`}
     >
       {type === "terms" ? (
         <span>
@@ -55,7 +58,7 @@ export default function CustomSelect({
       ) : (
         <span>{value === "" ? "--" : value === "NA" ? "N/A" : value}</span>
       )}
-      <button className={styles.toggleOptionsButton} onClick={toggleOptions}>
+      <button className={styles.toggle_options_button} onClick={toggleOptions}>
         <FontAwesomeIcon icon={hideOptions ? faChevronDown : faChevronUp} />
       </button>
       <div

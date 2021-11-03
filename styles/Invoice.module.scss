@@ -12,6 +12,59 @@
   &_with_invoice_form {
     display: none;
   }
+  &_dark {
+    .container {
+      background-color: $element-bg_dark;
+      box-shadow: none;
+    }
+    p.status {
+      &_draft {
+        color: $white;
+        background-color: $status-draft-bg_dark;
+      }
+    }
+    .actions {
+      background-color: $element-bg_dark;
+      button:first-child {
+        @include button-edit_dark;
+      }
+    }
+    p,
+    p.description,
+    .address p,
+    .id {
+      color: $white;
+    }
+    .details {
+      p:not(.label):not(.address p) {
+        color: $white;
+      }
+    }
+    .breakdown {
+      ul {
+        background-color: $element-bg-lighter_dark;
+      }
+      .total_container {
+        background-color: $text_light;
+        p {
+          color: $blue-gray;
+        }
+      }
+      & > ul > li {
+        &.list_headings {
+          border-color: $element-bg_dark;
+          .item_price,
+          .item_quantity {
+            color: $blue-gray;
+          }
+        }
+        .item_price,
+        .item_quantity {
+          color: $white;
+        }
+      }
+    }
+  }
 }
 
 .container {
@@ -31,33 +84,34 @@
   }
 }
 
-.status {
+p.status {
   text-align: center;
   text-transform: capitalize;
   width: 7rem;
   padding: 0.75rem 0;
   &_paid {
     background-color: $status-paid-bg;
-    color: $status-paid !important;
+    color: $status-paid;
   }
   &_pending {
     background-color: $status-pending-bg;
-    color: $status-pending !important;
+    color: $status-pending;
   }
   &_draft {
     background-color: $status-draft-bg;
-    color: $status-draft !important;
+    color: $status-draft;
   }
 }
 
 .id {
+  @include heading-2_sm;
   span {
     color: $blue-gray;
   }
 }
 
 p.description {
-  color: $blue-gray;
+  @include body_xl;
   margin-top: 0.5rem;
   margin-bottom: 2rem;
 }
@@ -92,6 +146,16 @@ p.description {
   }
   .list_headings {
     display: none;
+    border-bottom: 1px solid $light-blue;
+    margin-bottom: 1rem;
+    .item_price,
+    .item_quantity {
+      color: $blue-gray;
+    }
+    p {
+      @include body_sm;
+      color: $blue-gray;
+    }
   }
   li {
     display: flex;
@@ -107,7 +171,7 @@ p.description {
       margin-top: 0.5rem;
     }
   }
-  & > div:last-child {
+  .total_container {
     background-color: $navbar-bg;
     display: flex;
     justify-content: space-between;
@@ -194,12 +258,6 @@ p.description {
     & > ul > li {
       &.list_headings {
         display: flex;
-        border-bottom: 1px solid hsla(0, 0%, 0%, 0.1);
-        margin-bottom: 1rem;
-        p {
-          @include body_sm;
-          color: $blue-gray;
-        }
       }
       position: relative;
       padding: 1rem;
@@ -212,6 +270,7 @@ p.description {
         transform: translate(-100%, -50%);
         top: 50%;
         left: 50%;
+        color: $text_light;
         span {
           display: none; // hide the "x"
         }
@@ -221,6 +280,7 @@ p.description {
         transform: translate(-100%, -50%);
         top: 50%;
         left: 75%;
+        color: $text_light;
       }
     }
   }

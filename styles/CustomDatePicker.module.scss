@@ -5,12 +5,6 @@
   @include textfield;
   background-color: $white;
   padding-right: 3rem;
-  &_focused {
-    border-color: $light-purple;
-  }
-  &_with_error {
-    border-color: $red;
-  }
   .button {
     color: $blue-gray;
     border: none;
@@ -30,6 +24,7 @@
     max-height: 17rem;
     transition: max-height 0.5s ease-out;
     z-index: 10;
+    background: $white;
     &_hidden {
       max-height: 0;
       overflow: hidden;
@@ -37,5 +32,26 @@
   }
   .chevron {
     pointer-events: none;
+  }
+  &_dark {
+    background-color: $element-bg-lighter_dark;
+    color: $white;
+    border-color: transparent;
+    .button {
+      color: $light-purple;
+    }
+    .calendar {
+      background-color: $element-bg-lighter_dark;
+      box-shadow: none;
+      button {
+        color: $white;
+      }
+    }
+  }
+  &_focused {
+    border-color: $light-purple;
+  }
+  &_with_error {
+    border-color: $red;
   }
 }

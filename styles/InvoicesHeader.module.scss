@@ -20,6 +20,11 @@
   &_with_form {
     display: none;
   }
+  &_dark {
+    h2 {
+      color: $white;
+    }
+  }
 }
 
 .button_add {

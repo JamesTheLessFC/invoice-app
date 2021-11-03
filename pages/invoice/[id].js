@@ -16,12 +16,13 @@ import {
 import { selectInvoiceForm } from "../../features/invoiceForm/invoiceFormSlice";
 import { selectToast } from "../../features/toast/toastSlice";
 import { useSelector } from "react-redux";
+import { selectDarkMode } from "../../features/darkMode/darkModeSlice";
 
 function InvoicePage({ router }) {
   const { id } = router.query;
   const [session, loading] = useSession();
   const { data, error, isLoading } = useGetInvoiceByIdQuery(id);
-
+  const darkMode = useSelector(selectDarkMode);
   const toast = useSelector(selectToast);
   const invoiceForm = useSelector(selectInvoiceForm);
 
@@ -33,7 +34,11 @@ function InvoicePage({ router }) {
 
   if (isLoading) {
     return (
-      <div className={`${styles.root} ${styles.root_no_content}`}>
+      <div
+        className={`${styles.root} ${styles.root_no_content} ${
+          darkMode.on ? styles.root_dark : ""
+        }`}
+      >
         <AppBar />
         <FontAwesomeIcon
           icon={faSpinner}
@@ -46,7 +51,11 @@ function InvoicePage({ router }) {
 
   if (error) {
     return (
-      <div className={`${styles.root} ${styles.root_no_content}`}>
+      <div
+        className={`${styles.root} ${styles.root_no_content} ${
+          darkMode.on ? styles.root_dark : ""
+        }`}
+      >
         <AppBar />
         <FontAwesomeIcon
           icon={faExclamationCircle}
@@ -58,7 +67,7 @@ function InvoicePage({ router }) {
   }
 
   return (
-    <div className={styles.root}>
+    <div className={`${styles.root} ${darkMode.on ? styles.root_dark : ""}`}>
       <AppBar />
       <Invoice data={data.invoice} />
       {invoiceForm.open && (

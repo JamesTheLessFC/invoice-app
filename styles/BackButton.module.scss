@@ -3,6 +3,9 @@
 .root {
   @include button-reset;
   @include text_sm;
+  &_dark {
+    color: $white;
+  }
   span {
     color: $purple;
     margin-right: 1rem;

@@ -4,7 +4,7 @@
   position: fixed;
   top: 0;
   height: 4rem;
-  background-color: $navbar-bg;
+  background-color: $element-bg-lighter_dark;
   width: 100%;
   display: flex;
   align-items: center;
@@ -41,6 +41,11 @@
   align-items: center;
   button {
     @include button-reset;
+    &:hover {
+      .icon {
+        color: $light-blue-gray;
+      }
+    }
   }
 }
 
@@ -86,6 +91,7 @@
   .root {
     left: 0;
     width: 4rem;
+    min-width: unset;
     height: 100%;
     flex-direction: column;
     padding: 1rem 0;

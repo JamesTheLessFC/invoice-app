@@ -15,7 +15,7 @@ export default async function handle(req, res) {
     };
     const dataQuery = {
       take: 10,
-      skip: (Number(req.query.page) - 1) * 2,
+      skip: (Number(req.query.page) - 1) * 10,
       where: {
         user: { email: session.user.email },
       },

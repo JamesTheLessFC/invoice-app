@@ -2,13 +2,16 @@ import { faChevronRight, faCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from "../styles/InvoiceListItem.module.scss";
 import { useRouter } from "next/router";
+import { useSelector } from "react-redux";
+import { selectDarkMode } from "../features/darkMode/darkModeSlice";
 
 export default function InvoiceListItem({ data }) {
   const router = useRouter();
+  const darkMode = useSelector(selectDarkMode);
 
   return (
     <li
-      className={styles.root}
+      className={`${styles.root} ${darkMode.on ? styles.root_dark : ""}`}
       onClick={() => router.push(`/invoice/${data.id}`)}
     >
       <p className={styles.id}>

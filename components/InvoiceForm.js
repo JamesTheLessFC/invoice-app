@@ -24,6 +24,7 @@ import {
 } from "../features/invoiceForm/invoiceFormSlice";
 import { states } from "../util/states";
 import { validateInvoice } from "../util/validators";
+import { selectDarkMode } from "../features/darkMode/darkModeSlice";
 
 export default function InvoiceForm({ invoice }) {
   const [senderStreet, setSenderStreet] = useState("");
@@ -53,6 +54,7 @@ export default function InvoiceForm({ invoice }) {
   const invoiceForm = useSelector(selectInvoiceForm);
   const [activeButton, setActiveButton] = useState("");
   const [isValid, setIsValid] = useState(false);
+  const darkMode = useSelector(selectDarkMode);
 
   useEffect(() => {
     if (invoice) {
@@ -515,7 +517,7 @@ export default function InvoiceForm({ invoice }) {
     <div
       className={`${styles.root} ${
         invoiceForm.hidden ? styles.root_hidden : ""
-      }`}
+      } ${darkMode.on ? styles.root_dark : ""}`}
     >
       <div className={styles.back_button}>
         <BackButton handleClick={() => dispatch(hideInvoiceForm())} />
@@ -926,7 +928,9 @@ export default function InvoiceForm({ invoice }) {
             </li>
           ))}
         </ul>
-        <button onClick={addItem}>+ Add New Item</button>
+        <button className={styles.add_new_item_button} onClick={addItem}>
+          + Add New Item
+        </button>
       </form>
       {invoice && invoice.status !== "draft" ? (
         <div className={styles.actions}>
@@ -936,7 +940,7 @@ export default function InvoiceForm({ invoice }) {
             disabled={isUpdating}
           >
             <span className={styles.icon_xs_only}>
-              <FontAwesomeIcon icon={faTimes} className={styles.icon} />
+              <FontAwesomeIcon icon={faTimes} />
             </span>
             <span>Cancel</span>
           </button>

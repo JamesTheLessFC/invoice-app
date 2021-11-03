@@ -17,6 +17,7 @@ import {
   showDeleteModal,
 } from "../features/deleteModal/deleteModalSlice";
 import { selectInvoiceList } from "../features/invoiceList/invoiceListSlice";
+import { selectDarkMode } from "../features/darkMode/darkModeSlice";
 
 export default function Invoice({ data }) {
   const [patchInvoiceById, { isLoading: isUpdating }] =
@@ -27,6 +28,7 @@ export default function Invoice({ data }) {
   const invoiceForm = useSelector(selectInvoiceForm);
   const deleteModal = useSelector(selectDeleteModal);
   const invoiceList = useSelector(selectInvoiceList);
+  const darkMode = useSelector(selectDarkMode);
 
   const toggleStatus = async () => {
     const body = {
@@ -75,7 +77,7 @@ export default function Invoice({ data }) {
     <div
       className={`${styles.root} ${
         invoiceForm.open ? styles.root_with_invoice_form : ""
-      }`}
+      } ${darkMode.on ? styles.root_dark : ""}`}
     >
       <BackButton handleClick={handleBackClick} />
       <div className={`${styles.container} ${styles.container_status}`}>
@@ -104,10 +106,10 @@ export default function Invoice({ data }) {
       <div className={styles.container}>
         <div>
           <div>
-            <p className={styles.id}>
+            <h2 className={styles.id}>
               <span>#</span>
-              {data.id.toUpperCase()}
-            </p>
+              {data.id.slice(-8).toUpperCase()}
+            </h2>
             <p className={styles.description}>{data.description}</p>
           </div>
           <div className={styles.address}>
@@ -197,7 +199,7 @@ export default function Invoice({ data }) {
               </li>
             ))}
           </ul>
-          <div>
+          <div className={styles.total_container}>
             <p>Grand Total</p>
             <p>
               {data.total.toLocaleString("en-US", {

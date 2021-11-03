@@ -8,10 +8,12 @@ import {
   showInvoiceForm,
 } from "../features/invoiceForm/invoiceFormSlice";
 import { selectInvoiceList } from "../features/invoiceList/invoiceListSlice";
+import { selectDarkMode } from "../features/darkMode/darkModeSlice";
 
 export default function InvoicesHeader() {
   const invoiceForm = useSelector(selectInvoiceForm);
   const invoiceList = useSelector(selectInvoiceList);
+  const darkMode = useSelector(selectDarkMode);
   const dispatch = useDispatch();
 
   const getInvoiceCountLine = () => {
@@ -30,7 +32,7 @@ export default function InvoicesHeader() {
     <div
       className={`${styles.root} ${
         invoiceForm.open ? styles.root_with_form : ""
-      }`}
+      } ${darkMode.on ? styles.root_dark : ""}`}
     >
       <div className={styles.align_left}>
         <h2>Invoices</h2>
