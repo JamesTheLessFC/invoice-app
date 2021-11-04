@@ -969,7 +969,7 @@ export default function InvoiceForm({ invoice }) {
             disabled={isAdding || isUpdating}
           >
             <span className={styles.icon_xs_only}>
-              <FontAwesomeIcon icon={invoice ? faTimes : faTrash} />
+              <FontAwesomeIcon icon={faTimes} />
             </span>
             <span>{invoice ? "Cancel" : "Discard"}</span>
           </button>

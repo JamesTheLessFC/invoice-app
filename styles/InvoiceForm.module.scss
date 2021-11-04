@@ -261,6 +261,9 @@
           &.cancel {
             @include button-save_light;
           }
+          &.save_as_draft {
+            @include button-purple;
+          }
         }
       }
     }

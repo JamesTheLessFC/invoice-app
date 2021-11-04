@@ -248,6 +248,9 @@ p.description {
     }
     .delete_button {
       @include button-delete;
+      &:hover {
+        color: $white;
+      }
     }
     .mark_as_button {
       @include button-purple;
