@@ -24,9 +24,6 @@
       color: $white;
     }
     .label_input_container {
-      // label {
-      //   color: $white;
-      // }
       input {
         background-color: $element-bg-lighter_dark;
         color: $white;
@@ -158,14 +155,14 @@
         display: inline-flex;
       }
       .item_price {
-        width: calc(30%);
+        width: calc(25%);
         display: inline-flex;
         margin-left: 1rem;
         margin-right: 1rem;
         flex-grow: 1;
       }
       .item_total {
-        width: calc(25%);
+        width: calc(30%);
         display: inline-flex;
         flex-grow: 1;
         p {

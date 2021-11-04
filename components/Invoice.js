@@ -1,6 +1,11 @@
 import styles from "../styles/Invoice.module.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircle, faSpinner } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCircle,
+  faEdit,
+  faSpinner,
+  faTrash,
+} from "@fortawesome/free-solid-svg-icons";
 import BackButton from "./BackButton";
 import ModalScreen from "./ModalScreen";
 import DeleteModal from "./DeleteModal";
@@ -87,11 +92,21 @@ export default function Invoice({ data }) {
           <span>&nbsp;&nbsp;{data.status}</span>
         </p>
         <div className={styles.actions}>
-          <button onClick={() => dispatch(showInvoiceForm())}>Edit</button>
-          <button onClick={handleDeleteClick}>Delete</button>
+          <button
+            onClick={() => dispatch(showInvoiceForm())}
+            className={styles.edit_button}
+          >
+            <FontAwesomeIcon icon={faEdit} className={styles.icon_xs_only} />
+            <span>Edit</span>
+          </button>
+          <button onClick={handleDeleteClick} className={styles.delete_button}>
+            <FontAwesomeIcon icon={faTrash} className={styles.icon_xs_only} />
+            <span>Delete</span>
+          </button>
           <button
             onClick={toggleStatus}
             disabled={isUpdating || data.status === "draft"}
+            className={styles.mark_as_button}
           >
             {isUpdating ? (
               <FontAwesomeIcon icon={faSpinner} spin />

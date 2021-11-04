@@ -25,9 +25,6 @@
     }
     .actions {
       background-color: $element-bg_dark;
-      button:first-child {
-        @include button-edit_dark;
-      }
     }
     p,
     p.description,
@@ -60,7 +57,7 @@
         }
         .item_price,
         .item_quantity {
-          color: $white;
+          color: $blue-gray;
         }
       }
     }
@@ -195,15 +192,66 @@ p.description {
   left: 0;
   width: 100%;
   display: flex;
-  justify-content: space-between;
-  button:first-child {
-    @include button-edit_light;
+  justify-content: flex-end;
+  min-width: 320px;
+  button {
+    @include button-reset;
+    span {
+      display: none;
+    }
+    .icon_xs_only {
+      font-size: 2rem;
+    }
   }
-  button:nth-child(2) {
-    @include button-delete;
+  .edit_button {
+    margin-right: 2rem;
+    color: $blue-gray;
+    &:hover {
+      color: $light-blue-gray;
+    }
   }
-  button:last-child {
+  .delete_button {
+    margin-right: auto;
+    color: $red;
+    &:hover {
+      color: $light-red;
+    }
+  }
+  .mark_as_button {
     @include button-purple;
+  }
+}
+
+@media screen and (min-width: 500px) {
+  .root {
+    &_dark {
+      .actions {
+        .edit_button {
+          @include button-edit_dark;
+        }
+      }
+    }
+  }
+
+  .actions {
+    button {
+      span {
+        display: block;
+      }
+      .icon_xs_only {
+        display: none;
+      }
+    }
+    .edit_button {
+      @include button-edit_light;
+      margin-right: 1rem;
+    }
+    .delete_button {
+      @include button-delete;
+    }
+    .mark_as_button {
+      @include button-purple;
+    }
   }
 }
 
@@ -212,6 +260,16 @@ p.description {
     &_with_invoice_form {
       display: block;
     }
+    &_dark {
+      .breakdown {
+        & > ul > li {
+          .item_price,
+          .item_quantity {
+            color: $white;
+          }
+        }
+      }
+    }
   }
 
   .actions {
@@ -219,8 +277,8 @@ p.description {
     padding: 0;
     width: unset;
     margin-left: auto;
-    button:nth-child(2) {
-      margin: 0 1rem;
+    .delete_button {
+      margin-right: 1rem;
     }
   }
 
