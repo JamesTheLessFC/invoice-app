@@ -125,3 +125,9 @@
     transform: rotate(180deg);
   }
 }
+
+@media print {
+  .root {
+    display: none;
+  }
+}

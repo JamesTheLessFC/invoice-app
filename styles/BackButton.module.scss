@@ -10,4 +10,15 @@
     color: $purple;
     margin-right: 1rem;
   }
+  &:hover {
+    span {
+      color: $light-purple;
+    }
+  }
+}
+
+@media print {
+  .root {
+    display: none;
+  }
 }

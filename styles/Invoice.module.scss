@@ -64,6 +64,24 @@
   }
 }
 
+.links {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  .download_link {
+    @include button-reset;
+    font-size: 1rem;
+    color: $purple;
+    text-decoration: underline;
+    &:hover {
+      color: $light-purple;
+    }
+    .icon {
+      margin-right: 0.5rem;
+    }
+  }
+}
+
 .container {
   background-color: $white;
   border-radius: 5px;
@@ -186,7 +204,7 @@ p.description {
 
 .actions {
   background-color: $white;
-  padding: 1rem;
+  padding: 1rem 5%;
   position: fixed;
   bottom: 0;
   left: 0;
@@ -210,6 +228,9 @@ p.description {
       color: $light-blue-gray;
     }
   }
+  // .download_button {
+  //   margin-right: 1.5rem;
+  // }
   .delete_button {
     margin-right: auto;
     color: $red;
@@ -220,15 +241,42 @@ p.description {
   .mark_as_button {
     @include button-purple;
   }
+  .download_button {
+    @include button-reset;
+    margin-right: 2rem;
+    display: flex;
+    align-items: center;
+    span {
+      display: none;
+    }
+    .icon_xs_only {
+      font-size: 2rem;
+      color: $blue-gray;
+    }
+    &:hover {
+      .icon_xs_only {
+        color: $light-blue-gray;
+      }
+    }
+  }
 }
 
-@media screen and (min-width: 500px) {
+@media screen and (min-width: 550px) {
   .root {
     &_dark {
       .actions {
         .edit_button {
           @include button-edit_dark;
+          &:hover {
+            color: $white;
+          }
         }
+        // .download_button {
+        //   @include button-edit_dark;
+        //   &:hover {
+        //     color: $white;
+        //   }
+        // }
       }
     }
   }
@@ -245,6 +293,9 @@ p.description {
     .edit_button {
       @include button-edit_light;
       margin-right: 1rem;
+      &:hover {
+        color: $text_light;
+      }
     }
     .delete_button {
       @include button-delete;
@@ -255,6 +306,16 @@ p.description {
     .mark_as_button {
       @include button-purple;
     }
+    // .download_button {
+    //   @include button-edit_light;
+    //   margin-right: 1rem;
+    //   span {
+    //     display: block;
+    //   }
+    //   .icon_xs_only {
+    //     display: none;
+    //   }
+    // }
   }
 }
 
@@ -281,6 +342,9 @@ p.description {
     width: unset;
     margin-left: auto;
     .delete_button {
+      margin-right: 1rem;
+    }
+    .download_button {
       margin-right: 1rem;
     }
   }
@@ -356,5 +420,19 @@ p.description {
 @media screen and (min-width: 1199px) {
   .root {
     width: 60%;
+  }
+}
+
+@media print {
+  .root {
+    width: 100%;
+    margin: 0;
+  }
+  .container {
+    box-shadow: none;
+    border-radius: unset;
+  }
+  .container_status {
+    display: none;
   }
 }

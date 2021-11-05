@@ -2,7 +2,9 @@ import styles from "../styles/Invoice.module.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCircle,
+  faDownload,
   faEdit,
+  faFileDownload,
   faSpinner,
   faTrash,
 } from "@fortawesome/free-solid-svg-icons";
@@ -23,6 +25,8 @@ import {
 } from "../features/deleteModal/deleteModalSlice";
 import { selectInvoiceList } from "../features/invoiceList/invoiceListSlice";
 import { selectDarkMode } from "../features/darkMode/darkModeSlice";
+import { PDFDownloadLink, PDFViewer } from "@react-pdf/renderer";
+import InvoicePDF from "./InvoicePDF";
 
 export default function Invoice({ data }) {
   const [patchInvoiceById, { isLoading: isUpdating }] =
@@ -84,7 +88,30 @@ export default function Invoice({ data }) {
         invoiceForm.open ? styles.root_with_invoice_form : ""
       } ${darkMode.on ? styles.root_dark : ""}`}
     >
-      <BackButton handleClick={handleBackClick} />
+      <div className={styles.links}>
+        <BackButton handleClick={handleBackClick} />
+        <PDFDownloadLink
+          document={
+            <InvoicePDF invoice={{ ...data, senderName: "James Ciskanik" }} />
+          }
+          fileName={`Invoice_${data.id.slice(-8).toUpperCase()}.pdf`}
+          className={styles.download_link}
+        >
+          {({ blob, url, loading, error }) =>
+            loading ? (
+              <FontAwesomeIcon icon={faSpinner} spin />
+            ) : (
+              <>
+                <FontAwesomeIcon
+                  icon={faFileDownload}
+                  className={styles.icon}
+                />
+                <span>Download PDF</span>
+              </>
+            )
+          }
+        </PDFDownloadLink>
+      </div>
       <div className={`${styles.container} ${styles.container_status}`}>
         <p className={styles.label}>Status</p>
         <p className={`${styles.status} ${styles[`status_${data.status}`]}`}>
@@ -99,6 +126,27 @@ export default function Invoice({ data }) {
             <FontAwesomeIcon icon={faEdit} className={styles.icon_xs_only} />
             <span>Edit</span>
           </button>
+          {/* <PDFDownloadLink
+            document={
+              <InvoicePDF invoice={{ ...data, senderName: "James Ciskanik" }} />
+            }
+            fileName={`Invoice_${data.id.slice(-8).toUpperCase()}.pdf`}
+            className={styles.download_button}
+          >
+            {({ blob, url, loading, error }) =>
+              loading ? (
+                <FontAwesomeIcon icon={faSpinner} spin />
+              ) : (
+                <>
+                  <FontAwesomeIcon
+                    icon={faFileDownload}
+                    className={styles.icon_xs_only}
+                  />
+                  <span>Download</span>
+                </>
+              )
+            }
+          </PDFDownloadLink> */}
           <button onClick={handleDeleteClick} className={styles.delete_button}>
             <FontAwesomeIcon icon={faTrash} className={styles.icon_xs_only} />
             <span>Delete</span>
@@ -133,8 +181,8 @@ export default function Invoice({ data }) {
             <p>
               {data.senderCity}
               {data.senderState &&
-              data.senderState != "BLANK" &&
-              data.senderState != "NA"
+              data.senderState !== "BLANK" &&
+              data.senderState !== "NA"
                 ? ", " + data.senderState
                 : ""}
             </p>
