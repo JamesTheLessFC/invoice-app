@@ -176,6 +176,7 @@ export default function Invoice({ data }) {
             <p className={styles.description}>{data.description}</p>
           </div>
           <div className={styles.address}>
+            <p>{data.senderName}</p>
             <p>{data.senderStreet}</p>
             <p>{data.senderStreet2}</p>
             <p>

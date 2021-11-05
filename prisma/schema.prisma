@@ -88,6 +88,7 @@ model Invoice {
   clientName    String?
   clientEmail   String?
   status        Status   @default(DRAFT)
+  senderName    String?
   senderStreet  String?
   senderStreet2 String?
   senderCity    String?

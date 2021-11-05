@@ -27,6 +27,7 @@ import { validateInvoice } from "../util/validators";
 import { selectDarkMode } from "../features/darkMode/darkModeSlice";
 
 export default function InvoiceForm({ invoice }) {
+  const [senderName, setSenderName] = useState("");
   const [senderStreet, setSenderStreet] = useState("");
   const [senderStreet2, setSenderStreet2] = useState("");
   const [senderCity, setSenderCity] = useState("");
@@ -58,6 +59,7 @@ export default function InvoiceForm({ invoice }) {
 
   useEffect(() => {
     if (invoice) {
+      setSenderName(invoice.senderName);
       setSenderStreet(invoice.senderStreet);
       setSenderStreet2(invoice.senderStreet2);
       setSenderCity(invoice.senderCity);
@@ -116,6 +118,7 @@ export default function InvoiceForm({ invoice }) {
   const prepareInvoiceObj = () => {
     return {
       description,
+      senderName,
       senderStreet,
       senderStreet2,
       senderCity,
@@ -225,6 +228,18 @@ export default function InvoiceForm({ invoice }) {
       editInvoice("PENDING");
     } else {
       addNewInvoice("PENDING");
+    }
+  };
+
+  const handleSenderNameChange = (e) => {
+    setSenderName(e.target.value);
+    if (errors.senderName) {
+      setErrors((prevState) => {
+        return {
+          ...prevState,
+          senderName: "",
+        };
+      });
     }
   };
 
@@ -530,6 +545,23 @@ export default function InvoiceForm({ invoice }) {
         </h1>
         <fieldset>
           <p className={styles.fieldset_title}>BILL FROM</p>
+          <div
+            className={`${styles.label_input_container} ${
+              errors.senderName ? styles.label_input_container_with_error : ""
+            }`}
+          >
+            <div className={styles.label_error_container}>
+              <label>{"Sender's Name"}</label>
+              <p className={styles.error}>
+                {errors.senderName ? errors.senderName : ""}
+              </p>
+            </div>
+            <input
+              type="text"
+              value={senderName}
+              onChange={handleSenderNameChange}
+            />
+          </div>
           <div
             className={`${styles.label_input_container} ${
               errors.senderStreet ? styles.label_input_container_with_error : ""
