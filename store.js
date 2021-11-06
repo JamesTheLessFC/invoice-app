@@ -6,6 +6,7 @@ import invoiceFormReducer from "./features/invoiceForm/invoiceFormSlice";
 import deleteModalReducer from "./features/deleteModal/deleteModalSlice";
 import invoiceListReducer from "./features/invoiceList/invoiceListSlice";
 import darkModeReducer from "./features/darkMode/darkModeSlice";
+import invoiceReducer from "./features/invoice/invoiceSlice";
 
 export const store = configureStore({
   reducer: {
@@ -15,6 +16,7 @@ export const store = configureStore({
     deleteModal: deleteModalReducer,
     invoiceList: invoiceListReducer,
     darkMode: darkModeReducer,
+    invoice: invoiceReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(invoiceApi.middleware),

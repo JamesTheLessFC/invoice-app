@@ -90,6 +90,7 @@ const isValidEmail = (emailAddress) => {
 export const validateInvoice = (invoice) => {
   const errors = {};
   const emptyErrMsg = "Required";
+  if (isEmpty(invoice.senderName)) errors.senderName = emptyErrMsg;
   if (isEmpty(invoice.senderStreet)) errors.senderStreet = emptyErrMsg;
   if (isEmpty(invoice.senderCity)) errors.senderCity = emptyErrMsg;
   if (isEmpty(invoice.senderState) || invoice.senderState === "BLANK") {

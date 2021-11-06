@@ -159,6 +159,7 @@ export default function InvoiceForm({ invoice }) {
     }
     try {
       const response = await addInvoice(body).unwrap();
+      dispatch(hideInvoiceForm());
       dispatch(
         showToast({
           type: "success",

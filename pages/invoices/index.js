@@ -25,6 +25,11 @@ import {
 } from "../../features/invoiceList/invoiceListSlice";
 import { arraysAreEqual } from "../../util/helperFunctions";
 import { selectDarkMode } from "../../features/darkMode/darkModeSlice";
+import Head from "../../components/Head";
+import {
+  selectInvoice,
+  setInvoiceId,
+} from "../../features/invoice/invoiceSlice";
 
 export async function getServerSideProps({ query }) {
   const pageString = query.page;
@@ -49,12 +54,19 @@ function InvoicesPage({ page, filters, router }) {
     filters: invoiceList.filters,
   });
   const darkMode = useSelector(selectDarkMode);
+  const invoice = useSelector(selectInvoice);
 
   useEffect(() => {
     if (!session) {
       router.push("/");
     }
   }, [session, router]);
+
+  useEffect(() => {
+    if (invoice.id !== "") {
+      dispatch(setInvoiceId(""));
+    }
+  }, [dispatch, invoice.id]);
 
   useEffect(() => {
     if (!arraysAreEqual(filters, invoiceList.filters)) {
@@ -83,49 +95,58 @@ function InvoicesPage({ page, filters, router }) {
 
   if (isFetching) {
     return (
-      <div
-        className={`${styles.root} ${styles.root_no_content} ${
-          darkMode.on ? styles.root_dark : ""
-        }`}
-      >
-        <AppBar />
-        <FontAwesomeIcon
-          icon={faSpinner}
-          spin
-          className={styles.spinner_icon}
-        />
-      </div>
+      <>
+        <Head title="Loading..." />
+        <div
+          className={`${styles.root} ${styles.root_no_content} ${
+            darkMode.on ? styles.root_dark : ""
+          }`}
+        >
+          <AppBar />
+          <FontAwesomeIcon
+            icon={faSpinner}
+            spin
+            className={styles.spinner_icon}
+          />
+        </div>
+      </>
     );
   }
 
   if (error) {
     return (
-      <div
-        className={`${styles.root} ${styles.root_no_content} ${
-          darkMode.on ? styles.root_dark : ""
-        }`}
-      >
-        <AppBar />
-        <FontAwesomeIcon
-          icon={faExclamationCircle}
-          className={styles.error_icon}
-        />
-        <h3>Oops! Something went wrong.</h3>
-      </div>
+      <>
+        <Head title="Error" />
+        <div
+          className={`${styles.root} ${styles.root_no_content} ${
+            darkMode.on ? styles.root_dark : ""
+          }`}
+        >
+          <AppBar />
+          <FontAwesomeIcon
+            icon={faExclamationCircle}
+            className={styles.error_icon}
+          />
+          <h3>Oops! Something went wrong.</h3>
+        </div>
+      </>
     );
   }
 
   return (
-    <div className={`${styles.root} ${darkMode.on ? styles.root_dark : ""}`}>
-      <AppBar />
-      <Invoices data={data.invoices} />
-      {invoiceForm.open && (
-        <Screen>
-          <InvoiceForm />
-        </Screen>
-      )}
-      {toast.active && <Toast />}
-    </div>
+    <>
+      <Head title="Invoices" />
+      <div className={`${styles.root} ${darkMode.on ? styles.root_dark : ""}`}>
+        <AppBar />
+        <Invoices data={data.invoices} />
+        {invoiceForm.open && (
+          <Screen>
+            <InvoiceForm />
+          </Screen>
+        )}
+        {toast.active && <Toast />}
+      </div>
+    </>
   );
 }
 
