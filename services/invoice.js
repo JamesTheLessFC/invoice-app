@@ -42,7 +42,20 @@ export const invoiceApi = createApi({
     }),
     updateInvoiceById: builder.mutation({
       query: ({ id, ...body }) => ({
-        url: `invoice/${id}`,
+        url: `invoice/${id}?send=true`,
+        method: "PUT",
+        body,
+      }),
+      // Invalidates all queries that subscribe to this Invoice `id` only.
+      // In this case, `getInvoice` will be re-run. `getInvoices` *might*  rerun, if this id was under its results.
+      invalidatesTags: (result, error, { id }) => [
+        { type: "Invoices", id },
+        { type: "Invoices", id: "LIST" },
+      ],
+    }),
+    updateInvoiceByIdWithoutSending: builder.mutation({
+      query: ({ id, ...body }) => ({
+        url: `invoice/${id}?send=false`,
         method: "PUT",
         body,
       }),
@@ -82,6 +95,7 @@ export const {
   useGetInvoiceByIdQuery,
   useAddInvoiceMutation,
   useUpdateInvoiceByIdMutation,
+  useUpdateInvoiceByIdWithoutSendingMutation,
   usePatchInvoiceByIdMutation,
   useDeleteInvoiceByIdMutation,
 } = invoiceApi;

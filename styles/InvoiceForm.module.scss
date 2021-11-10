@@ -205,7 +205,7 @@
     .icon_xs_only {
       font-size: 2rem;
     }
-    &.discard {
+    &.cancel {
       margin-right: auto;
       .icon_xs_only {
         color: $blue-gray;
@@ -216,7 +216,7 @@
         }
       }
     }
-    &.save_as_draft {
+    &.save {
       margin-right: 2rem;
       .icon_xs_only {
         color: $purple;
@@ -227,25 +227,13 @@
         }
       }
     }
-    &.save_and_send,
-    &.save_changes {
+    &.save_and_send {
       .icon_xs_only {
         color: $purple;
       }
       &:hover {
         .icon_xs_only {
           color: $light-purple;
-        }
-      }
-    }
-    &.cancel {
-      margin-right: 2rem;
-      .icon_xs_only {
-        color: $blue-gray;
-      }
-      &:hover {
-        .icon_xs_only {
-          opacity: 0.75;
         }
       }
     }
@@ -257,11 +245,10 @@
     &_dark {
       .actions {
         button {
-          &.discard,
           &.cancel {
             @include button-save_light;
           }
-          &.save_as_draft {
+          &.save {
             @include button-purple;
           }
         }
@@ -276,21 +263,14 @@
       .icon_xs_only {
         display: none;
       }
-      &.discard {
+      &.cancel {
         @include button-edit_light;
       }
-      &.save_as_draft {
+      &.save {
         @include button-save_light;
         margin-right: 1rem;
       }
       &.save_and_send {
-        @include button-purple;
-      }
-      &.cancel {
-        @include button-edit_light;
-        margin-right: 1rem;
-      }
-      &.save_changes {
         @include button-purple;
       }
     }

@@ -1,6 +1,8 @@
 import { getSession } from "next-auth/client";
 import prisma from "../../../lib/prisma";
 import { validateInvoice } from "../../../util/validators";
+import { createAndUploadPDF } from "../../../util/createPDF";
+import { emailInvoice } from "../../../util/emailInvoice";
 
 export default async function handle(req, res) {
   const session = await getSession({ req });
@@ -28,5 +30,31 @@ export default async function handle(req, res) {
       id: true,
     },
   });
-  res.status(201).json(result);
+  if (req.body.status === "DRAFT") {
+    return res.status(201).json(result);
+  } else {
+    try {
+      const uploadResult = await createAndUploadPDF(req);
+      await emailInvoice({ ...req.body, id: result.id }, uploadResult);
+    } catch (err) {
+      await revertStatusToDraft(invoiceId);
+      return res.status(500).json(err);
+    }
+    return res.status(201).json(result);
+  }
 }
+
+export const revertStatusToDraft = async (id) => {
+  const fixStatusResult = await prisma.invoice.update({
+    where: {
+      id: id,
+    },
+    data: {
+      status: "DRAFT",
+    },
+    select: {
+      id: true,
+    },
+  });
+  return fixStatusResult;
+};

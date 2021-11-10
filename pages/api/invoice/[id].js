@@ -4,6 +4,7 @@ import { getSession } from "next-auth/client";
 import { createAndUploadPDF } from "../../../util/createPDF";
 import { emailInvoice } from "../../../util/emailInvoice";
 import { deleteFile } from "../../../util/storage";
+import { revertStatusToDraft } from ".";
 
 export default async function handle(req, res) {
   const session = await getSession({ req });
@@ -61,6 +62,7 @@ export default async function handle(req, res) {
       return res.status(500).json(err);
     }
   } else if (req.method === "PUT") {
+    const sendAfterUpdate = req.query.send === "true" ? true : false;
     if (!req.body.status) req.body.status = "DRAFT";
     if (req.body.status === "PENDING") {
       const validationResults = validateInvoice(req.body);
@@ -86,15 +88,18 @@ export default async function handle(req, res) {
       },
     });
 
+    if (!sendAfterUpdate) {
+      return res.json(result);
+    }
+
     try {
-      const uploadResult = await createAndUploadPDF(req);
-      await emailInvoice({ ...req.body, id: result.id }, uploadResult);
+      const invoicePDFUrl = await createAndUploadPDF(req);
+      await emailInvoice({ ...req.body, id: result.id }, invoicePDFUrl);
+      return res.json(result);
     } catch (err) {
       await revertStatusToDraft(invoiceId);
       return res.status(500).json(err);
     }
-
-    return res.json(result);
   } else if (req.method === "PATCH") {
     if (req.body.status === "PAID" || req.body.status === "PENDING") {
       const result = await prisma.invoice.update({
@@ -114,18 +119,3 @@ export default async function handle(req, res) {
     }
   }
 }
-
-const revertStatusToDraft = async (id) => {
-  const fixStatusResult = await prisma.invoice.update({
-    where: {
-      id: id,
-    },
-    data: {
-      status: "DRAFT",
-    },
-    select: {
-      id: true,
-    },
-  });
-  return fixStatusResult;
-};

@@ -15,6 +15,7 @@ import { nanoid } from "nanoid";
 import {
   useAddInvoiceMutation,
   useUpdateInvoiceByIdMutation,
+  useUpdateInvoiceByIdWithoutSendingMutation,
 } from "../services/invoice";
 import { useDispatch, useSelector } from "react-redux";
 import { showToast } from "../features/toast/toastSlice";
@@ -51,6 +52,10 @@ export default function InvoiceForm({ invoice }) {
     useAddInvoiceMutation();
   const [updateInvoice, { isLoading: isUpdating, error: updateError }] =
     useUpdateInvoiceByIdMutation();
+  const [
+    updateInvoiceWithoutSending,
+    { isLoading: isUpdatingWithoutSending, error: updateWithoutSendError },
+  ] = useUpdateInvoiceByIdWithoutSendingMutation();
   const dispatch = useDispatch();
   const invoiceForm = useSelector(selectInvoiceForm);
   const [activeButton, setActiveButton] = useState("");
@@ -180,7 +185,7 @@ export default function InvoiceForm({ invoice }) {
     }
   };
 
-  const editInvoice = async (status) => {
+  const editInvoice = async (status, sendAfterUpdate) => {
     const body = {
       ...prepareInvoiceObj(),
       id: invoice.id,
@@ -193,13 +198,18 @@ export default function InvoiceForm({ invoice }) {
       }
     }
     try {
-      const response = await updateInvoice(body).unwrap();
+      const response =
+        !sendAfterUpdate || status === "DRAFT"
+          ? await updateInvoiceWithoutSending(body).unwrap()
+          : await updateInvoice(body).unwrap();
       dispatch(
         showToast({
           type: "success",
-          message: `Invoice #${response.id
-            .slice(-8)
-            .toUpperCase()} updated successfully!`,
+          message: `Invoice #${response.id.slice(-8).toUpperCase()} ${
+            !sendAfterUpdate || status === "DRAFT"
+              ? "updated"
+              : `updated and sent to ${clientEmail}`
+          } successfully!`,
         })
       );
     } catch (err) {
@@ -225,10 +235,10 @@ export default function InvoiceForm({ invoice }) {
     }
   };
 
-  const saveAsDraft = () => {
-    setActiveButton("save as draft");
+  const save = () => {
+    setActiveButton("save");
     if (invoice) {
-      editInvoice("DRAFT");
+      editInvoice(invoice.status.toUpperCase(), false);
     } else {
       addNewInvoice();
     }
@@ -237,7 +247,7 @@ export default function InvoiceForm({ invoice }) {
   const saveAndSend = () => {
     setActiveButton("save and send");
     if (invoice) {
-      editInvoice("PENDING");
+      editInvoice(invoice.status === "paid" ? "PAID" : "PENDING", true);
     } else {
       addNewInvoice("PENDING");
     }
@@ -976,87 +986,60 @@ export default function InvoiceForm({ invoice }) {
           + Add New Item
         </button>
       </form>
-      {invoice && invoice.status !== "draft" ? (
-        <div className={styles.actions}>
-          <button
-            className={styles.cancel}
-            onClick={() => dispatch(hideInvoiceForm())}
-            disabled={isUpdating}
-          >
-            <span className={styles.icon_xs_only}>
-              <FontAwesomeIcon icon={faTimes} />
-            </span>
-            <span>Cancel</span>
-          </button>
-          <button
-            onClick={() => editInvoice(invoice.status.toUpperCase())}
-            className={styles.save_changes}
-            disabled={isUpdating || !isValid}
-          >
-            <span className={styles.icon_xs_only}>
-              <FontAwesomeIcon icon={faSave} />
-            </span>
-            <span>
-              {isUpdating ? (
-                <FontAwesomeIcon icon={faSpinner} spin />
-              ) : (
-                "Save Changes"
-              )}
-            </span>
-          </button>
-        </div>
-      ) : (
-        <div className={styles.actions}>
-          <button
-            className={styles.discard}
-            onClick={() => dispatch(hideInvoiceForm())}
-            disabled={isAdding || isUpdating}
-          >
-            <span className={styles.icon_xs_only}>
-              <FontAwesomeIcon icon={faTimes} />
-            </span>
-            <span>{invoice ? "Cancel" : "Discard"}</span>
-          </button>
-          <button
-            onClick={saveAsDraft}
-            className={styles.save_as_draft}
-            disabled={isAdding || isUpdating}
-          >
-            <span className={styles.icon_xs_only}>
-              {(isAdding || isUpdating) && activeButton === "save as draft" ? (
-                <FontAwesomeIcon icon={faSpinner} spin />
-              ) : (
-                <FontAwesomeIcon icon={faSave} />
-              )}
-            </span>
-            <span>
-              {(isAdding || isUpdating) && activeButton === "save as draft" ? (
-                <FontAwesomeIcon icon={faSpinner} spin />
-              ) : (
-                "Save as Draft"
-              )}
-            </span>
-          </button>
-          <button
-            onClick={saveAndSend}
-            className={styles.save_and_send}
-            disabled={isAdding || isUpdating || !isValid}
-          >
-            <span className={styles.icon_xs_only}>
-              {(isAdding || isUpdating) && activeButton === "save and send" ? (
-                <FontAwesomeIcon icon={faSpinner} spin />
-              ) : (
-                <FontAwesomeIcon icon={faPaperPlane} />
-              )}
-            </span>
+
+      <div className={styles.actions}>
+        <button
+          className={styles.cancel}
+          onClick={() => dispatch(hideInvoiceForm())}
+          disabled={isAdding || isUpdating || isUpdatingWithoutSending}
+        >
+          <span className={styles.icon_xs_only}>
+            <FontAwesomeIcon icon={faTimes} />
+          </span>
+          <span>{invoice ? "Cancel" : "Discard"}</span>
+        </button>
+        <button
+          onClick={save}
+          className={styles.save}
+          disabled={
+            isAdding || isUpdating || !isValid || isUpdatingWithoutSending
+          }
+        >
+          <span className={styles.icon_xs_only}>
+            <FontAwesomeIcon icon={faSave} />
+          </span>
+          <span>
+            {(isAdding || isUpdatingWithoutSending) &&
+            activeButton === "save" ? (
+              <FontAwesomeIcon icon={faSpinner} spin />
+            ) : invoice ? (
+              "Save Changes"
+            ) : (
+              "Save as Draft"
+            )}
+          </span>
+        </button>
+        <button
+          onClick={saveAndSend}
+          className={styles.save_and_send}
+          disabled={
+            isAdding || isUpdating || !isValid || isUpdatingWithoutSending
+          }
+        >
+          <span className={styles.icon_xs_only}>
             {(isAdding || isUpdating) && activeButton === "save and send" ? (
               <FontAwesomeIcon icon={faSpinner} spin />
             ) : (
-              <span>Save &amp; Send</span>
+              <FontAwesomeIcon icon={faPaperPlane} />
             )}
-          </button>
-        </div>
-      )}
+          </span>
+          {(isAdding || isUpdating) && activeButton === "save and send" ? (
+            <FontAwesomeIcon icon={faSpinner} spin />
+          ) : (
+            <span>Save &amp; Send</span>
+          )}
+        </button>
+      </div>
     </div>
   );
 }
