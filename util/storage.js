@@ -19,6 +19,7 @@ export const uploadFile = (doc, fileName) =>
           metadata: {
             contentType: "application/pdf",
             cacheControl: "public, max-age=0",
+            contentDisposition: `attachment; filename=${fileName};`,
           },
           resumable: false,
           public: true,
