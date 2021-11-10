@@ -203,7 +203,18 @@ export default function InvoiceForm({ invoice }) {
         })
       );
     } catch (err) {
-      if (err.status !== 400) {
+      if (
+        err.status === 500 &&
+        (err.data.name === "PDF Upload Error" ||
+          err.data.name === "Email Client Error")
+      ) {
+        dispatch(
+          showToast({
+            type: "error",
+            message: err.data.message,
+          })
+        );
+      } else if (err.status !== 400) {
         dispatch(
           showToast({
             type: "error",

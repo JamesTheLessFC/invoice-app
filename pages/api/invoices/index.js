@@ -45,12 +45,10 @@ export default async function handle(req, res) {
     const invoices = invoicesData.map((invoice) => ({
       ...invoice,
       total:
-        invoice.items.length > 1
-          ? invoice.items.reduce(
-              (a, b) => a.price * a.quantity + b.price * b.quantity
-            )
-          : invoice.items.length === 1
-          ? invoice.items[0].price * invoice.items[0].quantity
+        invoice.items.length > 0
+          ? invoice.items
+              .map((item) => item.price * item.quantity)
+              .reduce((a, b) => a + b)
           : 0,
       paymentDue: invoice.paymentDue.toLocaleDateString("en-US", {
         dateStyle: "medium",

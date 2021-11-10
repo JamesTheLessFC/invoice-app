@@ -8,7 +8,6 @@ import { selectDarkMode } from "../features/darkMode/darkModeSlice";
 export default function InvoiceListItem({ data }) {
   const router = useRouter();
   const darkMode = useSelector(selectDarkMode);
-
   return (
     <li
       className={`${styles.root} ${darkMode.on ? styles.root_dark : ""}`}

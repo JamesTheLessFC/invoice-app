@@ -24,6 +24,7 @@ export default function DeleteModal({ invoiceId }) {
       isLoading: isDeleting,
       isSuccess: deleteSuccess,
       isError: deleteFailure,
+      error: deleteError,
     },
   ] = useDeleteInvoiceByIdMutation();
   const router = useRouter();
@@ -78,6 +79,8 @@ export default function DeleteModal({ invoiceId }) {
         <span>
           {deleteSuccess
             ? "Success!"
+            : deleteFailure && deleteError.data?.name === "PDF Delete Error"
+            ? deleteError.data.name
             : deleteFailure
             ? "Oops!"
             : "Confirm Deletion"}
@@ -88,6 +91,8 @@ export default function DeleteModal({ invoiceId }) {
           ? `Invoice #${deletionResultData.id
               .slice(-8)
               .toUpperCase()} has been deleted.`
+          : deleteFailure && deleteError.data?.name === "PDF Delete Error"
+          ? deleteError.data.message
           : deleteFailure
           ? `Something went wrong. Invoice #${invoiceId
               .slice(-8)

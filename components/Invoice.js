@@ -2,7 +2,6 @@ import styles from "../styles/Invoice.module.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCircle,
-  faDownload,
   faEdit,
   faFileDownload,
   faSpinner,
@@ -25,7 +24,7 @@ import {
 } from "../features/deleteModal/deleteModalSlice";
 import { selectInvoiceList } from "../features/invoiceList/invoiceListSlice";
 import { selectDarkMode } from "../features/darkMode/darkModeSlice";
-import { PDFDownloadLink, PDFViewer } from "@react-pdf/renderer";
+import { PDFDownloadLink, usePDF } from "@react-pdf/renderer";
 import InvoicePDF from "./InvoicePDF";
 
 export default function Invoice({ data }) {
@@ -91,9 +90,7 @@ export default function Invoice({ data }) {
       <div className={styles.links}>
         <BackButton handleClick={handleBackClick} />
         <PDFDownloadLink
-          document={
-            <InvoicePDF invoice={{ ...data, senderName: "James Ciskanik" }} />
-          }
+          document={<InvoicePDF invoice={data} />}
           fileName={`Invoice_${data.id.slice(-8).toUpperCase()}.pdf`}
           className={styles.download_link}
         >
@@ -126,27 +123,6 @@ export default function Invoice({ data }) {
             <FontAwesomeIcon icon={faEdit} className={styles.icon_xs_only} />
             <span>Edit</span>
           </button>
-          {/* <PDFDownloadLink
-            document={
-              <InvoicePDF invoice={{ ...data, senderName: "James Ciskanik" }} />
-            }
-            fileName={`Invoice_${data.id.slice(-8).toUpperCase()}.pdf`}
-            className={styles.download_button}
-          >
-            {({ blob, url, loading, error }) =>
-              loading ? (
-                <FontAwesomeIcon icon={faSpinner} spin />
-              ) : (
-                <>
-                  <FontAwesomeIcon
-                    icon={faFileDownload}
-                    className={styles.icon_xs_only}
-                  />
-                  <span>Download</span>
-                </>
-              )
-            }
-          </PDFDownloadLink> */}
           <button onClick={handleDeleteClick} className={styles.delete_button}>
             <FontAwesomeIcon icon={faTrash} className={styles.icon_xs_only} />
             <span>Delete</span>
