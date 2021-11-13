@@ -20,9 +20,9 @@ export default function InvoicesHeader() {
     const count = invoiceList.invoiceCount;
     const page = invoiceList.page;
     const max = 10;
-    const lastPage = Math.ceil(count / max) === page;
-    const firstOnPage = max * page - (max - 1);
-    const lastOnPage = lastPage ? count : firstOnPage + max - 1;
+    const isLastPage = Math.ceil(count / max) === page || count === 0;
+    const firstOnPage = count === 0 ? 0 : max * page - (max - 1);
+    const lastOnPage = isLastPage ? count : firstOnPage + max - 1;
     return `${firstOnPage}${
       lastOnPage !== firstOnPage ? `-${lastOnPage}` : ""
     } of ${count}`;
