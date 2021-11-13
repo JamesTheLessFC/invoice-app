@@ -77,6 +77,10 @@
     &:hover {
       color: $light-purple;
     }
+    &:disabled {
+      opacity: 0.5;
+      pointer-events: none;
+    }
     .icon {
       margin-right: 0.5rem;
     }

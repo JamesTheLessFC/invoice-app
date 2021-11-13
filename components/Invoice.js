@@ -101,8 +101,16 @@ export default function Invoice({ data }) {
     >
       <div className={styles.links}>
         <BackButton handleClick={handleBackClick} />
-        <button className={styles.download_link} onClick={downloadPDF}>
-          <FontAwesomeIcon icon={faFileDownload} className={styles.icon} />
+        <button
+          disabled={isLoadingPDF}
+          className={styles.download_link}
+          onClick={downloadPDF}
+        >
+          {isLoadingPDF ? (
+            <FontAwesomeIcon icon={faSpinner} spin className={styles.icon} />
+          ) : (
+            <FontAwesomeIcon icon={faFileDownload} className={styles.icon} />
+          )}
           <span>Download PDF</span>
         </button>
       </div>
