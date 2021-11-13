@@ -3,7 +3,7 @@ import prisma from "../../../lib/prisma";
 import { validateInvoice } from "../../../util/validators";
 import { emailInvoice } from "../../../util/emailInvoice";
 import { createPDF } from "../../../util/pdf";
-import { uploadFile } from "../../../util/storage";
+import { deleteFile, uploadFile } from "../../../util/storage";
 
 export default async function handle(req, res) {
   const session = await getSession({ req });
@@ -39,7 +39,12 @@ export default async function handle(req, res) {
       const fileName = `Invoice_${result.id}.pdf`;
       const invoicePDFUrl = await uploadFile(doc, fileName);
       await emailInvoice({ ...req.body, id: result.id }, invoicePDFUrl);
+      await deleteFile(fileName);
     } catch (err) {
+      if (err.name && err.name === "PDF Delete Error") {
+        //this error doesn't need to be reported to user
+        return res.json(result);
+      }
       await revertStatusToDraft(result.id);
       return res.status(500).json(err);
     }

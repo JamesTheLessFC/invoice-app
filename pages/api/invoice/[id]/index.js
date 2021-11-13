@@ -47,20 +47,15 @@ export default async function handle(req, res) {
     return res.json({ invoice });
   }
   if (req.method === "DELETE") {
-    try {
-      await deleteFile(`Invoice_${invoiceId}.pdf`);
-      const result = await prisma.invoice.delete({
-        where: {
-          id: invoiceId,
-        },
-        select: {
-          id: true,
-        },
-      });
-      return res.json(result);
-    } catch (err) {
-      return res.status(500).json(err);
-    }
+    const result = await prisma.invoice.delete({
+      where: {
+        id: invoiceId,
+      },
+      select: {
+        id: true,
+      },
+    });
+    return res.json(result);
   } else if (req.method === "PUT") {
     const sendAfterUpdate = req.query.send === "true" ? true : false;
     if (!req.body.status) req.body.status = "DRAFT";
@@ -97,8 +92,13 @@ export default async function handle(req, res) {
       const fileName = `Invoice_${result.id}.pdf`;
       const invoicePDFUrl = await uploadFile(doc, fileName);
       await emailInvoice({ ...req.body, id: result.id }, invoicePDFUrl);
+      await deleteFile(fileName);
       return res.json(result);
     } catch (err) {
+      if (err.name && err.name === "PDF Delete Error") {
+        //this error doesn't need to be reported to user
+        return res.json(result);
+      }
       await revertStatusToDraft(invoiceId);
       return res.status(500).json(err);
     }

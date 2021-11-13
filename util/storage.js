@@ -45,6 +45,7 @@ export const deleteFile = async (fileName) => {
     await file.delete({
       ignoreNotFound: true,
     });
+    console.log("PDF deleted!");
   } catch (err) {
     console.error(err);
     throw {
