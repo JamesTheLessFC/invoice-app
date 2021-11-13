@@ -40,6 +40,13 @@ export const invoiceApi = createApi({
       query: (id) => `invoice/${id}`,
       providesTags: (result, error, id) => [{ type: "Invoices", id }],
     }),
+    getInvoicePDFById: builder.query({
+      query: ({ id, ...body }) => ({
+        url: `invoice/${id}/pdf`,
+        method: "POST",
+        body,
+      }),
+    }),
     updateInvoiceById: builder.mutation({
       query: ({ id, ...body }) => ({
         url: `invoice/${id}?send=true`,
@@ -93,6 +100,7 @@ export const invoiceApi = createApi({
 export const {
   useGetInvoicesQuery,
   useGetInvoiceByIdQuery,
+  useGetInvoicePDFByIdQuery,
   useAddInvoiceMutation,
   useUpdateInvoiceByIdMutation,
   useUpdateInvoiceByIdWithoutSendingMutation,

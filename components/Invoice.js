@@ -10,7 +10,10 @@ import {
 import BackButton from "./BackButton";
 import ModalScreen from "./ModalScreen";
 import DeleteModal from "./DeleteModal";
-import { usePatchInvoiceByIdMutation } from "../services/invoice";
+import {
+  usePatchInvoiceByIdMutation,
+  useGetInvoicePDFByIdQuery,
+} from "../services/invoice";
 import { useRouter } from "next/router";
 import { useSelector, useDispatch } from "react-redux";
 import { selectToast, showToast } from "../features/toast/toastSlice";
@@ -24,12 +27,13 @@ import {
 } from "../features/deleteModal/deleteModalSlice";
 import { selectInvoiceList } from "../features/invoiceList/invoiceListSlice";
 import { selectDarkMode } from "../features/darkMode/darkModeSlice";
-import Link from "next/link";
 import FileSaver from "file-saver";
 
 export default function Invoice({ data }) {
   const [patchInvoiceById, { isLoading: isUpdating }] =
     usePatchInvoiceByIdMutation();
+  const { data: invoicePDFData, isLoading: isLoadingPDF } =
+    useGetInvoicePDFByIdQuery(data);
   const router = useRouter();
   const toast = useSelector(selectToast);
   const dispatch = useDispatch();
@@ -82,15 +86,7 @@ export default function Invoice({ data }) {
   };
 
   const downloadPDF = async () => {
-    const result = await fetch(`/api/invoice/${data.id}/pdf`, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-      method: "POST",
-      body: JSON.stringify(data),
-    });
-    const jsonResult = await result.json();
-    const dataURI = jsonResult.base64;
+    const dataURI = invoicePDFData.base64;
     const arrayBuffer = Buffer.from(dataURI.split(",")[1], "base64");
     const mimeString = dataURI.split(",")[0].split(":")[1].split(";")[0];
     const blob = new Blob([arrayBuffer], { type: mimeString });
