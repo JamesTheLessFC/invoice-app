@@ -32,8 +32,11 @@ import FileSaver from "file-saver";
 export default function Invoice({ data }) {
   const [patchInvoiceById, { isLoading: isUpdating }] =
     usePatchInvoiceByIdMutation();
-  const { data: invoicePDFData, isLoading: isLoadingPDF } =
-    useGetInvoicePDFByIdQuery(data);
+  const {
+    data: invoicePDFData,
+    isLoading: isLoadingPDF,
+    isError: isPDFError,
+  } = useGetInvoicePDFByIdQuery(data);
   const router = useRouter();
   const toast = useSelector(selectToast);
   const dispatch = useDispatch();
@@ -86,11 +89,17 @@ export default function Invoice({ data }) {
   };
 
   const downloadPDF = async () => {
-    const dataURI = invoicePDFData.base64;
-    const arrayBuffer = Buffer.from(dataURI.split(",")[1], "base64");
-    const mimeString = dataURI.split(",")[0].split(":")[1].split(";")[0];
-    const blob = new Blob([arrayBuffer], { type: mimeString });
-    FileSaver.saveAs(blob, `Invoice_${data.id}.pdf`);
+    if (isPDFError) {
+      dispatch(
+        showToast({ type: "error", message: "Unable to download PDF file" })
+      );
+    } else {
+      const dataURI = invoicePDFData.base64;
+      const arrayBuffer = Buffer.from(dataURI.split(",")[1], "base64");
+      const mimeString = dataURI.split(",")[0].split(":")[1].split(";")[0];
+      const blob = new Blob([arrayBuffer], { type: mimeString });
+      FileSaver.saveAs(blob, `Invoice_${data.id}.pdf`);
+    }
   };
 
   return (

@@ -232,21 +232,8 @@ export const createPDF = (invoice) => {
 };
 
 export const getPDFAsBase64String = async (invoice) => {
-  try {
-    const doc = createPDF(invoice);
-    const stream = await getStream.buffer(doc);
-    const b64 = Buffer.from(stream).toString("base64");
-    return b64;
-  } catch (err) {
-    console.error(err);
-    return null;
-  }
-};
-
-export const createAndUploadPDF = async (req) => {
-  const fileName = `Invoice_${req.query.id}.pdf`;
-  const invoice = { ...req.body, id: req.query.id };
   const doc = createPDF(invoice);
-  //upload to google cloud storage and return public url or error
-  return await uploadFile(doc, fileName);
+  const stream = await getStream.buffer(doc);
+  const b64 = Buffer.from(stream).toString("base64");
+  return b64;
 };

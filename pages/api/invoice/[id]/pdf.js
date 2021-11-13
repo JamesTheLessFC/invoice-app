@@ -9,7 +9,12 @@ export default async function handle(req, res) {
   }
 
   if (req.method === "POST") {
-    const b64 = await getPDFAsBase64String({ ...req.body, id: invoiceId });
-    return res.json({ base64: "data:application/pdf;base64," + b64 });
+    try {
+      const b64 = await getPDFAsBase64String({ ...req.body, id: invoiceId });
+      return res.json({ base64: "data:application/pdf;base64," + b64 });
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({ message: "Unable to fetch PDF" });
+    }
   }
 }
