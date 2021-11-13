@@ -202,6 +202,7 @@ export default function InvoiceForm({ invoice }) {
         !sendAfterUpdate || status === "DRAFT"
           ? await updateInvoiceWithoutSending(body).unwrap()
           : await updateInvoice(body).unwrap();
+      dispatch(hideInvoiceForm());
       dispatch(
         showToast({
           type: "success",
@@ -1001,9 +1002,7 @@ export default function InvoiceForm({ invoice }) {
         <button
           onClick={save}
           className={styles.save}
-          disabled={
-            isAdding || isUpdating || !isValid || isUpdatingWithoutSending
-          }
+          disabled={isAdding || isUpdating || isUpdatingWithoutSending}
         >
           <span className={styles.icon_xs_only}>
             <FontAwesomeIcon icon={faSave} />
