@@ -24,8 +24,8 @@ import {
 } from "../features/deleteModal/deleteModalSlice";
 import { selectInvoiceList } from "../features/invoiceList/invoiceListSlice";
 import { selectDarkMode } from "../features/darkMode/darkModeSlice";
-import { PDFDownloadLink, usePDF } from "@react-pdf/renderer";
-import InvoicePDF from "./InvoicePDF";
+import Link from "next/link";
+import FileSaver from "file-saver";
 
 export default function Invoice({ data }) {
   const [patchInvoiceById, { isLoading: isUpdating }] =
@@ -81,6 +81,22 @@ export default function Invoice({ data }) {
     );
   };
 
+  const downloadPDF = async () => {
+    const result = await fetch(`/api/invoice/${data.id}/pdf`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+    const jsonResult = await result.json();
+    const dataURI = jsonResult.base64;
+    const arrayBuffer = Buffer.from(dataURI.split(",")[1], "base64");
+    const mimeString = dataURI.split(",")[0].split(":")[1].split(";")[0];
+    const blob = new Blob([arrayBuffer], { type: mimeString });
+    FileSaver.saveAs(blob, `Invoice_${data.id}.pdf`);
+  };
+
   return (
     <div
       className={`${styles.root} ${
@@ -89,25 +105,10 @@ export default function Invoice({ data }) {
     >
       <div className={styles.links}>
         <BackButton handleClick={handleBackClick} />
-        <PDFDownloadLink
-          document={<InvoicePDF invoice={data} />}
-          fileName={`Invoice_${data.id.slice(-8).toUpperCase()}.pdf`}
-          className={styles.download_link}
-        >
-          {({ blob, url, loading, error }) =>
-            loading ? (
-              <FontAwesomeIcon icon={faSpinner} spin />
-            ) : (
-              <>
-                <FontAwesomeIcon
-                  icon={faFileDownload}
-                  className={styles.icon}
-                />
-                <span>Download PDF</span>
-              </>
-            )
-          }
-        </PDFDownloadLink>
+        <button className={styles.download_link} onClick={downloadPDF}>
+          <FontAwesomeIcon icon={faFileDownload} className={styles.icon} />
+          <span>Download PDF</span>
+        </button>
       </div>
       <div className={`${styles.container} ${styles.container_status}`}>
         <p className={styles.label}>Status</p>

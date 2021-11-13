@@ -1,10 +1,10 @@
-import prisma from "../../../lib/prisma";
-import { validateInvoice } from "../../../util/validators";
+import prisma from "../../../../lib/prisma";
+import { validateInvoice } from "../../../../util/validators";
 import { getSession } from "next-auth/client";
-import { createAndUploadPDF } from "../../../util/createPDF";
-import { emailInvoice } from "../../../util/emailInvoice";
-import { deleteFile } from "../../../util/storage";
-import { revertStatusToDraft } from ".";
+import { createPDF } from "../../../../util/pdf";
+import { emailInvoice } from "../../../../util/emailInvoice";
+import { deleteFile, uploadFile } from "../../../../util/storage";
+import { revertStatusToDraft } from "../index";
 
 export default async function handle(req, res) {
   const session = await getSession({ req });
@@ -93,7 +93,9 @@ export default async function handle(req, res) {
     }
 
     try {
-      const invoicePDFUrl = await createAndUploadPDF(req);
+      const doc = createPDF({ ...req.body, id: result.id });
+      const fileName = `Invoice_${result.id}.pdf`;
+      const invoicePDFUrl = await uploadFile(doc, fileName);
       await emailInvoice({ ...req.body, id: result.id }, invoicePDFUrl);
       return res.json(result);
     } catch (err) {

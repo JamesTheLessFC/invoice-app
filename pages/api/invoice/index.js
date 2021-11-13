@@ -1,8 +1,9 @@
 import { getSession } from "next-auth/client";
 import prisma from "../../../lib/prisma";
 import { validateInvoice } from "../../../util/validators";
-import { createAndUploadPDF } from "../../../util/createPDF";
 import { emailInvoice } from "../../../util/emailInvoice";
+import { createPDF } from "../../../util/pdf";
+import { uploadFile } from "../../../util/storage";
 
 export default async function handle(req, res) {
   const session = await getSession({ req });
@@ -34,10 +35,12 @@ export default async function handle(req, res) {
     return res.status(201).json(result);
   } else {
     try {
-      const uploadResult = await createAndUploadPDF(req);
-      await emailInvoice({ ...req.body, id: result.id }, uploadResult);
+      const doc = createPDF({ ...req.body, id: result.id });
+      const fileName = `Invoice_${result.id}.pdf`;
+      const invoicePDFUrl = await uploadFile(doc, fileName);
+      await emailInvoice({ ...req.body, id: result.id }, invoicePDFUrl);
     } catch (err) {
-      await revertStatusToDraft(invoiceId);
+      await revertStatusToDraft(result.id);
       return res.status(500).json(err);
     }
     return res.status(201).json(result);

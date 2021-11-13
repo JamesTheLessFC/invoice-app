@@ -1,5 +1,6 @@
 import PDFDocument from "pdfkit";
-import { uploadFile } from "../util/storage";
+import { uploadFile } from "./storage";
+import getStream from "get-stream";
 
 const black = "black";
 const blueGray = "#7e88c3";
@@ -7,54 +8,52 @@ const lightGray = "#f9fafe";
 const white = "#ffffff";
 const darkGray = "#373b53";
 
-export const createAndUploadPDF = async (req) => {
-  const fileName = `Invoice_${req.query.id}.pdf`;
-  const invoice = { ...req.body, id: req.query.id };
+const formatDateString = (isoDate) => {
+  return new Date(isoDate).toLocaleDateString("en-US", {
+    dateStyle: "medium",
+  });
+};
+
+const formatUSD = (num) => {
+  return num.toLocaleString("en-US", {
+    style: "currency",
+    currency: "USD",
+  });
+};
+
+const generateItemRow = (doc, yVal, item) => {
+  doc.text(item.name, 60, yVal);
+  doc.text(item.quantity, 250, yVal, {
+    align: "right",
+    width: 50,
+  });
+  doc.text(formatUSD(item.price), 315, yVal, {
+    align: "right",
+    width: 100,
+  });
+  doc.text(formatUSD(item.quantity * item.price), 50, yVal, {
+    align: "right",
+    width: doc.page.width - 110,
+  });
+  doc.moveDown(0.25);
+};
+
+const generateHr = (doc, yVal, color) => {
+  doc
+    .strokeColor(color)
+    .lineWidth(1)
+    .moveTo(50, yVal)
+    .lineTo(doc.page.width - 50, yVal)
+    .stroke();
+};
+
+export const createPDF = (invoice) => {
   const doc = new PDFDocument({ size: "A4", margin: 50 });
 
   let total = 0;
   for (let i = 0; i < invoice.items.length; i++) {
     total += invoice.items[i].price * invoice.items[i].quantity;
   }
-
-  const formatDateString = (isoDate) => {
-    return new Date(isoDate).toLocaleDateString("en-US", {
-      dateStyle: "medium",
-    });
-  };
-
-  const formatUSD = (num) => {
-    return num.toLocaleString("en-US", {
-      style: "currency",
-      currency: "USD",
-    });
-  };
-
-  const generateItemRow = (doc, yVal, item) => {
-    doc.text(item.name, 60, yVal);
-    doc.text(item.quantity, 250, yVal, {
-      align: "right",
-      width: 50,
-    });
-    doc.text(formatUSD(item.price), 315, yVal, {
-      align: "right",
-      width: 100,
-    });
-    doc.text(formatUSD(item.quantity * item.price), 50, yVal, {
-      align: "right",
-      width: doc.page.width - 110,
-    });
-    doc.moveDown(0.25);
-  };
-
-  const generateHr = (doc, yVal, color) => {
-    doc
-      .strokeColor(color)
-      .lineWidth(1)
-      .moveTo(50, yVal)
-      .lineTo(doc.page.width - 50, yVal)
-      .stroke();
-  };
 
   //invoice ID
   doc
@@ -229,6 +228,25 @@ export const createAndUploadPDF = async (req) => {
 
   doc.end();
 
+  return doc;
+};
+
+export const getPDFAsBase64String = async (invoice) => {
+  try {
+    const doc = createPDF(invoice);
+    const stream = await getStream.buffer(doc);
+    const b64 = Buffer.from(stream).toString("base64");
+    return b64;
+  } catch (err) {
+    console.error(err);
+    return null;
+  }
+};
+
+export const createAndUploadPDF = async (req) => {
+  const fileName = `Invoice_${req.query.id}.pdf`;
+  const invoice = { ...req.body, id: req.query.id };
+  const doc = createPDF(invoice);
   //upload to google cloud storage and return public url or error
   return await uploadFile(doc, fileName);
 };
