@@ -47,6 +47,9 @@ export default async function handle(req, res) {
     return res.json({ invoice });
   }
   if (req.method === "DELETE") {
+    if (!isAuthorized(invoiceId, session.user.email)) {
+      return res.status(401).json({ message: "Unauthorized " });
+    }
     const result = await prisma.invoice.delete({
       where: {
         id: invoiceId,
@@ -64,6 +67,9 @@ export default async function handle(req, res) {
       if (!validationResults.valid) {
         return res.status(400).json({ errors: validationResults.errors });
       }
+    }
+    if (!isAuthorized(invoiceId, session.user.email)) {
+      return res.status(401).json({ message: "Unauthorized " });
     }
     const result = await prisma.invoice.update({
       where: {
@@ -104,6 +110,9 @@ export default async function handle(req, res) {
     }
   } else if (req.method === "PATCH") {
     if (req.body.status === "PAID" || req.body.status === "PENDING") {
+      if (!isAuthorized(invoiceId, session.user.email)) {
+        return res.status(401).json({ message: "Unauthorized " });
+      }
       const result = await prisma.invoice.update({
         where: {
           id: invoiceId,
@@ -121,3 +130,19 @@ export default async function handle(req, res) {
     }
   }
 }
+
+const isAuthorized = async (invoiceId, userEmail) => {
+  const requestedInvoice = await prisma.invoice.findUnique({
+    where: {
+      id: invoiceId,
+    },
+    include: {
+      user: true,
+    },
+  });
+  if (requestedInvoice.user.email !== userEmail) {
+    return false;
+  } else {
+    return true;
+  }
+};
