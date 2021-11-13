@@ -1,4 +1,4 @@
-import { getSession } from "next-auth/client";
+import { getSession } from "next-auth/react";
 import prisma from "../../../lib/prisma";
 import { validateInvoice } from "../../../util/validators";
 import { emailInvoice } from "../../../util/emailInvoice";

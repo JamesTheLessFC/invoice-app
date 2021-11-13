@@ -14,13 +14,14 @@
     "@fortawesome/free-solid-svg-icons": "^5.15.4",
     "@fortawesome/react-fontawesome": "^0.1.15",
     "@google-cloud/storage": "^5.15.5",
-    "@prisma/client": "^3.3.0",
+    "@next-auth/prisma-adapter": "^0.5.2-next.19",
+    "@prisma/client": "^3.4.2",
     "@reduxjs/toolkit": "^1.6.2",
     "file-saver": "^2.0.5",
     "get-stream": "^6.0.1",
     "nanoid": "^3.1.29",
     "next": "11.1.2",
-    "next-auth": "^3.29.0",
+    "next-auth": "^4.0.0-beta.6",
     "nodemailer": "^6.7.0",
     "pdfkit": "^0.13.0",
     "react": "17.0.2",
@@ -33,6 +34,6 @@
   "devDependencies": {
     "eslint": "7.32.0",
     "eslint-config-next": "11.1.2",
-    "prisma": "^3.3.0"
+    "prisma": "^3.4.2"
   }
 }

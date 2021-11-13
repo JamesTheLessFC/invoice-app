@@ -1,5 +1,5 @@
 import styles from "../../styles/page.module.scss";
-import { useSession } from "next-auth/client";
+import { useSession } from "next-auth/react";
 import { useGetInvoicesQuery } from "../../services/invoice";
 import AppBar from "../../components/AppBar";
 import Invoices from "../../components/Invoices";
@@ -44,7 +44,7 @@ export async function getServerSideProps({ query }) {
 }
 
 function InvoicesPage({ page, filters, router }) {
-  const [session, loading] = useSession();
+  const { status } = useSession();
   const toast = useSelector(selectToast);
   const invoiceForm = useSelector(selectInvoiceForm);
   const invoiceList = useSelector(selectInvoiceList);
@@ -57,10 +57,10 @@ function InvoicesPage({ page, filters, router }) {
   const invoice = useSelector(selectInvoice);
 
   useEffect(() => {
-    if (!session) {
+    if (status === "unauthenticated") {
       router.push("/");
     }
-  }, [session, router]);
+  }, [status, router]);
 
   useEffect(() => {
     if (invoice.id !== "") {

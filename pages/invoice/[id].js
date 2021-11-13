@@ -1,7 +1,7 @@
 import styles from "../../styles/page.module.scss";
 import Invoice from "../../components/Invoice";
 import { useEffect, useState } from "react";
-import { useSession } from "next-auth/client";
+import { useSession } from "next-auth/react";
 import { useGetInvoiceByIdQuery } from "../../services/invoice";
 import { withRouter } from "next/router";
 import AppBar from "../../components/AppBar";
@@ -23,7 +23,7 @@ import { setInvoiceId } from "../../features/invoice/invoiceSlice";
 function InvoicePage({ router }) {
   const { id } = router.query;
   const [skip, setSkip] = useState(true);
-  const [session, loading] = useSession();
+  const { status } = useSession();
   const { data, error, isLoading, isUninitialized } = useGetInvoiceByIdQuery(
     id,
     { skip }
@@ -34,10 +34,10 @@ function InvoicePage({ router }) {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (!session) {
+    if (status === "unauthenticated") {
       router.push("/");
     }
-  }, [session, router]);
+  }, [status, router]);
 
   useEffect(() => {
     if (id) {

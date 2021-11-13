@@ -1,7 +1,7 @@
 import styles from "../styles/page.module.scss";
 import AppBar from "../components/AppBar";
 import { useEffect } from "react";
-import { useSession } from "next-auth/client";
+import { useSession } from "next-auth/react";
 import { SignInMessage } from "../components/SignInMessage";
 import router from "next/router";
 import { useSelector } from "react-redux";
@@ -10,12 +10,12 @@ import Head from "../components/Head";
 import { selectInvoice } from "../features/invoice/invoiceSlice";
 
 export default function Home() {
-  const [session, loading] = useSession();
+  const { status } = useSession();
   const invoiceList = useSelector(selectInvoiceList);
   const invoice = useSelector(selectInvoice);
 
   useEffect(() => {
-    if (session) {
+    if (status === "authenticated") {
       const selectedFilters = invoiceList.filters;
       const page = invoiceList.page;
       const invoiceId = invoice.id;
@@ -36,9 +36,9 @@ export default function Home() {
         );
       }
     }
-  }, [session, invoiceList.filters, invoiceList.page, invoice.id]);
+  }, [status, invoiceList.filters, invoiceList.page, invoice.id]);
 
-  if (!session) {
+  if (status === "unauthenticated") {
     return (
       <>
         <Head title="Home" />

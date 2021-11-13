@@ -11,7 +11,7 @@ import {
   faSun,
 } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
-import { signOut, useSession } from "next-auth/client";
+import { signOut, useSession } from "next-auth/react";
 import {
   toggleDarkMode,
   selectDarkMode,
@@ -19,7 +19,7 @@ import {
 import { useSelector, useDispatch } from "react-redux";
 
 export default function AppBar() {
-  const [session, loading] = useSession();
+  const { status, data: session } = useSession();
   const darkMode = useSelector(selectDarkMode);
   const dispatch = useDispatch();
 
@@ -37,7 +37,7 @@ export default function AppBar() {
         </button>
         <div className={styles.divider}>&nbsp;</div>
         <div className={styles.avatar_name_container}>
-          {session ? (
+          {status === "authenticated" ? (
             <Image
               src={session.user.image}
               alt="avatar"
@@ -48,16 +48,16 @@ export default function AppBar() {
           ) : (
             <FontAwesomeIcon icon={faUserCircle} className={styles.icon} />
           )}
-          {session ? (
+          {status === "authenticated" ? (
             <p className={styles.name}>{session.user.name}</p>
           ) : (
             <p className={styles.name}>Anonymous User</p>
           )}
         </div>
         <div className={styles.divider}>&nbsp;</div>
-        {loading ? (
+        {status === "loading" ? (
           <FontAwesomeIcon icon={faSpinner} spin className={styles.icon} />
-        ) : !session ? (
+        ) : status === "unauthenticated" ? (
           <Link href="/api/auth/signin">
             <a>
               <FontAwesomeIcon icon={faSignInAlt} className={styles.icon} />

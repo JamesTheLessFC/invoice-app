@@ -1,4 +1,4 @@
-import { getSession } from "next-auth/client";
+import { getSession } from "next-auth/react";
 import { getPDFAsBase64String } from "../../../../util/pdf";
 
 export default async function handle(req, res) {

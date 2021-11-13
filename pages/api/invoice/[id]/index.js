@@ -1,6 +1,6 @@
 import prisma from "../../../../lib/prisma";
 import { validateInvoice } from "../../../../util/validators";
-import { getSession } from "next-auth/client";
+import { getSession } from "next-auth/react";
 import { createPDF } from "../../../../util/pdf";
 import { emailInvoice } from "../../../../util/emailInvoice";
 import { deleteFile, uploadFile } from "../../../../util/storage";

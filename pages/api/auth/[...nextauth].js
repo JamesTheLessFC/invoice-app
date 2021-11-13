@@ -1,7 +1,9 @@
 import NextAuth from "next-auth";
-import Providers from "next-auth/providers";
-import Adapters from "next-auth/adapters";
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import prisma from "../../../lib/prisma";
+import GoogleProvider from "next-auth/providers/google";
+import GitHubProvider from "next-auth/providers/github";
+import EmailProvider from "next-auth/providers/email";
 
 const authHandler = (req, res) => NextAuth(req, res, options);
 
@@ -9,15 +11,15 @@ export default authHandler;
 
 const options = {
   providers: [
-    Providers.GitHub({
+    GitHubProvider({
       clientId: process.env.GITHUB_ID,
       clientSecret: process.env.GITHUB_SECRET,
     }),
-    Providers.Google({
+    GoogleProvider({
       clientId: process.env.GOOGLE_ID,
       clientSecret: process.env.GOOGLE_SECRET,
     }),
-    Providers.Email({
+    EmailProvider({
       server: {
         host: process.env.EMAIL_SERVER_HOST,
         port: process.env.EMAIL_SERVER_PORT,
@@ -29,6 +31,11 @@ const options = {
       from: process.env.EMAIL_FROM,
     }),
   ],
-  adapter: Adapters.Prisma.Adapter({ prisma }),
+  adapter: PrismaAdapter(prisma),
   secret: process.env.SECRET,
+  theme: {
+    colorScheme: "dark", // "auto" | "dark" | "light"
+    brandColor: "#9277ff", // Hex color value
+    logo: process.env.LOGO_IMAGE_URL, // Absolute URL to logo image
+  },
 };
