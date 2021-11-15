@@ -233,9 +233,6 @@ p.description {
       color: $light-blue-gray;
     }
   }
-  // .download_button {
-  //   margin-right: 1.5rem;
-  // }
   .delete_button {
     margin-right: auto;
     color: $red;
@@ -276,12 +273,6 @@ p.description {
             color: $white;
           }
         }
-        // .download_button {
-        //   @include button-edit_dark;
-        //   &:hover {
-        //     color: $white;
-        //   }
-        // }
       }
     }
   }
@@ -311,16 +302,6 @@ p.description {
     .mark_as_button {
       @include button-purple;
     }
-    // .download_button {
-    //   @include button-edit_light;
-    //   margin-right: 1rem;
-    //   span {
-    //     display: block;
-    //   }
-    //   .icon_xs_only {
-    //     display: none;
-    //   }
-    // }
   }
 }
 
@@ -425,19 +406,5 @@ p.description {
 @media screen and (min-width: 1199px) {
   .root {
     width: 60%;
-  }
-}
-
-@media print {
-  .root {
-    width: 100%;
-    margin: 0;
-  }
-  .container {
-    box-shadow: none;
-    border-radius: unset;
-  }
-  .container_status {
-    display: none;
   }
 }

@@ -194,15 +194,6 @@ $transparent-black: hsla(0, 0%, 0%, 0.6);
   }
 }
 
-// @mixin button-save_light {
-//   @include button-default;
-//   background-color: $navbar-bg;
-//   color: $white;
-//   &:hover {
-//     background-color: $text_light;
-//   }
-// }
-
 @mixin button-save_light {
   @include button-default;
   background-color: $element-bg_dark;
@@ -255,8 +246,6 @@ $transparent-black: hsla(0, 0%, 0%, 0.6);
   outline: none;
   border-radius: 5px;
   padding: 1rem;
-  //width: 100%;
-  //min-width: 15rem;
   &:focus {
     border-color: $light-purple;
   }
