@@ -1,6 +1,8 @@
 import { getToken } from "next-auth/jwt";
 import { getPDFAsBase64String } from "../../../../util/pdf";
 
+const secret = process.env.SECRET;
+
 export default async function handle(req, res) {
   const token = await getToken({ req, secret });
 

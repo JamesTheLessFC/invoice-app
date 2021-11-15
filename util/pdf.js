@@ -101,7 +101,12 @@ export const createPDF = (invoice) => {
 
   if (invoice.senderCountry === "United States") {
     doc.text(
-      invoice.senderCity + ", " + invoice.senderState + " " + invoice.senderZip,
+      invoice.senderCity +
+        (invoice.senderState && invoice.senderState !== "BLANK"
+          ? ", " + invoice.senderState
+          : "") +
+        " " +
+        invoice.senderZip,
       {
         align: "right",
       }
@@ -159,7 +164,12 @@ export const createPDF = (invoice) => {
 
   if (invoice.clientCountry === "United States") {
     doc.text(
-      invoice.clientCity + ", " + invoice.clientState + " " + invoice.clientZip,
+      invoice.clientCity +
+        (invoice.clientState && invoice.clientState !== "BLANK"
+          ? ", " + invoice.clientState
+          : "") +
+        " " +
+        invoice.clientZip,
       {
         align: "right",
       }
