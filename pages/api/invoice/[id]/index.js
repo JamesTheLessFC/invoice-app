@@ -1,24 +1,28 @@
 import prisma from "../../../../lib/prisma";
 import { validateInvoice } from "../../../../util/validators";
-import { getSession } from "next-auth/react";
+import { getToken } from "next-auth/jwt";
 import { createPDF } from "../../../../util/pdf";
 import { emailInvoice } from "../../../../util/emailInvoice";
 import { deleteFile, uploadFile } from "../../../../util/storage";
 import { revertStatusToDraft } from "../index";
 
+const secret = process.env.SECRET;
+
 export default async function handle(req, res) {
-  const session = await getSession({ req });
-  if (!session) {
+  const token = await getToken({ req, secret });
+
+  if (!token) {
     return res.status(401).json({ message: "User not signed in" });
   }
-  const user = session.user;
+
+  const userId = token.sub;
   const invoiceId = req.query.id;
 
   if (req.method === "GET") {
     const invoiceData = await prisma.invoice.findFirst({
       where: {
         id: invoiceId,
-        user: { email: session.user.email },
+        user: { id: userId },
       },
       include: {
         items: true,
@@ -47,8 +51,8 @@ export default async function handle(req, res) {
     return res.json({ invoice });
   }
   if (req.method === "DELETE") {
-    if (!isAuthorized(invoiceId, session.user.email)) {
-      return res.status(401).json({ message: "Unauthorized " });
+    if (!isAuthorized(invoiceId, userId)) {
+      return res.status(401).json({ message: "Unauthorized" });
     }
     const result = await prisma.invoice.delete({
       where: {
@@ -68,8 +72,8 @@ export default async function handle(req, res) {
         return res.status(400).json({ errors: validationResults.errors });
       }
     }
-    if (!isAuthorized(invoiceId, session.user.email)) {
-      return res.status(401).json({ message: "Unauthorized " });
+    if (!isAuthorized(invoiceId, userId)) {
+      return res.status(401).json({ message: "Unauthorized" });
     }
     const result = await prisma.invoice.update({
       where: {
@@ -110,8 +114,8 @@ export default async function handle(req, res) {
     }
   } else if (req.method === "PATCH") {
     if (req.body.status === "PAID" || req.body.status === "PENDING") {
-      if (!isAuthorized(invoiceId, session.user.email)) {
-        return res.status(401).json({ message: "Unauthorized " });
+      if (!isAuthorized(invoiceId, userId)) {
+        return res.status(401).json({ message: "Unauthorized" });
       }
       const result = await prisma.invoice.update({
         where: {
@@ -126,12 +130,14 @@ export default async function handle(req, res) {
       });
       return res.json(result);
     } else {
-      return res.status(400).json({ error: "status must be paid or pending" });
+      return res
+        .status(400)
+        .json({ message: "Status must be paid or pending" });
     }
   }
 }
 
-const isAuthorized = async (invoiceId, userEmail) => {
+const isAuthorized = async (invoiceId, userId) => {
   const requestedInvoice = await prisma.invoice.findUnique({
     where: {
       id: invoiceId,
@@ -140,7 +146,7 @@ const isAuthorized = async (invoiceId, userEmail) => {
       user: true,
     },
   });
-  if (requestedInvoice.user.email !== userEmail) {
+  if (requestedInvoice.user.id !== userId) {
     return false;
   } else {
     return true;

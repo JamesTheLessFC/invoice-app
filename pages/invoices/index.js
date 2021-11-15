@@ -44,7 +44,7 @@ export async function getServerSideProps({ query }) {
 }
 
 function InvoicesPage({ page, filters, router }) {
-  const { status } = useSession();
+  const { status, data: session } = useSession();
   const toast = useSelector(selectToast);
   const invoiceForm = useSelector(selectInvoiceForm);
   const invoiceList = useSelector(selectInvoiceList);
@@ -61,6 +61,8 @@ function InvoicesPage({ page, filters, router }) {
       router.push("/");
     }
   }, [status, router]);
+
+  console.log(session);
 
   useEffect(() => {
     if (invoice.id !== "") {

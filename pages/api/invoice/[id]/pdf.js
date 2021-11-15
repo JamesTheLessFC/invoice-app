@@ -1,12 +1,14 @@
-import { getSession } from "next-auth/react";
+import { getToken } from "next-auth/jwt";
 import { getPDFAsBase64String } from "../../../../util/pdf";
 
 export default async function handle(req, res) {
-  const invoiceId = req.query.id;
-  const session = await getSession({ req });
-  if (!session) {
+  const token = await getToken({ req, secret });
+
+  if (!token) {
     return res.status(401).json({ message: "User not signed in" });
   }
+
+  const invoiceId = req.query.id;
 
   if (req.method === "POST") {
     try {

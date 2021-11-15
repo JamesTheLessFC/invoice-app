@@ -34,8 +34,11 @@ const options = {
   adapter: PrismaAdapter(prisma),
   secret: process.env.SECRET,
   theme: {
-    colorScheme: "dark", // "auto" | "dark" | "light"
-    brandColor: "#9277ff", // Hex color value
-    logo: process.env.LOGO_IMAGE_URL, // Absolute URL to logo image
+    colorScheme: "dark",
+    brandColor: "#9277ff",
+    logo: process.env.LOGO_IMAGE_URL,
+  },
+  session: {
+    jwt: true,
   },
 };

@@ -1,23 +1,28 @@
-import { getSession } from "next-auth/react";
+import { getToken } from "next-auth/jwt";
 import prisma from "../../../lib/prisma";
 
+const secret = process.env.SECRET;
+
 export default async function handle(req, res) {
-  const session = await getSession({ req });
-  if (!session) {
+  const token = await getToken({ req, secret });
+
+  if (!token) {
     return res.status(401).json({ message: "User not signed in" });
   }
+
+  const userId = token.sub;
 
   if (req.method === "GET") {
     const countQuery = {
       where: {
-        user: { email: session.user.email },
+        user: { id: userId },
       },
     };
     const dataQuery = {
       take: 10,
       skip: (Number(req.query.page) - 1) * 10,
       where: {
-        user: { email: session.user.email },
+        user: { id: userId },
       },
       include: {
         items: true,

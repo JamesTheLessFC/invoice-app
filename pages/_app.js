@@ -6,14 +6,15 @@ import { Provider as StoreProvider } from "react-redux";
 import { store } from "../store";
 import { SessionProvider } from "next-auth/react";
 
-function MyApp({ Component, pageProps }) {
+export default function App({
+  Component,
+  pageProps: { session, ...pageProps },
+}) {
   return (
     <StoreProvider store={store}>
-      <SessionProvider session={pageProps.session}>
+      <SessionProvider session={session}>
         <Component {...pageProps} />
       </SessionProvider>
     </StoreProvider>
   );
 }
-
-export default MyApp;
