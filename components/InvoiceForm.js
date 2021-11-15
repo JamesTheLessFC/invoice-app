@@ -156,7 +156,7 @@ export default function InvoiceForm({ invoice }) {
       ...prepareInvoiceObj(),
       status,
     };
-    if (body.status !== "DRAFT") {
+    if (status !== "DRAFT") {
       const validationResults = validateInvoice(body);
       if (!validationResults.valid) {
         return setErrors(validationResults.errors);
@@ -168,9 +168,11 @@ export default function InvoiceForm({ invoice }) {
       dispatch(
         showToast({
           type: "success",
-          message: `Invoice #${response.id
-            .slice(-8)
-            .toUpperCase()} created successfully!`,
+          message: `Invoice #${response.id.slice(-8).toUpperCase()} ${
+            status === "DRAFT"
+              ? "created"
+              : `created and sent to ${clientEmail}`
+          } successfully!`,
         })
       );
     } catch (err) {
@@ -191,7 +193,7 @@ export default function InvoiceForm({ invoice }) {
       id: invoice.id,
       status,
     };
-    if (body.status !== "DRAFT") {
+    if (status !== "DRAFT") {
       const validationResults = validateInvoice(body);
       if (!validationResults.valid) {
         return setErrors(validationResults.errors);

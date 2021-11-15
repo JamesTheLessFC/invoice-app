@@ -37,7 +37,7 @@ export default function AppBar() {
         </button>
         <div className={styles.divider}>&nbsp;</div>
         <div className={styles.avatar_name_container}>
-          {status === "authenticated" ? (
+          {status === "authenticated" && session.user.image ? (
             <Image
               src={session.user.image}
               alt="avatar"
@@ -49,9 +49,11 @@ export default function AppBar() {
             <FontAwesomeIcon icon={faUserCircle} className={styles.icon} />
           )}
           {status === "authenticated" ? (
-            <p className={styles.name}>{session.user.name}</p>
+            <p className={styles.name}>
+              {session.user.name || session.user.email}
+            </p>
           ) : (
-            <p className={styles.name}>Anonymous User</p>
+            <p className={styles.name}>Signed Out</p>
           )}
         </div>
         <div className={styles.divider}>&nbsp;</div>
