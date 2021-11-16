@@ -16,7 +16,7 @@ export const emailInvoice = async (invoice, invoiceUrl) => {
       "<html><body><p>Hello {{params.clientName}},</p><p>You have a new invoice from {{params.senderName}}. You can find it attached to this email.</p><p>Thank you!<p><em>From the Team at Invoicer</em></p></body></html>";
     sendSmtpEmail.sender = {
       name: "No Reply",
-      email: "noreply@invoicewebapp.com",
+      email: process.env.EMAIL_FROM,
     };
     sendSmtpEmail.to = [
       { email: invoice.clientEmail, name: invoice.clientName },
