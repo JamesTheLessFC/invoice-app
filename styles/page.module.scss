@@ -19,6 +19,9 @@
   }
   &_dark {
     background-color: $bg_dark;
+    h3 {
+      color: $white;
+    }
   }
 }
 
