@@ -1,7 +1,7 @@
 @import "./variables.scss";
 
 .root {
-  padding: 2rem 2rem 3rem 2rem;
+  padding: 2rem;
   width: 100%;
   background-color: $white;
   position: fixed;
@@ -60,6 +60,7 @@
   @include button-edit_light;
   width: 100%;
   margin-top: 2rem;
+  margin-bottom: 3rem;
 }
 
 .label_input_container {

@@ -6,6 +6,7 @@ export const invoiceApi = createApi({
   reducerPath: "invoiceApi",
   baseQuery: fetchBaseQuery({
     baseUrl: "https://invoicer-five.vercel.app/api/",
+    //baseUrl: "http://localhost:3000/api/",
   }),
   tagTypes: ["Invoices"],
   endpoints: (builder) => ({
