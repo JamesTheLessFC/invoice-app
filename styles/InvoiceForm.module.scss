@@ -60,7 +60,7 @@
   @include button-edit_light;
   width: 100%;
   margin-top: 2rem;
-  margin-bottom: 3rem;
+  margin-bottom: 4rem;
 }
 
 .label_input_container {
@@ -399,6 +399,10 @@
 
   .form_title {
     margin-top: 3rem;
+  }
+
+  .add_new_item_button {
+    margin-bottom: 0;
   }
 }
 

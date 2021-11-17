@@ -63,7 +63,7 @@ function InvoicePage({ router }) {
           <AppBar />
           <FontAwesomeIcon
             icon={faSpinner}
-            spin
+            pulse
             className={styles.spinner_icon}
           />
         </div>

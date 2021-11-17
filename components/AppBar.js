@@ -58,7 +58,7 @@ export default function AppBar() {
         </div>
         <div className={styles.divider}>&nbsp;</div>
         {status === "loading" ? (
-          <FontAwesomeIcon icon={faSpinner} spin className={styles.icon} />
+          <FontAwesomeIcon icon={faSpinner} pulse className={styles.icon} />
         ) : status === "unauthenticated" ? (
           <Link href="/api/auth/signin">
             <a>

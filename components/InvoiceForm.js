@@ -1007,12 +1007,16 @@ export default function InvoiceForm({ invoice }) {
           disabled={isAdding || isUpdating || isUpdatingWithoutSending}
         >
           <span className={styles.icon_xs_only}>
-            <FontAwesomeIcon icon={faSave} />
+            {(isAdding || isUpdating) && activeButton === "save" ? (
+              <FontAwesomeIcon icon={faSpinner} pulse />
+            ) : (
+              <FontAwesomeIcon icon={faSave} />
+            )}
           </span>
           <span>
             {(isAdding || isUpdatingWithoutSending) &&
             activeButton === "save" ? (
-              <FontAwesomeIcon icon={faSpinner} spin />
+              <FontAwesomeIcon icon={faSpinner} pulse />
             ) : invoice ? (
               "Save Changes"
             ) : (
@@ -1029,13 +1033,13 @@ export default function InvoiceForm({ invoice }) {
         >
           <span className={styles.icon_xs_only}>
             {(isAdding || isUpdating) && activeButton === "save and send" ? (
-              <FontAwesomeIcon icon={faSpinner} spin />
+              <FontAwesomeIcon icon={faSpinner} pulse />
             ) : (
               <FontAwesomeIcon icon={faPaperPlane} />
             )}
           </span>
           {(isAdding || isUpdating) && activeButton === "save and send" ? (
-            <FontAwesomeIcon icon={faSpinner} spin />
+            <FontAwesomeIcon icon={faSpinner} pulse />
           ) : (
             <span>Save &amp; Send</span>
           )}

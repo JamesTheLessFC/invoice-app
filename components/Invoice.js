@@ -116,7 +116,7 @@ export default function Invoice({ data }) {
           onClick={downloadPDF}
         >
           {isLoadingPDF ? (
-            <FontAwesomeIcon icon={faSpinner} spin className={styles.icon} />
+            <FontAwesomeIcon icon={faSpinner} pulse className={styles.icon} />
           ) : (
             <FontAwesomeIcon icon={faFileDownload} className={styles.icon} />
           )}
@@ -147,7 +147,7 @@ export default function Invoice({ data }) {
             className={styles.mark_as_button}
           >
             {isUpdating ? (
-              <FontAwesomeIcon icon={faSpinner} spin />
+              <FontAwesomeIcon icon={faSpinner} pulse />
             ) : data.status === "paid" ? (
               "Mark as Pending"
             ) : (
